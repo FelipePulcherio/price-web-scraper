@@ -14,5 +14,8 @@ npm-debug.log*
 # Optional eslint cache
 .eslintcache
 
+# Built TS files
+dist/
+
 # Environment variables
 .env*

@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 
-// Define interface for item schema
+// Define interface for item
 export interface IItem {
   _id: Schema.Types.ObjectId;
   name: String;
@@ -22,7 +22,9 @@ export interface IItem {
   search_count: Number;
 }
 
-// Define interface for history schema
+// Define interface for short item
+
+// Define interface for history
 export interface IHistory {
   _id: Schema.Types.ObjectId;
   item_id: Schema.Types.ObjectId;
@@ -36,7 +38,7 @@ export interface IHistory {
   ];
 }
 
-// Define interface for graph schema
+// Define interface for graph
 export interface IGraph {
   _id: Schema.Types.ObjectId;
   item_id: Schema.Types.ObjectId;

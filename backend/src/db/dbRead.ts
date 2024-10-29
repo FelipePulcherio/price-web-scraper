@@ -44,3 +44,41 @@ export async function readItemCollection({
 
   return objectsFromItemCollection;
 }
+
+// Define interface for props used in readHistoryCollection function
+interface readHistoryCollectionProps {
+  searchParams: Object;
+  interestFields: String | null;
+}
+
+export async function readHistoryCollection({
+  searchParams,
+  interestFields = null,
+}: readHistoryCollectionProps): Promise<IHistory[]> {
+  // Declare variable for later use
+  let objectsFromHistoryCollection: IHistory[] = [];
+
+  // Connect to MongoDB with mongoose
+  try {
+    // Start connection
+    await connect(mongoDBUri);
+    console.log('Db_read: Connected to MongoDB.');
+
+    // Find all objects inside Item collections that are active
+    objectsFromHistoryCollection = await History.find(
+      searchParams,
+      interestFields
+    );
+    // .find() Errors are unhandled here !!!
+  } catch (err) {
+    // Error handling
+    console.log(`Db_read: Error connecting to the database: ${err}`);
+  } finally {
+    await connection.close();
+    console.log('Db_read: Mongoose closed.');
+  }
+
+  // console.log(objectsFromHistoryCollection);
+
+  return objectsFromHistoryCollection;
+}

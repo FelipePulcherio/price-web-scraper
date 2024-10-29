@@ -21,4 +21,4 @@ const historySchema = new Schema<IHistory>(
 );
 
 // Create and export model using historySchema
-module.exports = model('History', historySchema);
+export const History = model('History', historySchema);

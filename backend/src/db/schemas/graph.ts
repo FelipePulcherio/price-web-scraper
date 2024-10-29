@@ -19,4 +19,4 @@ const graphSchema = new Schema(
 );
 
 // Create and export model using graphSchema
-module.exports = model('Graph', graphSchema);
+export const Graph = model('Graph', graphSchema);

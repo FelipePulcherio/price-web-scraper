@@ -29,4 +29,4 @@ const itemSchema = new Schema<IItem>(
 );
 
 // Create and export model using itemSchema
-module.exports = model('Item', itemSchema);
+export const Item = model<IItem>('Item', itemSchema);

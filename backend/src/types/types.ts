@@ -3,47 +3,47 @@ import { Schema } from 'mongoose';
 // Define interface for item
 export interface IItem {
   _id: Schema.Types.ObjectId;
-  name?: String;
-  brand?: String;
-  description?: String;
-  category?: String;
+  name?: string;
+  brand?: string;
+  description?: string;
+  category?: string;
   isActive: Boolean;
   stores: [
     {
-      name: String;
-      logo: String;
-      url: String;
+      name: string;
+      logo: string;
+      url: string;
     }
   ];
   addDate?: Date;
   lastUpdated?: Date;
-  lowestPrice: Number;
-  lowestStore?: String;
-  searchCount?: Number;
+  lowestPrice: number;
+  lowestStore?: string;
+  searchCount?: number;
 }
 
 // Define interface for short item
 export interface IShortItem {
   _id: Schema.Types.ObjectId;
-  url: String;
-  price: Number;
+  url: string;
+  price: number;
   lastUpdated: Date;
   status: 'OK' | 'Failed' | null;
-  storeName: String;
+  storeName: string;
 }
 
 // Define interface for store
 export interface IStore {
-  storeName: String;
+  storeName: string;
   items: IShortItem[];
 }
 
 // Define interface for scraped result
 export interface IScraperResult {
-  store: String;
-  price: Number;
+  store: string;
+  price: number;
   date: Date;
-  moment: String;
+  moment: string;
 }
 
 // Define interface for history

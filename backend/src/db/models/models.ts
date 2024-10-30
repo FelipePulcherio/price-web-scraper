@@ -17,11 +17,11 @@ const itemSchema = new Schema<IItem>(
         url: { type: String, required: true },
       },
     ],
-    add_date: { type: Date, required: true },
-    last_updated: { type: Date, required: true },
-    lowest_price: { type: Number, required: true },
-    lowest_store: { type: String, required: true },
-    search_count: { type: Number },
+    addDate: { type: Date, required: true },
+    lastUpdated: { type: Date, required: true },
+    lowestPrice: { type: Number, required: true },
+    lowestStore: { type: String, required: true },
+    searchCount: { type: Number },
   },
   {
     collection: 'Item',
@@ -36,7 +36,7 @@ const historySchema = new Schema<IHistory>(
   {
     _id: { type: Schema.ObjectId },
     item_id: { type: Schema.ObjectId, ref: 'Item', required: true },
-    data_full: [
+    dataFull: [
       {
         store: { type: String, required: true },
         price: { type: Number, required: true },
@@ -58,7 +58,7 @@ const graphSchema = new Schema<IGraph>(
   {
     _id: { type: Schema.ObjectId },
     item_id: { type: Schema.ObjectId, ref: 'Item', required: true },
-    data_365: [
+    data365: [
       {
         lowest_price: { type: Number, required: true },
         lowest_store: { type: String, required: true },

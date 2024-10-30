@@ -3,10 +3,10 @@ import { Schema } from 'mongoose';
 // Define interface for item
 export interface IItem {
   _id: Schema.Types.ObjectId;
-  name: String;
-  brand: String;
-  description: String;
-  category: String;
+  name?: String;
+  brand?: String;
+  description?: String;
+  category?: String;
   isActive: Boolean;
   stores: [
     {
@@ -15,20 +15,34 @@ export interface IItem {
       url: String;
     }
   ];
-  add_date: Date;
-  last_updated: Date;
-  lowest_price: Number;
-  lowest_store: String;
-  search_count: Number;
+  addDate?: Date;
+  lastUpdated?: Date;
+  lowestPrice: Number;
+  lowestStore?: String;
+  searchCount?: Number;
 }
 
 // Define interface for short item
+export interface IShortItem {
+  _id: Schema.Types.ObjectId;
+  url: String;
+  price?: Number;
+  lastUpdated?: Date;
+  status?: String;
+  storeName?: String;
+}
+
+// Define interface for store
+export interface IStore {
+  storeName: String;
+  items: IShortItem[];
+}
 
 // Define interface for history
 export interface IHistory {
   _id: Schema.Types.ObjectId;
   item_id: Schema.Types.ObjectId;
-  data_full: [
+  dataFull: [
     {
       store: String;
       price: Number;
@@ -42,7 +56,7 @@ export interface IHistory {
 export interface IGraph {
   _id: Schema.Types.ObjectId;
   item_id: Schema.Types.ObjectId;
-  data_365: [
+  data365: [
     {
       lowest_price: Number;
       lowest_store: String;

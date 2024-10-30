@@ -1,14 +1,14 @@
-import { AnyBulkWriteOperation, connect, connection, Schema } from 'mongoose';
-import dotenv from 'dotenv';
-import { IHistory, IItem, IShortItem, IScraperResult } from '../types/types';
+import { connect, connection, AnyBulkWriteOperation } from 'mongoose';
+import { mongoConfig } from '../config/config';
+import {
+  IHistory,
+  IItem,
+  IShortItem,
+  IScraperResult,
+  IGraphResult,
+  IGraph,
+} from '../types/types';
 import { Item, History, Graph } from './models/models';
-
-// Read .env file
-dotenv.config();
-
-const dbName = process.env.DATABASE_NAME || '';
-const uri = process.env.DATABASE_URL || '';
-const mongoDBUri = uri.split('?')[0] + dbName + '?' + uri.split('?')[1];
 
 // FUNCTIONS
 // Define interface for props used in updateHistoryCollection function
@@ -26,7 +26,7 @@ async function updateHistoryCollection({
   // Connect to MongoDB with mongoose
   try {
     // Start connection
-    await connect(mongoDBUri);
+    await connect(mongoConfig.MONGO_URI, mongoConfig.MONGO_CONNECT_OPTIONS);
     console.log('Db_update: Connected to MongoDB.');
 
     // Declare bulkOperations array

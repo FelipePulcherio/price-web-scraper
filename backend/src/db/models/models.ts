@@ -4,7 +4,7 @@ import { IItem, IHistory, IGraph } from '../../types/types';
 // Create Item Schema
 const itemSchema = new Schema<IItem>(
   {
-    _id: { type: Schema.ObjectId },
+    _id: { type: Schema.Types.ObjectId },
     name: { type: String, required: true },
     brand: { type: String, required: true },
     description: { type: String, required: true },
@@ -34,8 +34,8 @@ export const Item = model<IItem>('Item', itemSchema);
 // Create History Schema
 const historySchema = new Schema<IHistory>(
   {
-    _id: { type: Schema.ObjectId },
-    item_id: { type: Schema.ObjectId, ref: 'Item', required: true },
+    _id: { type: Schema.Types.ObjectId },
+    item_id: { type: Schema.Types.ObjectId, ref: 'Item', required: true },
     dataFull: [
       {
         store: { type: String, required: true },
@@ -56,12 +56,12 @@ export const History = model('History', historySchema);
 // Create Graph Schema
 const graphSchema = new Schema<IGraph>(
   {
-    _id: { type: Schema.ObjectId },
-    item_id: { type: Schema.ObjectId, ref: 'Item', required: true },
+    _id: { type: Schema.Types.ObjectId },
+    item_id: { type: Schema.Types.ObjectId, ref: 'Item', required: true },
     data365: [
       {
-        lowest_price: { type: Number, required: true },
-        lowest_store: { type: String, required: true },
+        lowestPrice: { type: Number, required: true },
+        lowestStore: { type: String, required: true },
         date: { type: Date, required: true },
       },
     ],

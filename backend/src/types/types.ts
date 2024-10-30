@@ -26,10 +26,10 @@ export interface IItem {
 export interface IShortItem {
   _id: Schema.Types.ObjectId;
   url: String;
-  price?: Number;
-  lastUpdated?: Date;
-  status?: String;
-  storeName?: String;
+  price: Number;
+  lastUpdated: Date;
+  status: 'OK' | 'Failed' | null;
+  storeName: String;
 }
 
 // Define interface for store
@@ -38,18 +38,19 @@ export interface IStore {
   items: IShortItem[];
 }
 
+// Define interface for scraped result
+export interface IScraperResult {
+  store: String;
+  price: Number;
+  date: Date;
+  moment: String;
+}
+
 // Define interface for history
 export interface IHistory {
   _id: Schema.Types.ObjectId;
   item_id: Schema.Types.ObjectId;
-  dataFull: [
-    {
-      store: String;
-      price: Number;
-      date: Date;
-      moment: String;
-    }
-  ];
+  dataFull: IScraperResult[];
 }
 
 // Define interface for graph

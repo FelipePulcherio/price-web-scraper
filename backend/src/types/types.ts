@@ -53,15 +53,16 @@ export interface IHistory {
   dataFull: IScraperResult[];
 }
 
+// Define interface for graph result
+export interface IGraphResult {
+  lowestPrice: number;
+  lowestStore: string;
+  date: Date;
+}
+
 // Define interface for graph
 export interface IGraph {
   _id: Schema.Types.ObjectId;
   item_id: Schema.Types.ObjectId;
-  data365: [
-    {
-      lowest_price: Number;
-      lowest_store: String;
-      date: Date;
-    }
-  ];
+  data365: IGraphResult[];
 }

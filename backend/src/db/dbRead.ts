@@ -1,14 +1,7 @@
+import { mongoConfig } from '../config/config';
 import { connect, connection } from 'mongoose';
-import dotenv from 'dotenv';
 import { IHistory, IItem } from '../types/types';
 import { Item, History } from './models/models';
-
-// Read .env file
-dotenv.config();
-
-const dbName = process.env.DATABASE_NAME || '';
-const uri = process.env.DATABASE_URL || '';
-const mongoDBUri = uri.split('?')[0] + dbName + '?' + uri.split('?')[1];
 
 // FUNCTIONS
 // Define interface for props used in readItemCollection function
@@ -25,7 +18,7 @@ export async function readItemCollection({
   // Connect to MongoDB with mongoose
   try {
     // Start connection
-    await connect(mongoDBUri);
+    await connect(mongoConfig.MONGO_URI, mongoConfig.MONGO_CONNECT_OPTIONS);
     console.log('Db_read: Connected to MongoDB.');
 
     // Find all objects inside Item collections that are active
@@ -61,7 +54,7 @@ export async function readHistoryCollection({
   // Connect to MongoDB with mongoose
   try {
     // Start connection
-    await connect(mongoDBUri);
+    await connect(mongoConfig.MONGO_URI, mongoConfig.MONGO_CONNECT_OPTIONS);
     console.log('Db_read: Connected to MongoDB.');
 
     // Find all objects inside Item collections that are active

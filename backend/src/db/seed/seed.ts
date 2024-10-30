@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import { set, connect, connection, Types } from 'mongoose';
 import dotenv from 'dotenv';
 import { Item, History, Graph } from '../models/models';
 import { items, histories, graphs } from './completeList';
@@ -14,10 +14,10 @@ const MONGO_DATABASE: string = process.env.MONGO_DATABASE || '';
 const MONGO_URI: string = `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}`;
 
 // Set `strictQuery` to `true` to omit unknown fields in queries.
-mongoose.set('strictQuery', true);
+set('strictQuery', true);
 
 // Store newly created Ids
-let itemId: mongoose.Types.ObjectId[] = [];
+let itemId: Types.ObjectId[] = [];
 
 // Function definitions
 // Call Save function
@@ -93,7 +93,7 @@ async function loopAllHistories(list: IHistory[]) {
 // Save new document inside 'History' collection
 async function historyDocumentCreate(
   histories: IHistory,
-  itemId: mongoose.Types.ObjectId
+  itemId: Types.ObjectId
 ) {
   const newHistory = new History({
     _id: histories._id,
@@ -135,10 +135,7 @@ async function loopAllGraphs(list: IGraph[]) {
 }
 
 // Save new document inside 'Price' collection
-async function graphDocumentCreate(
-  graphs: IGraph,
-  itemId: mongoose.Types.ObjectId
-) {
+async function graphDocumentCreate(graphs: IGraph, itemId: Types.ObjectId) {
   const newGraph = new Graph({
     _id: graphs._id,
     item_id: itemId,
@@ -175,7 +172,7 @@ async function connectToDB() {
   console.log('Debug: Trying to connect to MongoDB ...');
 
   try {
-    await mongoose.connect(MONGO_URI, { retryWrites: true, w: 'majority' });
+    await connect(MONGO_URI, { retryWrites: true, w: 'majority' });
     console.log('Debug: Connected to MongoDB.');
 
     // Call functions to create Collections and populate
@@ -186,7 +183,7 @@ async function connectToDB() {
   } catch (err) {
     console.log(`Error connecting to the database: ${err}`);
   } finally {
-    await mongoose.connection.close();
+    await connection.close();
     console.log('Debug: Mongoose closed.');
   }
 }

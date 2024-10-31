@@ -156,7 +156,7 @@ export async function updateGraphCollection({
   }
 }
 
-async function updateItemCollection({
+export async function updateItemCollection({
   updatedItem,
   retryCount = 3,
 }: updateGraphItemCollectionProps) {

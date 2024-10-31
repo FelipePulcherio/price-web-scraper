@@ -1,4 +1,4 @@
-import { connect, connection, AnyBulkWriteOperation } from 'mongoose';
+import { connect, connection, AnyBulkWriteOperation, Types } from 'mongoose';
 import { mongoConfig } from '../config/config';
 import {
   IHistory,
@@ -17,12 +17,10 @@ interface updateHistoryCollectionProps {
   retryCount?: number;
 }
 
-async function updateHistoryCollection({
+export async function updateHistoryCollection({
   listOfSuccessObj,
   retryCount = 3,
 }: updateHistoryCollectionProps) {
-  // Accept array in format: [ { _id: , url: , price: , lastUpdated: , status: , store: } ]
-
   // Connect to MongoDB with mongoose
   try {
     // Start connection
@@ -33,19 +31,19 @@ async function updateHistoryCollection({
     const bulkOperations: AnyBulkWriteOperation[] = [];
 
     // Iterate over listOfSuccessObj and create a new Entry for each one
-    listOfSuccessObj.forEach(async (item) => {
+    listOfSuccessObj.forEach(async (shortItem) => {
       const newEntry: IScraperResult = {
-        store: item.storeName,
-        price: item.price,
-        date: item.lastUpdated,
-        moment: item.lastUpdated.getHours() < 22 ? 'Morning' : 'Evening',
+        store: shortItem.storeName,
+        price: shortItem.price,
+        date: shortItem.lastUpdated,
+        moment: shortItem.lastUpdated.getHours() < 22 ? 'Morning' : 'Evening',
       };
 
       // Prepare update operation for each item
       bulkOperations.push({
         updateOne: {
-          filter: { item_id: item._id },
-          update: { $push: { data_full: newEntry } },
+          filter: { item_id: shortItem._id },
+          update: { $push: { dataFull: newEntry } },
         },
       });
     });
@@ -86,3 +84,22 @@ async function updateHistoryCollection({
     console.log('Db_update: Mongoose closed.');
   }
 }
+
+async function testUpdateHistoryCollection() {
+  const listOfShortItems: IShortItem[] = [
+    {
+      _id: new Types.ObjectId('67227ed8a47e7d929cd3d213'),
+      url: 'https://www.walmart.ca/en/ip/Samsung-65-QLED-SMART-4K-TV-Q60D-Series/6000207606889?selectedSellerId=1&from=/search',
+      price: 990,
+      lastUpdated: new Date(),
+      status: 'OK',
+      storeName: 'walmart.ca',
+    },
+  ];
+
+  const test = await updateHistoryCollection({
+    listOfSuccessObj: listOfShortItems,
+  });
+}
+
+// testUpdateHistoryCollection();

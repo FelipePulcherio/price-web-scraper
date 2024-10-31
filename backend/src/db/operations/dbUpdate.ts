@@ -1,5 +1,5 @@
 import { connect, connection, AnyBulkWriteOperation, Types } from 'mongoose';
-import { mongoConfig } from '../config/config';
+import { mongoConfig } from '../../config/config';
 import {
   IHistory,
   IItem,
@@ -7,8 +7,8 @@ import {
   IScraperResult,
   IGraphResult,
   IGraph,
-} from '../types/types';
-import { Item, History, Graph } from './models/models';
+} from '../../types/types';
+import { Item, History, Graph } from '../models/models';
 
 // FUNCTIONS
 // Define interface for props used in updateHistoryCollection function

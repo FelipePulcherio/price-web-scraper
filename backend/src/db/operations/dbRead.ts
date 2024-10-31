@@ -1,7 +1,7 @@
-import { mongoConfig } from '../config/config';
+import { mongoConfig } from '../../config/config';
 import { connect, connection, ObjectId, Types, FilterQuery } from 'mongoose';
-import { IHistory, IItem } from '../types/types';
-import { Item, History } from './models/models';
+import { IHistory, IItem } from '../../types/types';
+import { Item, History } from '../models/models';
 
 // FUNCTIONS
 // Define interface for props used in readItemCollection function

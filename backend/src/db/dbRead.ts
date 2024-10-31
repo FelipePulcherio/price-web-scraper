@@ -1,12 +1,12 @@
 import { mongoConfig } from '../config/config';
-import { connect, connection } from 'mongoose';
+import { connect, connection, ObjectId, Types, FilterQuery } from 'mongoose';
 import { IHistory, IItem } from '../types/types';
 import { Item, History } from './models/models';
 
 // FUNCTIONS
 // Define interface for props used in readItemCollection function
 interface readItemCollectionProps {
-  interestFields: String | null;
+  interestFields?: string | null;
 }
 
 export async function readItemCollection({
@@ -40,8 +40,8 @@ export async function readItemCollection({
 
 // Define interface for props used in readHistoryCollection function
 interface readHistoryCollectionProps {
-  searchParams: Object;
-  interestFields: String | null;
+  searchParams: FilterQuery<IHistory>;
+  interestFields?: String | null;
 }
 
 export async function readHistoryCollection({
@@ -75,3 +75,27 @@ export async function readHistoryCollection({
 
   return objectsFromHistoryCollection;
 }
+
+async function testItemRead() {
+  const test = await readItemCollection({
+    interestFields: '_id stores isActive lowestPrice',
+  });
+  console.log(test);
+}
+
+async function testHistoryRead() {
+  const listOfIds: Types.ObjectId[] = [
+    new Types.ObjectId('67227ed8a47e7d929cd3d214'),
+    new Types.ObjectId('67227ed8a47e7d929cd3d213'),
+  ];
+
+  const test = await readHistoryCollection({
+    searchParams: {
+      item_id: { $in: listOfIds },
+    },
+  });
+  console.log(test);
+}
+
+// testItemRead();
+testHistoryRead();

@@ -1,12 +1,10 @@
 import { connect, connection, AnyBulkWriteOperation, Types } from 'mongoose';
 import { mongoConfig } from '../../config/config';
 import {
-  IHistory,
   IItem,
   IShortItem,
   IScraperResult,
   IGraphResult,
-  IGraph,
 } from '../../types/types';
 import { Item, History, Graph } from '../models/models';
 

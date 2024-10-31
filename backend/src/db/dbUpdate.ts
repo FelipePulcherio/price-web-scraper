@@ -85,6 +85,79 @@ export async function updateHistoryCollection({
   }
 }
 
+// Define interface for props used in updateGraphCollection function
+interface updateGraphCollectionProps {
+  updatedItem: IItem[];
+  retryCount?: number;
+}
+
+export async function updateGraphCollection({
+  updatedItem,
+  retryCount = 3,
+}: updateGraphCollectionProps) {
+  // Connect to MongoDB with mongoose
+  try {
+    // Start connection
+    await connect(mongoConfig.MONGO_URI, mongoConfig.MONGO_CONNECT_OPTIONS);
+    console.log('Db_update: Connected to MongoDB.');
+
+    // Declare bulkOperations array
+    const bulkOperations: AnyBulkWriteOperation[] = [];
+
+    // Iterate over updatedItem and create a new Entry for each one
+    updatedItem.forEach(async (item) => {
+      const newEntry: IGraphResult = {
+        lowestPrice: item.lowestPrice,
+        lowestStore: item.lowestStore,
+        date: item.lastUpdated,
+      };
+
+      // Prepare update operation for each item
+      bulkOperations.push({
+        updateOne: {
+          filter: { item_id: item._id },
+          update: { $push: { data365: newEntry } },
+        },
+      });
+    });
+
+    try {
+      // Execute bulk update operation
+      await Graph.bulkWrite(bulkOperations);
+
+      console.log('Db_update: Graph update success!\nUpdated IDs:');
+      // updatedItem.forEach((item) => console.log(item._id));
+      //
+    } catch (error) {
+      console.error(
+        `Db_update: Error executing bulk write operation in Graph: ${error}`
+      );
+
+      // Check if it's possible to try again.
+      if (retryCount > 0) {
+        console.log(
+          `Db_update: Retrying update operation.\nRetries left: ${retryCount}`
+        );
+
+        // Retry the operation recursively with decremented retryCount
+        await updateGraphCollection({
+          updatedItem: updatedItem,
+          retryCount: retryCount - 1,
+        });
+      } else {
+        console.error('Db_update: Retry limit reached. Operation failed.');
+        // Need more error Handling here! (Logging)
+      }
+    }
+  } catch (err) {
+    // Error handling related to connection
+    console.log(`Db_update: Error connecting to the database: ${err}`);
+  } finally {
+    await connection.close();
+    console.log('Db_update: Mongoose closed.');
+  }
+}
+
 async function testUpdateHistoryCollection() {
   const listOfShortItems: IShortItem[] = [
     {

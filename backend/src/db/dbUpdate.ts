@@ -85,8 +85,8 @@ export async function updateHistoryCollection({
   }
 }
 
-// Define interface for props used in updateGraphCollection function
-interface updateGraphCollectionProps {
+// Define interface for props used in updateGraphCollection and updateItemCollection function
+interface updateGraphItemCollectionProps {
   updatedItem: IItem[];
   retryCount?: number;
 }
@@ -94,7 +94,7 @@ interface updateGraphCollectionProps {
 export async function updateGraphCollection({
   updatedItem,
   retryCount = 3,
-}: updateGraphCollectionProps) {
+}: updateGraphItemCollectionProps) {
   // Connect to MongoDB with mongoose
   try {
     // Start connection
@@ -125,7 +125,7 @@ export async function updateGraphCollection({
       // Execute bulk update operation
       await Graph.bulkWrite(bulkOperations);
 
-      console.log('Db_update: Graph update success!');
+      console.log('Db_update: Graph update success!\nUpdated IDs:');
       // updatedItem.forEach((item) => console.log(item._id));
       //
     } catch (error) {
@@ -141,6 +141,73 @@ export async function updateGraphCollection({
 
         // Retry the operation recursively with decremented retryCount
         await updateGraphCollection({
+          updatedItem: updatedItem,
+          retryCount: retryCount - 1,
+        });
+      } else {
+        console.error('Db_update: Retry limit reached. Operation failed.');
+        // Need more error Handling here! (Logging)
+      }
+    }
+  } catch (err) {
+    // Error handling related to connection
+    console.log(`Db_update: Error connecting to the database: ${err}`);
+  } finally {
+    await connection.close();
+    console.log('Db_update: Mongoose closed.');
+  }
+}
+
+async function updateItemCollection({
+  updatedItem,
+  retryCount = 3,
+}: updateGraphItemCollectionProps) {
+  // Connect to MongoDB with mongoose
+  try {
+    // Start connection
+    await connect(mongoConfig.MONGO_URI, mongoConfig.MONGO_CONNECT_OPTIONS);
+    console.log('Db_update: Connected to MongoDB.');
+
+    // Declare bulkOperations array
+    const bulkOperations: AnyBulkWriteOperation[] = [];
+
+    // Iterate over updatedItem and create a new Entry for each one
+    updatedItem.forEach(async (item) => {
+      // Prepare update operation for each item
+      bulkOperations.push({
+        updateOne: {
+          filter: { _id: item._id },
+          update: {
+            $set: {
+              lastUpdated: item.lastUpdated,
+              lowestPrice: item.lowestPrice,
+              lowestStore: item.lowestStore,
+            },
+          },
+        },
+      });
+    });
+
+    try {
+      // Execute bulk update operation
+      await Item.bulkWrite(bulkOperations);
+
+      console.log('Db_update: Item update success!\nUpdated IDs:');
+      // updatedItem.forEach((item) => console.log(item._id));
+      //
+    } catch (error) {
+      console.error(
+        `Db_update: Error executing bulk write operation in Item: ${error}`
+      );
+
+      // Check if it's possible to try again.
+      if (retryCount > 0) {
+        console.log(
+          `Db_update: Retrying update operation.\nRetries left: ${retryCount}`
+        );
+
+        // Retry the operation recursively with decremented retryCount
+        await updateItemCollection({
           updatedItem: updatedItem,
           retryCount: retryCount - 1,
         });

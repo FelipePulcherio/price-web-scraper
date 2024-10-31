@@ -125,7 +125,7 @@ export async function updateGraphCollection({
       // Execute bulk update operation
       await Graph.bulkWrite(bulkOperations);
 
-      console.log('Db_update: Graph update success!\nUpdated IDs:');
+      console.log('Db_update: Graph update success!');
       // updatedItem.forEach((item) => console.log(item._id));
       //
     } catch (error) {
@@ -175,4 +175,19 @@ async function testUpdateHistoryCollection() {
   });
 }
 
+async function testUpdateGraphCollection() {
+  const updatedItem: IItem[] = [
+    {
+      _id: new Types.ObjectId('67227ed8a47e7d929cd3d213'),
+      lastUpdated: new Date('2024-10-31T03:20:05.842+00:00'),
+      lowestPrice: 990,
+      stores: [{ name: '', logo: '', url: '' }],
+      lowestStore: 'walmart.ca',
+    },
+  ];
+
+  const test = await updateGraphCollection({ updatedItem: updatedItem });
+}
+
 // testUpdateHistoryCollection();
+testUpdateGraphCollection();

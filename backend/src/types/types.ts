@@ -1,30 +1,31 @@
-import { Schema } from 'mongoose';
+import { Types } from 'mongoose';
+
+// Define interface for store info inside Item
+export interface IStoreDetail {
+  name: string;
+  logo: string;
+  url: string;
+}
 
 // Define interface for item
 export interface IItem {
-  _id: Schema.Types.ObjectId;
+  _id: Types.ObjectId;
   name?: string;
   brand?: string;
   description?: string;
   category?: string;
-  isActive: Boolean;
-  stores: [
-    {
-      name: string;
-      logo: string;
-      url: string;
-    }
-  ];
+  isActive?: Boolean;
+  stores: IStoreDetail[];
   addDate?: Date;
-  lastUpdated?: Date;
+  lastUpdated: Date;
   lowestPrice: number;
-  lowestStore?: string;
+  lowestStore: string;
   searchCount?: number;
 }
 
 // Define interface for short item
 export interface IShortItem {
-  _id: Schema.Types.ObjectId;
+  _id: Types.ObjectId;
   url: string;
   price: number;
   lastUpdated: Date;
@@ -48,8 +49,8 @@ export interface IScraperResult {
 
 // Define interface for history
 export interface IHistory {
-  _id: Schema.Types.ObjectId;
-  item_id: Schema.Types.ObjectId;
+  _id: Types.ObjectId;
+  item_id: Types.ObjectId;
   dataFull: IScraperResult[];
 }
 
@@ -62,7 +63,7 @@ export interface IGraphResult {
 
 // Define interface for graph
 export interface IGraph {
-  _id: Schema.Types.ObjectId;
-  item_id: Schema.Types.ObjectId;
+  _id: Types.ObjectId;
+  item_id: Types.ObjectId;
   data365: IGraphResult[];
 }

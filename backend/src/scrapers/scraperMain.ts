@@ -1,4 +1,4 @@
-import puppeteer, { Browser } from 'puppeteer-core';
+import puppeteer, { Browser, Page } from 'puppeteer-core';
 import { brightDataConfig } from '../config/config';
 import { IStore } from '../types/types';
 
@@ -19,13 +19,12 @@ export async function scraperMain({
   return new Promise(async (resolve, reject) => {
     // Iterate trough all items
     for (const item of storeSet.items) {
-      const url = item.url;
-
       let retries = 0;
       let success = false;
 
       // Initialize variables outside any try...catch
-      let page, browser;
+      let browser: Browser | null = null;
+      let page: Page | null = null;
 
       // Allow multiple retry
       while (!success && retries < retryCount) {
@@ -88,42 +87,47 @@ export async function scraperMain({
         }
 
         // Scraping Try...Catch
-        try {
-          switch (storeSet.storeName) {
-            case 'bestbuy.ca':
-              price = await bestbuyScraper(page, url);
-              break;
-            case 'walmart.ca':
-              price = await walmartScraper(page, url);
-              break;
-            default:
-              console.log(`Main_scraper: ${storeSet.storeName} not found!`);
-          }
+        if (browser && page) {
+          try {
+            switch (storeSet.storeName) {
+              case 'bestbuy.ca':
+                item.price = await bestbuyScraper({
+                  page: page,
+                  url: item.url,
+                });
+                break;
+              case 'walmart.ca':
+                item.price = await walmartScraper({
+                  page: page,
+                  url: item.url,
+                });
+                break;
+              default:
+                console.log(`Main_scraper: ${storeSet.storeName} not found!`);
+            }
 
-          // Add the scraped price to the item in storeSet
-          item.price = price;
-          item.lastUpdated = new Date();
-          item.status = 'OK';
+            // Add the scraped price to the item in storeSet
+            item.lastUpdated = new Date();
+            item.status = 'OK';
 
-          // Exit retry loop
-          success = true;
+            // Exit retry loop
+            success = true;
 
-          // Catch errors
-        } catch (error) {
-          console.error(`Error scraping ${url}: ${error}`);
+            // Catch errors
+          } catch (error) {
+            console.error(`Error scraping ${item.url}: ${error}`);
 
-          // Capture screenshot
-          await page.screenshot({
-            path: 'screenshot.jpg',
-          });
+            // Capture screenshot
+            await page.screenshot({
+              path: 'screenshot.jpg',
+            });
 
-          // Increment retry counter
-          retries++;
-          console.log(`Main_scraper: Trying again...\nRetry #${retries}`);
+            // Increment retry counter
+            retries++;
+            console.log(`Main_scraper: Trying again...\nRetry #${retries}`);
 
-          // Execute independently of success/error
-        } finally {
-          if (page) {
+            // Execute independently of success/error
+          } finally {
             console.log('Main_scraper: Closing Scraping Browser...');
 
             // Close page and browser
@@ -137,11 +141,11 @@ export async function scraperMain({
 
       // If scraping failed after all retries, set price to null and status to 'failed'
       if (!success) {
-        item.price = null;
+        item.price = 0;
         item.lastUpdated = new Date();
         item.status = 'Failed';
 
-        console.error(`Main_scraper: Error scraping ${url}`);
+        console.error(`Main_scraper: Error scraping ${item.url}`);
         console.log('Main_scraper: Moving to next URL...');
       }
     }

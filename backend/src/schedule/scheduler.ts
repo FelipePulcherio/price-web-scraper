@@ -1,12 +1,14 @@
 import { Agenda, Job } from '@hokify/agenda';
 import { mongoConfig } from '../config/config';
-import { IItem, ISchedule } from '../types/types';
+import { IItem, IStore } from '../types/types';
 import { readItemCollection } from '../db/operations/dbRead';
 import {
   updateHistoryCollection,
   updateGraphCollection,
   updateItemCollection,
 } from '../db/operations/dbUpdate';
+import { scraperWorker } from '../scrapers/scraperWorker';
+import { Types } from 'mongoose';
 
 // Create new instance of Agenda WITHOUT MONGOOSE
 const scraperAgenda = new Agenda({
@@ -42,11 +44,19 @@ scraperAgenda.define('scraper', async (job: Job<FetcherJobData>) => {
   // console.log('Data received on "scraper" job:');
   // console.log('Total Items: ', fetcherData.length);
   // console.log(fetcherData[0]);
+
+  // Call scraper worker
+  const stores: IStore[] = await scraperWorker({ itemData: fetcherData });
+  console.log('Scheduler: Scraper Worker Completed!');
+
+  // console.log(stores);
+  // console.log(stores.length);
+  // console.log(stores[0].items);
 });
 
 // Schedule the "fetcher" job to run every X hours
 const runJobs = async () => {
-  await scraperAgenda.every('15 seconds', 'fetcher');
+  await scraperAgenda.every('12 hours', 'fetcher');
 };
 
 // Set up listeners for completion

@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { createServer } from 'http';
+import { agendaStart } from './schedule/scheduler';
 
 dotenv.config();
 
@@ -22,3 +23,6 @@ const startServer = () => {
 
 // Initialize server
 startServer();
+
+// Start agenda
+agendaStart();

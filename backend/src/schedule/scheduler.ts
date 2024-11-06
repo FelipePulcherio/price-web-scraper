@@ -1,6 +1,6 @@
 import { Agenda, Job } from '@hokify/agenda';
 import { mongoConfig } from '../config/config';
-import { IItem, IShortItem, IStore } from '../types/types';
+import { IHistory, IItem, IShortItem, IStore } from '../types/types';
 import {
   readItemCollection,
   readHistoryCollection,
@@ -70,12 +70,12 @@ scraperAgenda.define('scraper', async (job: Job<FetcherJobData>) => {
   console.log('Scheduler: Update History Completed!');
 
   // Create list of IDs (non repeating) with status 'OK'
-  const okIDs = [...new Set(okItems.map((obj) => obj._id))];
+  const okIDs: Types.ObjectId[] = [...new Set(okItems.map((obj) => obj._id))];
 
   // console.log(okIDs);
 
   // Call read History with success IDs as param
-  const historyCollection = await readHistoryCollection({
+  const historyCollection: IHistory[] = await readHistoryCollection({
     searchParams: {
       item_id: { $in: okIDs },
     },

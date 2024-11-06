@@ -10,6 +10,7 @@ import {
   updateGraphCollection,
   updateItemCollection,
 } from '../db/operations/dbUpdate';
+import { deleteScraperJobsCollection } from '../db/operations/dbDelete';
 import { scraperWorker } from '../scrapers/scraperWorker';
 import { Types } from 'mongoose';
 import { analyzerComparison } from '../analyzer/analyzerComparison';
@@ -118,6 +119,11 @@ scraperAgenda.on('complete', async (job) => {
 
 // Start Agenda
 export async function agendaStart(): Promise<void> {
+  // Delete all 'fetcher' in 'Scraper-jobs' collection
+  console.log('Scheduler: Clearing previous "fetcher" schedule');
+  await deleteScraperJobsCollection();
+
+  // Actually start scraperAgenda
   await scraperAgenda.start();
   await runJobs();
   console.log('Scheduler: Agenda started!');

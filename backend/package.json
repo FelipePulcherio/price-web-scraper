@@ -21,7 +21,8 @@
     "@hokify/agenda": "^6.3.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "mongoose": "^8.5.2"
+    "mongoose": "^8.5.2",
+    "puppeteer-core": "^23.6.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

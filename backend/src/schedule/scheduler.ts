@@ -1,7 +1,10 @@
 import { Agenda, Job } from '@hokify/agenda';
 import { mongoConfig } from '../config/config';
-import { IItem, IStore } from '../types/types';
-import { readItemCollection } from '../db/operations/dbRead';
+import { IItem, IShortItem, IStore } from '../types/types';
+import {
+  readItemCollection,
+  readHistoryCollection,
+} from '../db/operations/dbRead';
 import {
   updateHistoryCollection,
   updateGraphCollection,
@@ -52,6 +55,33 @@ scraperAgenda.define('scraper', async (job: Job<FetcherJobData>) => {
   // console.log(stores);
   // console.log(stores.length);
   // console.log(stores[0].items);
+
+  // Create list of stores with items status 'OK'
+  const okItems: IShortItem[] = stores.flatMap((store) =>
+    store.items.filter((item) => item.status === 'OK')
+  );
+
+  // console.log(okItems);
+  // console.log(okItems.length);
+  // console.log(okItems[0]);
+
+  // Call update History based on success list
+  await updateHistoryCollection({ arrayOfShortItems: okItems });
+  console.log('Scheduler: Update History Completed!');
+
+  // Create list of IDs (non repeating) with status 'OK'
+  const okIDs = [...new Set(okItems.map((obj) => obj._id))];
+
+  // console.log(okIDs);
+
+  // Call read History with success IDs as param
+  const historyCollection = await readHistoryCollection({
+    searchParams: {
+      item_id: { $in: okIDs },
+    },
+  });
+
+  // console.log(historyCollection);
 });
 
 // Schedule the "fetcher" job to run every X hours

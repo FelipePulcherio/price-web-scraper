@@ -90,8 +90,26 @@ export async function scraperMain({
         if (browser && page) {
           try {
             switch (storeSet.storeName) {
+              case 'amazon.ca':
+                item.price = await amazon_scraper({
+                  page: page,
+                  url: item.url,
+                });
+                break;
               case 'bestbuy.ca':
                 item.price = await bestbuyScraper({
+                  page: page,
+                  url: item.url,
+                });
+                break;
+              case 'canadacomputers.com':
+                item.price = await canadacomputers_scraper({
+                  page: page,
+                  url: item.url,
+                });
+                break;
+              case 'newegg.ca':
+                item.price = await newegg_scraper({
                   page: page,
                   url: item.url,
                 });
@@ -274,6 +292,162 @@ async function walmartScraper({ page, url }: storeScraperProps) {
     }
   } else {
     throw new Error('Main_scraper (WM): HTML Element not found.');
+  }
+
+  return price;
+}
+
+async function amazon_scraper({ page, url }: storeScraperProps) {
+  //Navigate to url
+  console.log(`Main_scraper (AM): Navigating to ${url}...`);
+  await page.goto(url);
+
+  console.log('Main_scraper (AM): Navigated!');
+
+  // const html = await page.content();
+  // // Save the HTML content to a file
+  // await fs.writeFile('output.html', html, 'utf-8');
+
+  // const captchaFrame = page
+  //   .frames()
+  //   .find(
+  //     (f) => f.name() === 'destination_publishing_iframe_walmart-wmi_0_name'
+  //   );
+
+  // // If captchaFrame exists, handle the captcha
+  // if (captchaFrame !== undefined) {
+  //   const client = await page.createCDPSession();
+  //   console.log('Main_scraper (AM): Waiting captcha to solve...');
+  //   const { status } = await client.send('Captcha.waitForSolve', {
+  //     detectTimeout: 10000,
+  //   });
+  //   console.log('Main_scraper (AM): Captcha solve status:', status);
+  // }
+
+  // Wait for the selector to appear
+  console.log('Main_scraper (AM): Waiting for selector...');
+  await page.waitForSelector('div.a-spacing-top-mini', {
+    timeout: 1 * 30 * 1000, // 30 seconds
+  });
+
+  let priceContent: string | null = null;
+  let price: number | null = null;
+
+  // Query div with price info (first match only)
+  console.log('Main_scraper (AM): Scraping prices...');
+  const priceLocation = await page.$(
+    'div.a-spacing-top-mini>span.a-price>span.a-offscreen'
+  );
+
+  // Check if element exist
+  if (priceLocation) {
+    // Get the value from div
+    priceContent = await page.evaluate(
+      (element) => element.textContent,
+      priceLocation
+    );
+
+    if (priceContent) {
+      // Remove dollar symbol and comma
+      price = Number(Number(priceContent.replace(/[$,]/g, '')).toFixed(2));
+      console.log(`Main_scraper (AM): Scraped value: ${price}`);
+    } else {
+      throw new Error(
+        'Main_scraper (AM): Could not evaluate "textContent" of HTML Element.'
+      );
+    }
+  } else {
+    throw new Error('Main_scraper (AM): HTML Element not found.');
+  }
+
+  return price;
+}
+
+async function canadacomputers_scraper({ page, url }: storeScraperProps) {
+  //Navigate to url
+  console.log(`Main_scraper (CC): Navigating to ${url}...`);
+  await page.goto(url);
+
+  console.log('Main_scraper (CC): Navigated!');
+
+  // Wait for the selector to appear
+  console.log('Main_scraper (CC): Waiting for selector...');
+  await page.waitForSelector('div.col-auto.col-md-12.order-2.order-md-1>span', {
+    timeout: 1 * 30 * 1000, // 30 seconds
+  });
+
+  let priceContent: string | null = null;
+  let price: number | null = null;
+
+  // Query div with price info (first match only)
+  console.log('Main_scraper (CC): Scraping prices...');
+  const priceLocation = await page.$(
+    'div.col-auto.col-md-12.order-2.order-md-1>span'
+  );
+
+  // Check if element it exists
+  if (priceLocation) {
+    // Get the value from div
+    priceContent = await page.evaluate(
+      (element) => element.textContent,
+      priceLocation
+    );
+
+    if (priceContent) {
+      // Remove dollar symbol
+      price = Number(Number(priceContent.split('$')[1]).toFixed(2));
+      console.log(`Main_scraper (CC): Scraped value: ${price}`);
+    } else {
+      throw new Error(
+        'Main_scraper (CC): Could not evaluate "textContent" of HTML Element.'
+      );
+    }
+  } else {
+    throw new Error('Main_scraper (CC): HTML Element not found.');
+  }
+
+  return price;
+}
+
+async function newegg_scraper({ page, url }: storeScraperProps) {
+  //Navigate to url
+  console.log(`Main_scraper (NE): Navigating to ${url}...`);
+  await page.goto(url);
+
+  console.log('Main_scraper (NE): Navigated!');
+
+  // Wait for the selector to appear
+  console.log('Main_scraper (NE): Waiting for selector...');
+  await page.waitForSelector('ul.price', {
+    timeout: 1 * 30 * 1000, // 30 seconds
+  });
+
+  let priceContent: string | null = null;
+  let price: number | null = null;
+
+  // Query div with price info (first match only)
+  console.log('Main_scraper (NE): Scraping prices...');
+  const priceLocation = await page.$('li.price-current');
+
+  // Check if element it exists
+  if (priceLocation) {
+    // Get the value from div
+    priceContent = await page.evaluate(
+      (element) => element.textContent,
+      priceLocation
+    );
+
+    if (priceContent) {
+      // Remove dollar symbol and comma
+      price = Number(Number(priceContent.replace(/[$,]/g, '')).toFixed(2));
+      console.log(`Main_scraper (NE): Scraped value: ${price}`);
+    } else {
+      throw new Error(
+        'Main_scraper (CC): Could not evaluate "textContent" of HTML Element.'
+      );
+    }
+  } else {
+    throw new Error('Main_scraper (CC): HTML Element not found.');
   }
 
   return price;

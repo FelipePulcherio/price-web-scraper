@@ -11,12 +11,12 @@ import { Item, History, Graph } from '../models/models';
 // FUNCTIONS
 // Define interface for props used in updateHistoryCollection function
 interface updateHistoryCollectionProps {
-  listOfSuccessObj: IShortItem[];
+  arrayOfShortItems: IShortItem[];
   retryCount?: number;
 }
 
 export async function updateHistoryCollection({
-  listOfSuccessObj,
+  arrayOfShortItems,
   retryCount = 3,
 }: updateHistoryCollectionProps) {
   // Connect to MongoDB with mongoose
@@ -28,8 +28,8 @@ export async function updateHistoryCollection({
     // Declare bulkOperations array
     const bulkOperations: AnyBulkWriteOperation[] = [];
 
-    // Iterate over listOfSuccessObj and create a new Entry for each one
-    listOfSuccessObj.forEach(async (shortItem) => {
+    // Iterate over arrayOfShortItems and create a new Entry for each one
+    arrayOfShortItems.forEach(async (shortItem) => {
       const newEntry: IScraperResult = {
         store: shortItem.storeName,
         price: shortItem.price,
@@ -51,7 +51,7 @@ export async function updateHistoryCollection({
       await History.bulkWrite(bulkOperations);
 
       console.log('Db_update: History update success!\nUpdated IDs:');
-      // listOfSuccessObj.forEach((item) => console.log(item._id));
+      // arrayOfShortItems.forEach((item) => console.log(item._id));
       //
     } catch (error) {
       console.error(
@@ -66,7 +66,7 @@ export async function updateHistoryCollection({
 
         // Retry the operation recursively with decremented retryCount
         await updateHistoryCollection({
-          listOfSuccessObj,
+          arrayOfShortItems,
           retryCount: retryCount - 1,
         });
       } else {
@@ -236,7 +236,7 @@ async function testUpdateHistoryCollection() {
   ];
 
   const test = await updateHistoryCollection({
-    listOfSuccessObj: listOfShortItems,
+    arrayOfShortItems: listOfShortItems,
   });
 }
 

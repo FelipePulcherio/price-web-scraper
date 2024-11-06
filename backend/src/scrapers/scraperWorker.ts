@@ -26,7 +26,7 @@ export async function scraperWorker({
           price: 0,
           lastUpdated: new Date(),
           status: null,
-          storeName: '',
+          storeName: store.name,
         });
       } else {
         stores.push({
@@ -38,7 +38,7 @@ export async function scraperWorker({
               price: 0,
               lastUpdated: new Date(),
               status: null,
-              storeName: '',
+              storeName: store.name,
             },
           ],
         });

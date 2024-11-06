@@ -51,7 +51,7 @@ export async function updateHistoryCollection({
       await History.bulkWrite(bulkOperations);
 
       console.log('Db_update: History update success!\nUpdated IDs:');
-      // arrayOfShortItems.forEach((item) => console.log(item._id));
+      arrayOfShortItems.forEach((item) => console.log(item._id));
       //
     } catch (error) {
       console.error(
@@ -124,7 +124,7 @@ export async function updateGraphCollection({
       await Graph.bulkWrite(bulkOperations);
 
       console.log('Db_update: Graph update success!\nUpdated IDs:');
-      // updatedItem.forEach((item) => console.log(item._id));
+      updatedItem.forEach((item) => console.log(item._id));
       //
     } catch (error) {
       console.error(

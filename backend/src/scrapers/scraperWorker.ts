@@ -51,47 +51,49 @@ export async function scraperWorker({
   // console.log(stores[0].items);
 
   // FOR DEVELOPMENT: Run one by one, always waiting the last Promise to resolve before starting a new scraperMain() call.
-  return new Promise(async (resolve, reject) => {
-    // Outside try...catch is used to handle errors in the looping part
-    try {
-      // loop trough all stores
-      for (const storeSet of stores) {
-        // Inside try...catch is used to handle errors in scraperMain().
-        try {
-          // Send whole storeSet to scraperMain() and wait for promise to resolve on storeSet
-          await scraperMain({ storeSet: storeSet });
-        } catch (error) {
-          console.error(`Error scraping ${storeSet.storeName}: ${error}`);
-          // More error handling here!
-        }
-      }
-
-      // console.log(stores[0].items);
-
-      resolve(stores);
-    } catch (err) {
-      console.error(err);
-      reject(err);
-    }
-  });
-
-  // // FOR PRODUCTION: If everything is working as intended, run all scraperMain() at the same time.
-  // return Promise.all(
-  //   stores.map(async (storeSet) => {
-  //     try {
-  //       await scraperMain({ storeSet: storeSet });
-  //       // Additional processing if needed
-  //     } catch (error) {
-  //       console.error(`Error scraping ${storeSet.storeName}: ${error}`);
-  //       // More error handling here!
+  // return new Promise(async (resolve, reject) => {
+  //   // Outside try...catch is used to handle errors in the looping part
+  //   try {
+  //     // loop trough all stores
+  //     for (const storeSet of stores) {
+  //       // Inside try...catch is used to handle errors in scraperMain().
+  //       try {
+  //         // Send whole storeSet to scraperMain() and wait for promise to resolve on storeSet
+  //         await scraperMain({ storeSet: storeSet });
+  //       } catch (error) {
+  //         console.error(`Error scraping ${storeSet.storeName}: ${error}`);
+  //         // More error handling here!
+  //       }
   //     }
-  //   })
-  // )
-  //   .then(() => {
-  //     console.log(stores[0].items);
-  //     return stores;
-  //   })
-  //   .catch((err) => {
+
+  //     // console.log(stores[0].items);
+
+  //     resolve(stores);
+  //   } catch (err) {
   //     console.error(err);
-  //   });
+  //     reject(err);
+  //   }
+  // });
+
+  // FOR PRODUCTION: If everything is working as intended, run all scraperMain() at the same time.
+  return Promise.all(
+    stores.map(async (storeSet) => {
+      try {
+        await scraperMain({ storeSet: storeSet });
+        // Additional processing if needed
+      } catch (error) {
+        console.error(`Error scraping ${storeSet.storeName}: ${error}`);
+        // Handle error or rethrow as necessary
+      }
+    })
+  )
+    .then(() => {
+      // Return the stores array after all promises have resolved
+      // console.log(stores[0].items);
+      return stores;
+    })
+    .catch((err) => {
+      console.error(err);
+      throw err; // Rethrow error to ensure Promise<IStore[]> type is met
+    });
 }

@@ -31,3 +31,13 @@ export const mongoConfig: IMongoConfig = {
   MONGO_URI: `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}`,
   MONGO_CONNECT_OPTIONS,
 };
+
+interface IBrightConfig {
+  BRIGHT_ENDPOINT: string;
+}
+
+const BRIGHT_ENDPOINT: string = process.env.BRIGHT_ENDPOINT || '';
+
+export const brightDataConfig: IBrightConfig = {
+  BRIGHT_ENDPOINT: BRIGHT_ENDPOINT,
+};

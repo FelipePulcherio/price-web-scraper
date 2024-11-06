@@ -117,11 +117,13 @@ scraperAgenda.on('complete', async (job) => {
 });
 
 // Start Agenda
-(async () => {
+export async function agendaStart(): Promise<void> {
   await scraperAgenda.start();
   await runJobs();
   console.log('Scheduler: Agenda started!');
-})();
+}
+
+// agendaStart();
 
 // Handle graceful shutdown (.on)
 async function gracefulShutdown() {

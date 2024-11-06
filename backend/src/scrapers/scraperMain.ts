@@ -115,7 +115,7 @@ export async function scraperMain({
 
             // Catch errors
           } catch (error) {
-            console.error(`Error scraping ${item.url}: ${error}`);
+            console.error(`Error scraping ${item.url}. ${error}`);
 
             // Capture screenshot
             await page.screenshot({
@@ -153,4 +153,128 @@ export async function scraperMain({
     // When finish looping all items resolve
     resolve(storeSet);
   });
+}
+
+// Define interface for props used in all specific stores scraper functions
+interface storeScraperProps {
+  page: Page;
+  url: string;
+}
+
+async function bestbuyScraper({ page, url }: storeScraperProps) {
+  //Navigate to url
+  console.log(`Main_scraper (BB): Navigating to ${url}...`);
+  await page.goto(url);
+
+  console.log('Main_scraper (BB): Navigated!');
+
+  // Wait for the selector to appear
+  console.log('Main_scraper (BB): Waiting for selector...');
+  await page.waitForSelector('span[data-automation="product-price"]', {
+    timeout: 1 * 30 * 1000, // 30 seconds
+  });
+
+  let priceContent: string | null = null;
+  let price: number | null = null;
+
+  // Query element with price info (first match only)
+  console.log('Main_scraper (BB): Scraping prices...');
+  const priceLocation = await page.$(
+    'span.style-module_screenReaderOnly__4QmbS.style-module_large__g5jIz'
+  );
+
+  // Check if element it exists
+  if (priceLocation) {
+    // Get the value from element
+    priceContent = await page.evaluate(
+      (element) => element.textContent,
+      priceLocation
+    );
+
+    if (priceContent) {
+      // Remove dollar symbol
+      price = Number(Number(priceContent.split('$')[1]).toFixed(2));
+      console.log(`Main_scraper (BB): Scraped value: ${price}`);
+    } else {
+      throw new Error(
+        'Main_scraper (BB): Could not evaluate "textContent" of HTML Element.'
+      );
+    }
+  } else {
+    throw new Error('Main_scraper (BB): HTML Element not found.');
+  }
+
+  return price;
+}
+
+async function walmartScraper({ page, url }: storeScraperProps) {
+  //Navigate to url
+  console.log(`Main_scraper (WM): Navigating to ${url}...`);
+  await page.goto(url);
+
+  console.log('Main_scraper (WM): Navigated!');
+
+  // // Capture screenshot
+  // await page.screenshot({
+  //   path: 'screenshot.jpg',
+  // });
+
+  // Save HTML from page
+  // const html = await page.content();
+  // // Save the HTML content to a file
+  // await fs.writeFile('output.html', html, 'utf-8');
+
+  // const captchaFrame = page
+  //   .frames()
+  //   .find(
+  //     (f) =>
+  //       f.name() ===
+  //       'destination_publishing_iframe_walmart-wmi_0_name'
+  //   );
+
+  // If captchaFrame exists, handle the captcha
+  // if (captchaFrame !== undefined) {
+  //   const client = await page.createCDPSession();
+  //   console.log('Main_scraper (WM): Waiting captcha to solve...');
+  //   const { status } = await client.send('Captcha.waitForSolve', {
+  //     detectTimeout: 10000,
+  //   });
+  //   console.log('Main_scraper (WM): Captcha solve status:', status);
+  // }
+
+  // Wait for the selector to appear
+  console.log('Main_scraper (WM): Waiting for selector...');
+  await page.waitForSelector('div[data-testid="add-to-cart-section"]', {
+    timeout: 1 * 30 * 1000, // 30 seconds
+  });
+
+  let priceContent: string | null = null;
+  let price: number | null = null;
+
+  // Query element with price info (first match only)
+  console.log('Main_scraper (WM): Scraping prices...');
+  const priceLocation = await page.$('span[itemprop="price"]');
+
+  // Check if element it exists
+  if (priceLocation) {
+    // Get the value from element
+    priceContent = await page.evaluate(
+      (element) => element.textContent,
+      priceLocation
+    );
+
+    if (priceContent) {
+      // Remove dollar symbol and comma
+      price = Number(Number(priceContent.replace(/[$,]/g, '')).toFixed(2));
+      console.log(`Main_scraper (WM): Scraped value: ${price}`);
+    } else {
+      throw new Error(
+        'Main_scraper (WM): Could not evaluate "textContent" of HTML Element.'
+      );
+    }
+  } else {
+    throw new Error('Main_scraper (WM): HTML Element not found.');
+  }
+
+  return price;
 }

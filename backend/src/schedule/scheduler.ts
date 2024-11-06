@@ -12,6 +12,7 @@ import {
 } from '../db/operations/dbUpdate';
 import { scraperWorker } from '../scrapers/scraperWorker';
 import { Types } from 'mongoose';
+import { analyzerComparison } from '../analyzer/analyzerComparison';
 
 // Create new instance of Agenda WITHOUT MONGOOSE
 const scraperAgenda = new Agenda({
@@ -82,6 +83,18 @@ scraperAgenda.define('scraper', async (job: Job<FetcherJobData>) => {
   });
 
   // console.log(historyCollection);
+
+  // Call analyzerComparison
+  const updatedItem: IItem[] = analyzerComparison({ historyCollection });
+  console.log('Scheduler: Comparison analysis Completed!');
+
+  // Call update Graph
+  await updateGraphCollection({ updatedItem });
+  console.log('Scheduler: Update Graph Completed!');
+
+  // Call update Item
+  await updateItemCollection({ updatedItem });
+  console.log('Scheduler: Update Item Completed!');
 });
 
 // Schedule the "fetcher" job to run every X hours

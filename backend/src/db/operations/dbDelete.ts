@@ -2,14 +2,8 @@ import { connect, connection } from 'mongoose';
 import { mongoConfig } from '../../config/config';
 
 // FUNCTIONS
-// Define interface for props used in updateHistoryCollection function
-interface deleteScraperJobsCollectionProps {
-  retryCount?: number;
-}
 
-export async function deleteScraperJobsCollection({
-  retryCount = 3,
-}: deleteScraperJobsCollectionProps): Promise<void> {
+export async function deleteScraperJobsCollection(): Promise<void> {
   // Connect to MongoDB with mongoose
   try {
     await connect(mongoConfig.MONGO_URI, mongoConfig.MONGO_CONNECT_OPTIONS);

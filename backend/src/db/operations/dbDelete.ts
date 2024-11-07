@@ -17,7 +17,7 @@ export async function deleteScraperJobsCollection(): Promise<void> {
     if (schedulerCollection) {
       const deleteResult = await connection.db
         .collection('Scheduler-jobs')
-        .deleteMany({ name: 'fetcher' });
+        .deleteMany({});
 
       if (deleteResult.deletedCount > 0) {
         console.log(

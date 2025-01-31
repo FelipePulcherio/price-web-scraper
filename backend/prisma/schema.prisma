@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Item {
+  id          Int            @id @default(autoincrement())
+  name        String
+  model       String
+  brand       String
+  categories  ItemCategory[]
+  description Json           @default("{}")
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  stores      ItemStore[]
+  searchCount Int            @default(0)
+}
+
+model Category {
+  id   Int            @id @default(autoincrement())
+  name String
+  item ItemCategory[]
+}
+
+model ItemCategory {
+  itemId Int
+  item   Item @relation(fields: [itemId], references: [id])
+
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([itemId, categoryId])
+}
+
+enum Country {
+  CANADA
+  USA
+}
+
+model Store {
+  id      Int         @id @default(autoincrement())
+  name    String
+  logo    String
+  country Country     @default(CANADA)
+  item    ItemStore[]
+}
+
+model ItemStore {
+  itemId Int
+  item   Item @relation(fields: [itemId], references: [id])
+
+  storeId Int
+  store   Store @relation(fields: [storeId], references: [id])
+
+  url    String
+  events Events[]
+
+  @@id([itemId, storeId])
+}
+
+model Events {
+  id        Int       @id @default(autoincrement())
+  itemId    Int
+  storeId   Int
+  itemStore ItemStore @relation(fields: [itemId, storeId], references: [itemId, storeId])
+  price     Float
+  date      DateTime  @updatedAt
+  fromJob   String
+}
+
+enum Role {
+  SYSTEM
+  ADMIN
+  REGULAR_USER
+  LOGGED_USER
+  PREMIUM_USER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  userName  String   @unique
+  email     String   @unique
+  country   Country  @default(CANADA)
+  phone     String
+  password  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      Role     @default(REGULAR_USER)
+
+  updatedBy   User   @relation("UserUpdatedBy", fields: [updatedById], references: [id])
+  updatedById String @unique
+
+  updatedUsers User[] @relation("UserUpdatedBy")
+}

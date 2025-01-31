@@ -17,6 +17,14 @@ Price Web Scraper is an automated tool designed to track prices of products acro
   - [Configure environment](#configure-environment)
   - [Initialize Database](#initialize-database)
   - [How to Run](#how-to-run)
+- [High Level Design](#high-level-design)
+- [Database Schema](#database-schema)
+- [API contracts](#api-contracts)
+  - [User and Authentication](#user-and-authentication)
+    - [Register](#1-register-a-new-user)
+  - [Items and Categories](#items-and-categories)
+  - [Stores and Pricing](#stores-and-pricing)
+  - [History and Analytics](#history-and-analytics)
 - [Contributing](#contributing)
 
 ## Project Overview
@@ -178,6 +186,454 @@ Steps 1 to 3 are done only once. They will compile the source code in javascript
    `node dist/index.js`
 
 4. Exit when needed by pressing `CTRL + C`.
+
+<br>
+
+## High Level Design
+
+![Screenshot of high level design](./backend/src/images/high-level-diagram.jpg)
+
+<br>
+
+## Database Schema
+
+![Screenshot of database schema](./backend/src/images/ERD-diagram.jpg)
+
+<br>
+
+## API Contracts
+
+Each API request will need to follow a specific schema in a JSON format that will be defined below.
+
+The response of all APIs will follow the same schema independently of a successful response or not:
+
+```js
+{
+  "timestamp": String,
+  "success": Boolean,
+  "message": String,
+  "data": Object
+}
+```
+
+The currently available roles are:
+
+- SYSTEM
+- ADMIN
+- REGULAR_USER
+- LOGGED_USER
+- PREMIUM_USER
+
+The 'SYSTEM' role will have access to all endpoints and will be used for all actions performed directly through the backend or an external DBM system.
+
+### Successful response example
+
+```json
+{
+  "timestamp": "2025-01-27T12:00:00Z",
+  "success": true,
+  "message": "Request successful",
+  "data": {
+    "id": "uuid",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "role": "REGULAR_USER"
+  }
+}
+```
+
+### Error response example
+
+```json
+{
+  "timestamp": "2025-01-27T12:05:00Z",
+  "success": false,
+  "message": "User not found",
+  "data": null
+}
+```
+
+### User and Authentication
+
+#### 1. Register a new user
+
+- **Description:** Register a new user
+- **Method:** POST
+- **Endpoint:** /api/v1/auth/register
+- **Roles allowed:** SYSTEM, ADMIN
+- **Request Body:**
+
+```json
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "SecurePass123!",
+  "role": "REGULAR_USER"
+}
+```
+
+- **Response (201 Created):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:00:00Z",
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "id": "uuid",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "role": "REGULAR_USER",
+    "createdAt": "2025-01-27T12:00:00Z"
+  }
+}
+```
+
+**2. Login**
+
+- **Description:** Login into app
+- **Method:** POST
+- **Endpoint:** /api/v1/auth/login
+- **Roles allowed:** ALL
+- **Request Body:**
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:01:00Z",
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "jwt-token",
+    "expiresIn": 3600
+  }
+}
+```
+
+**3. Logout**
+
+- **Description:** Logout from the app
+- **Method:** POST
+- **Endpoint:** /api/v1/auth/logout
+- **Roles allowed:** ALL
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:02:00Z",
+  "success": true,
+  "message": "Logged out successfully",
+  "data": null
+}
+```
+
+**4. User details**
+
+- **Description:** Get authenticated user details
+- **Method:** GET
+- **Endpoint:** /api/v1/auth/me
+- **Roles allowed:** ALL
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:03:00Z",
+  "success": true,
+  "message": "User details fetched",
+  "data": {
+    "id": "uuid",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "role": "REGULAR_USER",
+    "createdAt": "2025-01-27T12:00:00Z"
+  }
+}
+```
+
+**5. Update user**
+
+- **Description:** Update user details
+- **Method:** PATCH
+- **Endpoint:** /api/v1/users/{id}
+- **Roles allowed:** SYSTEM, ADMINISTRATOR (for any user); REGULAR_USER and PREMIUM_USER (only for themselves)
+- **Request Body (Admin Editing Another User):**
+
+```json
+{
+  "name": "Updated Name",
+  "role": "PREMIUM_USER"
+}
+```
+
+- **Request Body (User Editing Their Own Profile):**
+
+```json
+{
+  "name": "Updated Name"
+}
+```
+
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:04:00Z",
+  "success": true,
+  "message": "User updated successfully",
+  "data": {
+    "id": "uuid",
+    "name": "Updated Name",
+    "email": "john.doe@example.com",
+    "role": "PREMIUM_USER"
+  }
+}
+```
+
+<br>
+
+### Items and Categories
+
+**1. Item details**
+
+- **Description:** Retrieve item details
+- **Method:** GET
+- **Endpoint:** /api/v1/items/{id}
+- **Roles allowed:** ALL
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:10:00Z",
+  "success": true,
+  "message": "Item details fetched successfully",
+  "data": {
+    "id": "uuid",
+    "name": "TV",
+    "category": "Electronics",
+    "description": Object,
+    "lowestPrice": 1500.99,
+    "lowestStore": "Store 1",
+    "createdAt": "2025-01-27T11:00:00Z"
+  }
+}
+```
+
+**2. All active items from category**
+
+- **Description:** Retrieves all active items from specified category
+- **Method:** GET
+- **Endpoint:** /api/v1/categories/{categoryId}/items
+- **Roles allowed:** ALL
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:11:00Z",
+  "success": true,
+  "message": "Items fetched successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "name": "Gaming Laptop",
+      "lowestPrice": 1500.99,
+      "lowestStore": "Store 1"
+    },
+    {
+      "id": "uuid",
+      "name": "Mechanical Keyboard",
+      "lowestPrice": 1500.99,
+      "lowestStore": "Store 1"
+    }
+  ]
+}
+```
+
+**3. Search item**
+
+- **Description:** Search an item by name
+- **Method:** GET
+- **Endpoint:** /api/v1/items/search?q={query}
+- **Roles allowed:** ALL
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:12:00Z",
+  "success": true,
+  "message": "Search results fetched successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "name": "Gaming Laptop",
+      "lowesrPrice": 1500.99,
+      "lowestStore": "Store 1"
+    }
+  ]
+}
+```
+
+<br>
+
+### Stores and Pricing
+
+**1. Store details**
+
+- **Description:** Retrieve store details
+- **Method:** GET
+- **Endpoint:** /api/v1/stores/{id}
+- **Roles allowed:** ALL
+
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:15:00Z",
+  "success": true,
+  "message": "Store details fetched successfully",
+  "data": {
+    "id": "uuid",
+    "name": "Tech Store",
+    "logo": "https://imageurl.com/",
+    "country": "contact@techstore.com"
+  }
+}
+```
+
+<br>
+
+### History and Analytics
+
+**1. Item price history**
+
+- **Description:** Retrieve price history for an item
+- **Method:** GET
+- **Endpoint:** /api/v1/items/{itemId}/price-history
+- **Roles allowed:** SYSTEM, ADMIN (fetch all history), others (fetch last entry only)
+- **Response (200 OK for SYSTEM or ADMIN):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:20:00Z",
+  "success": true,
+  "message": "Price history fetched successfully",
+  "data": [
+    {
+      "lowesrPrice": 1500.99,
+      "lowestStore": "Store 1",
+      "date": "2025-01-26T12:00:00Z",
+    },
+    {
+      "lowesrPrice": 1499.99,
+      "lowestStore": "Store 2",
+      "date": "2025-01-27T12:00:00Z",
+    },
+    {...}
+  ]
+}
+```
+
+- **Response (200 OK for other roles):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:00:00Z",
+  "success": true,
+  "message": "Price history fetched successfully",
+  "data": [
+    {
+      "lowesrPrice": 1500.99,
+      "lowestStore": "Store 1",
+      "date": "2025-01-26T12:00:00Z"
+    }
+  ]
+}
+```
+
+<br>
+
+**2. Price-trend 365 days**
+
+- **Description:** Retrieve the last 365 days of price trends for an item
+- **Method:** GET
+- **Endpoint:** /api/v1/items/{itemId}/price-trends/365-days
+- **Roles allowed:** ALL but REGULAR_USER
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:00:00Z",
+  "success": true,
+  "message": "Price trends for the last 365 days fetched",
+  "data": [
+    {
+      "lowesrPrice": 1500.99,
+      "lowestStore": "Store 1",
+      "date": "2025-01-26T12:00:00Z"
+    },
+    {...}
+  ]
+}
+```
+
+<br>
+
+**3. Price-trend 180 days**
+
+- **Description:** Retrieve the last 180 days of price trends for an item
+- **Method:** GET
+- **Endpoint:** /api/v1/items/{itemId}/price-trends/180-days
+- **Roles allowed:** ALL but REGULAR_USER
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:00:00Z",
+  "success": true,
+  "message": "Price trends for the last 180 days fetched",
+  "data": [
+    {
+      "lowesrPrice": 1500.99,
+      "lowestStore": "Store 1",
+      "date": "2025-01-26T12:00:00Z"
+    },
+    {...}
+  ]
+}
+```
+
+<br>
+
+**3. Price-trend 30 days**
+
+- **Description:** Retrieve the last 30 days of price trends for an item
+- **Method:** GET
+- **Endpoint:** /api/v1/items/{itemId}/price-trends/30-days
+- **Roles allowed:** ALL
+- **Response (200 OK):**
+
+```json
+{
+  "timestamp": "2025-01-27T12:00:00Z",
+  "success": true,
+  "message": "Price trends for the last 30 days fetched",
+  "data": [
+    {
+      "lowesrPrice": 1500.99,
+      "lowestStore": "Store 1",
+      "date": "2025-01-26T12:00:00Z"
+    },
+    {...}
+  ]
+}
+```
 
 <br>
 

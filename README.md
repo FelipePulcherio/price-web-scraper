@@ -200,6 +200,8 @@ The 'SYSTEM' role will have access to all endpoints and will be used for all act
 }
 ```
 
+<br>
+
 ### User and Authentication
 
 #### 1. Register a new user
@@ -236,6 +238,8 @@ The 'SYSTEM' role will have access to all endpoints and will be used for all act
 }
 ```
 
+<br>
+
 #### 2. Login
 
 - **Description:** Login into app
@@ -265,6 +269,8 @@ The 'SYSTEM' role will have access to all endpoints and will be used for all act
 }
 ```
 
+<br>
+
 #### 3. Logout
 
 - **Description:** Logout from the app
@@ -281,6 +287,8 @@ The 'SYSTEM' role will have access to all endpoints and will be used for all act
   "data": null
 }
 ```
+
+<br>
 
 #### 4. User details
 
@@ -304,6 +312,8 @@ The 'SYSTEM' role will have access to all endpoints and will be used for all act
   }
 }
 ```
+
+<br>
 
 #### 5. Update user
 
@@ -373,6 +383,8 @@ The 'SYSTEM' role will have access to all endpoints and will be used for all act
 }
 ```
 
+<br>
+
 #### 2. All active items from category
 
 - **Description:** Retrieves all active items from specified category
@@ -402,6 +414,8 @@ The 'SYSTEM' role will have access to all endpoints and will be used for all act
   ]
 }
 ```
+
+<br>
 
 #### 3. Search item
 

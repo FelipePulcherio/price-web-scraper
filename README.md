@@ -66,7 +66,7 @@ The app will allow users to:
 - **Backend:**
   - Typescript + Node + Express
   - Agenda
-  - MongoDB Atlas + PostgreSQL
+  - MongoDB Atlas + PostgreSQL + Prisma
   - Puppeteer + Bright Data Proxy
   - Bcrypt + JWT
 - **API:**

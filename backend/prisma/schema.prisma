@@ -9,7 +9,7 @@ datasource db {
 
 model Item {
   id          Int            @id @default(autoincrement())
-  name        String
+  name        String         @unique
   model       String
   brand       String
   categories  ItemCategory[]
@@ -23,7 +23,7 @@ model Item {
 
 model Category {
   id   Int            @id @default(autoincrement())
-  name String
+  name String         @unique
   item ItemCategory[]
 }
 
@@ -44,8 +44,8 @@ enum Country {
 
 model Store {
   id      Int         @id @default(autoincrement())
-  name    String
-  logo    String
+  name    String      @unique
+  logo    String      @default("")
   country Country     @default(CANADA)
   item    ItemStore[]
 }
@@ -95,8 +95,8 @@ model User {
   updatedAt DateTime @updatedAt
   role      Role     @default(REGULAR_USER)
 
-  updatedBy   User   @relation("UserUpdatedBy", fields: [updatedById], references: [id])
-  updatedById String @unique
+  updatedById String?
+  updatedBy   User?   @relation("UserUpdatedBy", fields: [updatedById], references: [id])
 
   updatedUsers User[] @relation("UserUpdatedBy")
 }

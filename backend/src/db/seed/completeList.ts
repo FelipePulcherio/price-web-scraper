@@ -1,121 +1,86 @@
-import { Types } from 'mongoose';
-import { IGraph, IHistory, IItem } from '../../types/types';
+import {
+  IStore,
+  IShortItem,
+  ICategory,
+  IEvent,
+  IUser,
+} from '../../types/types';
 
-export const items: IItem[] = [
+export const ITEMS_LIST: IShortItem[] = [
   {
-    _id: new Types.ObjectId(),
     name: 'TV 65" Q60C 2024',
+    model: 'QN65Q60DAFXZC',
     brand: 'Samsung',
-    description: 'None',
-    category: 'TV',
-    isActive: true,
+    description: {},
+    categories: [{ name: 'Electronics' }, { name: 'TV' }],
     stores: [
       {
-        name: 'bestbuy.ca',
-        logo: 'bestbuy.logo',
+        name: 'BEST BUY CA',
         url: 'https://www.bestbuy.ca/en-ca/product/samsung-65-4k-uhd-hdr-qled-tizen-os-smart-tv-qn65q60dafxzc-2024/17857410',
       },
       {
-        name: 'walmart.ca',
-        logo: 'walmart.logo',
-        url: 'https://www.walmart.ca/en/ip/Samsung-65-QLED-SMART-4K-TV-Q60D-Series/6000207606889?selectedSellerId=1&from=/search',
-      },
-    ],
-    addDate: new Date(),
-    lastUpdated: new Date(), // Will be replaced later
-    lowestPrice: 998, // Will be replaced later
-    lowestStore: 'walmart.ca', // Will be replaced later
-    searchCount: 0, // Will be replaced later
-  },
-  {
-    _id: new Types.ObjectId(),
-    name: 'TV 55" Q60C 2023',
-    brand: 'Samsung',
-    description: 'None',
-    category: 'TV',
-    isActive: true,
-    stores: [
-      {
-        name: 'bestbuy.ca',
-        logo: 'bestbuy.logo',
-        url: 'https://www.bestbuy.ca/en-ca/product/samsung-55-4k-uhd-hdr-qled-smart-tv-qn55q60cafxzc-2023-titan-grey/16698731',
-      },
-      {
-        name: 'walmart.ca',
-        logo: 'walmart.logo',
-        url: 'https://www.walmart.ca/en/ip/samsung-55-qled-smart-4k-tv-q60c-series-55-in/6000206105853?from=/search',
-      },
-    ],
-    addDate: new Date(),
-    lastUpdated: new Date(), // Will be replaced later
-    lowestPrice: 713, // Will be replaced later
-    lowestStore: 'walmart.ca', // Will be replaced later
-    searchCount: 0, // Will be replaced later
-  },
-];
-
-export const histories: IHistory[] = [
-  // Entry 1: TV 65" Q60C 2024
-  {
-    _id: new Types.ObjectId(),
-    item_id: new Types.ObjectId(),
-    dataFull: [
-      {
-        store: 'bestbuy.ca',
-        price: 1099.99, // Will be replaced later
-        date: new Date(), // Will be replaced later
-        moment: 'Morning',
-      },
-      {
-        store: 'walmart.ca',
-        price: 1098.0, // Will be replaced later
-        date: new Date(), // Will be replaced later
-        moment: 'Evening',
-      },
-    ],
-  },
-  // Entry 2: TV 55" Q60C 2023
-  {
-    _id: new Types.ObjectId(),
-    item_id: new Types.ObjectId(),
-    dataFull: [
-      {
-        store: 'amazon.ca',
-        price: 999.99, // Will be replaced later
-        date: new Date(), // Will be replaced later
-        moment: 'Morning',
-      },
-      {
-        store: 'bestbuy.ca',
-        price: 999.99, // Will be replaced later
-        date: new Date(), // Will be replaced later
-        moment: 'Evening',
+        name: 'WALMART CA',
+        url: 'https://www.walmart.ca/en/ip/Samsung-65-QLED-SMART-4K-TV-Q60D-Series/6000207606889',
       },
     ],
   },
 ];
 
-export const graphs: IGraph[] = [
+export const CATEGORIES_LIST: ICategory[] = [
+  { name: 'Electronics' },
+  { name: 'TV' },
+];
+
+export const STORES_LIST: IStore[] = [
+  { name: 'AMAZON CA' },
+  { name: 'BEST BUY CA' },
+  { name: 'CANADA COMPUTERS' },
+  { name: 'NEW EGG CA' },
+  { name: 'WALMART CA' },
+];
+
+export const EVENTS_LIST: IEvent[] = [
   {
-    _id: new Types.ObjectId(),
-    item_id: new Types.ObjectId(),
-    data365: [
-      {
-        lowestPrice: 799.99, // Will be replaced later
-        lowestStore: 'amazon.ca', // Will be replaced later
-        date: new Date(), // Will be replaced later
-      },
-    ],
+    itemName: 'TV 65" Q60C 2024',
+    storeName: 'BEST BUY CA',
+    price: 1099.0,
+    fromJob: 'Scraper',
   },
   {
-    _id: new Types.ObjectId(),
-    item_id: new Types.ObjectId(),
-    data365: [
-      {
-        lowestPrice: 899.99, // Will be replaced later
-        lowestStore: 'bestbuy.ca', // Will be replaced later
-        date: new Date(), // Will be replaced later
-      },
-    ],
+    itemName: 'TV 65" Q60C 2024',
+    storeName: 'WALMART CA',
+    price: 1095.0,
+    fromJob: 'Scraper',
+  },
+];
+
+export const USERS_LIST: IUser[] = [
+  {
+    id: '01010101-ffff-1111-ffff-010101010101',
+    firstName: 'SYSTEM',
+    lastName: 'SYSTEM',
+    userName: 'SYSTEM_MAIN',
+    email: 'system@findadeal.com',
+    phone: '000-000-0000',
+    password: 'qwerty',
+    role: 'SYSTEM',
+  },
+  {
+    firstName: 'ADMIN',
+    lastName: 'ADMIN',
+    userName: 'ADMIN_FSP',
+    email: 'adminfsp@findadeal.com',
+    phone: '000-000-0000',
+    password: 'qwerty',
+    role: 'ADMIN',
+  },
+  {
+    firstName: 'Felipe',
+    lastName: 'Pulcherio',
+    userName: 'FelipePulcherio',
+    email: 'felipe@test.com',
+    phone: '000-000-0000',
+    password: 'qwerty',
+    role: 'REGULAR_USER',
   },
 ];

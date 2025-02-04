@@ -1,192 +1,186 @@
-import { set, connect, connection, Types } from 'mongoose';
-import dotenv from 'dotenv';
-import { Item, History, Graph } from '../models/models';
-import { items, histories, graphs } from './completeList';
-import { IGraph, IHistory, IItem } from '../../types/types';
+import { PrismaClient } from '@prisma/client';
+import {
+  ITEMS_LIST,
+  CATEGORIES_LIST,
+  STORES_LIST,
+  EVENTS_LIST,
+  USERS_LIST,
+} from './completeList';
 
-// Read .env file
-dotenv.config();
+const prisma = new PrismaClient();
 
-const MONGO_USER: string = process.env.MONGO_USER || '';
-const MONGO_PASSWORD: string = process.env.MONGO_PASSWORD || '';
-const MONGO_URL: string = process.env.MONGO_URL || '';
-const MONGO_DATABASE: string = process.env.MONGO_DATABASE || '';
-const MONGO_URI: string = `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}`;
+// Seeding function will follow a set of steps to clear and re-populate all tables
+async function populateDB() {
+  // STEP 1: Clear all tables
+  console.log('Deleting all records...');
 
-// Set `strictQuery` to `true` to omit unknown fields in queries.
-set('strictQuery', true);
+  await prisma.events.deleteMany({});
+  await prisma.itemStore.deleteMany({});
+  await prisma.itemCategory.deleteMany({});
+  await prisma.store.deleteMany({});
+  await prisma.category.deleteMany({});
+  await prisma.item.deleteMany({});
+  await prisma.user.deleteMany({});
 
-// Store newly created Ids
-let itemId: Types.ObjectId[] = [];
+  console.log('All tables have been cleared.');
 
-// Function definitions
-// Call Save function
-async function loopAllItems(list: IItem[]) {
-  console.log('Debug: Adding all items in completeList.ts.');
+  // STEP 2: Find or Create categories
+  console.log('Creating categories...');
 
-  const promises = [];
+  const createdCategories = await Promise.all(
+    CATEGORIES_LIST.map(async (category) => {
+      return prisma.category.upsert({
+        where: { name: category.name },
+        update: {},
+        create: { name: category.name },
+      });
+    })
+  );
 
-  // Create a Promise array with all calls
-  for (let i = 0; i < list.length; i++) {
-    // Get itemId during loop so it's independent of promise.all resolve order
-    itemId[i] = list[i]._id;
+  console.log('Created categories:', createdCategories);
 
-    promises.push(itemDocumentCreate(list[i]));
+  // STEP 3: Find or Create stores
+  console.log('Creating stores...');
+
+  const createdStores = await Promise.all(
+    STORES_LIST.map(async (store) => {
+      return prisma.store.upsert({
+        where: { name: store.name },
+        update: {},
+        create: { name: store.name },
+      });
+    })
+  );
+
+  console.log('Created or Updated stores:', createdCategories);
+
+  // STEP 4: Create Items and connect them to a Category (ItemCategory) and a Store (ItemStore) sequentially
+  console.log('Creating items...');
+
+  for (const item of ITEMS_LIST) {
+    const createdItems = await prisma.item.create({
+      data: {
+        name: item.name,
+        model: item.model,
+        brand: item.brand,
+        description: item.description,
+
+        // Connect to a ItemCategory or create the category and then connect
+        categories: {
+          create: item.categories.map((category) => ({
+            category: {
+              connectOrCreate: {
+                where: { name: category.name },
+                create: { name: category.name },
+              },
+            },
+          })),
+        },
+
+        // Connect to a ItemStore or create the store and then connect. Also add URL
+        stores: {
+          create: item.stores.map((store) => ({
+            store: {
+              connectOrCreate: {
+                where: { name: store.name },
+                create: { name: store.name },
+              },
+            },
+            url: store.url,
+          })),
+        },
+      },
+    });
+
+    console.log('Created items:', createdItems);
   }
 
-  // Run all functions with Promise.all
-  await Promise.all(promises);
-}
+  // STEP 5: Create events (Retrieving itemId + storeId first)
+  console.log('Creating events...');
 
-// Save new document inside 'Item' collection
-async function itemDocumentCreate(item: IItem) {
-  const newItem = new Item({
-    _id: item._id,
-    name: item.name,
-    brand: item.brand,
-    description: item.description,
-    category: item.category,
-    isActive: item.isActive,
-    stores: [
-      {
-        name: item.stores[0].name,
-        logo: item.stores[0].logo,
-        url: item.stores[0].url,
-      },
-      {
-        name: item.stores[1].name,
-        logo: item.stores[1].logo,
-        url: item.stores[1].url,
-      },
-    ],
-    addDate: item.addDate,
-    lastUpdated: item.lastUpdated,
-    lowestPrice: item.lowestPrice,
-    lowestStore: item.lowestStore,
-    searchCount: item.searchCount,
-  });
+  async function createEvents() {
+    await Promise.all(
+      EVENTS_LIST.map(async (event) => {
+        // Find itemId based on itemName
+        const item = await prisma.item.findUnique({
+          where: { name: event.itemName },
+          select: { id: true },
+        });
 
-  try {
-    await newItem.save();
-    console.log(`Added new document in 'items' collection: ${newItem.name}`);
-  } catch (err) {
-    console.log(`An error occurred: ${err}`);
-  }
-}
+        if (!item) {
+          console.warn(
+            `Creation of events failed: Item "${event.itemName}" not found.`
+          );
+          return;
+        }
 
-// Call Save function
-async function loopAllHistories(list: IHistory[]) {
-  console.log('Debug: Adding all histories in completeList.ts.');
+        // Find storeId based on storeName
+        const store = await prisma.store.findUnique({
+          where: { name: event.storeName },
+          select: { id: true },
+        });
 
-  const promises = [];
+        if (!store) {
+          console.warn(
+            `Creation of events failed: store "${event.storeName}" not found.`
+          );
+          return;
+        }
 
-  // Create a Promise array with all calls
-  for (let i = 0; i < list.length; i++) {
-    // Previously created item_id is needed here
-    promises.push(historyDocumentCreate(list[i], itemId[i]));
-  }
+        // Create event with retrieved itemId and storeId
+        const createdEvents = await prisma.events.create({
+          data: {
+            itemId: item.id,
+            storeId: store.id,
+            price: event.price,
+            fromJob: event.fromJob,
+          },
+        });
 
-  // Run all functions with Promise.all
-  await Promise.all(promises);
-}
-
-// Save new document inside 'History' collection
-async function historyDocumentCreate(
-  histories: IHistory,
-  itemId: Types.ObjectId
-) {
-  const newHistory = new History({
-    _id: histories._id,
-    item_id: itemId,
-    dataFull: [
-      {
-        store: histories.dataFull[0].store,
-        price: histories.dataFull[0].price,
-        date: histories.dataFull[0].date,
-        moment: histories.dataFull[0].moment,
-      },
-    ],
-  });
-
-  try {
-    await newHistory.save();
-    console.log(
-      `Added new document in 'History' collection: ${newHistory._id}`
+        console.log('Created event:', createdEvents);
+        return createEvents;
+      })
     );
-  } catch (err) {
-    console.log(`An error occurred: ${err}`);
-  }
-}
-
-// Call Save function
-async function loopAllGraphs(list: IGraph[]) {
-  console.log('Debug: Adding all graphs in completeList.ts.');
-
-  const promises = [];
-
-  // Create a Promise array with all calls
-  for (let i = 0; i < list.length; i++) {
-    // Previously created item_id is needed here
-    promises.push(graphDocumentCreate(list[i], itemId[i]));
   }
 
-  // Run all functions with Promise.all
-  await Promise.all(promises);
-}
+  await createEvents();
 
-// Save new document inside 'Price' collection
-async function graphDocumentCreate(graphs: IGraph, itemId: Types.ObjectId) {
-  const newGraph = new Graph({
-    _id: graphs._id,
-    item_id: itemId,
-    data365: [
-      {
-        lowestPrice: graphs.data365[0].lowestPrice,
-        lowestStore: graphs.data365[0].lowestStore,
-        date: graphs.data365[0].date,
+  // STEP 6: Find or Create users
+  console.log('Creating users...');
+
+  let createdIds: string[] = [];
+  for (const user of USERS_LIST) {
+    // Find or Create without specifying connection
+    const result = await prisma.user.create({
+      data: {
+        id: user.id ?? undefined,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userName: user.userName,
+        email: user.email,
+        phone: user.phone,
+        password: user.password,
+        role: user.role,
+        updatedById: undefined,
       },
-    ],
+    });
+
+    createdIds.push(result.id);
+  }
+
+  // Specify the connection: SYSTEM created all new accounts
+  const createdUser = await prisma.user.update({
+    where: { id: '01010101-ffff-1111-ffff-010101010101' },
+    data: {
+      updatedUsers: {
+        connect: createdIds.map((id) => ({ id })),
+      },
+    },
   });
 
-  try {
-    await newGraph.save();
-    console.log(`Added new document in 'Graph' collection: ${newGraph._id}`);
-  } catch (err) {
-    console.log(`An error occurred: ${err}`);
-  }
+  console.log('Created user:', createdUser);
 }
 
-async function deleteAll() {
-  try {
-    await Graph.deleteMany({});
-    await History.deleteMany({});
-    await Item.deleteMany({});
-    console.log('Debug: Database cleared.');
-  } catch (err) {
-    console.log(`An error occurred: ${err}`);
-  }
-}
-
-// Connect to DB
-async function connectToDB() {
-  console.log('Debug: Trying to connect to MongoDB ...');
-
-  try {
-    await connect(MONGO_URI, { retryWrites: true, w: 'majority' });
-    console.log('Debug: Connected to MongoDB.');
-
-    // Call functions to create Collections and populate
-    await deleteAll();
-    await loopAllItems(items);
-    await loopAllHistories(histories);
-    await loopAllGraphs(graphs);
-  } catch (err) {
-    console.log(`Error connecting to the database: ${err}`);
-  } finally {
-    await connection.close();
-    console.log('Debug: Mongoose closed.');
-  }
-}
-
-// Call function
-connectToDB();
+populateDB()
+  .catch((e) => console.error(e))
+  .finally(() => prisma.$disconnect());

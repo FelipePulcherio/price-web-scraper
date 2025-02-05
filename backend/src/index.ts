@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { createServer } from 'http';
 import process from 'process';
-import { agendaStart } from './schedule/scheduler';
+import { startAgenda } from './schedule/scheduler';
 
 dotenv.config();
 
@@ -15,18 +15,19 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Server Running.');
 });
 
-// Define server
-const startServer = () => {
-  httpServer.listen(port, () => {
-    console.log(`[Server]: Server is running at http://localhost:${port}`);
-  });
-};
+async function startServer() {
+  try {
+    httpServer.listen(port, () => {
+      console.log(`[Server]: Server is running at http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
 
-// Initialize server
 startServer();
-
-// Start agenda
-agendaStart();
+startAgenda();
 
 // Graceful shutdown
 process.on('SIGINT', async () => {

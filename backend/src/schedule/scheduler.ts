@@ -1,6 +1,6 @@
 import { Agenda, Job } from '@hokify/agenda';
 import { mongoConfig } from '../config/config';
-import { IHistory, IItem, IShortItem, IStore } from '../types/types';
+import { IHistory, IItem, IShortItem, IStore } from '../types/typesBACKUP';
 import {
   readItemCollection,
   readHistoryCollection,
@@ -118,7 +118,7 @@ scraperAgenda.on('complete', async (job) => {
 });
 
 // Start Agenda
-export async function agendaStart(): Promise<void> {
+export async function startAgenda(): Promise<void> {
   // Delete all 'fetcher' in 'Scraper-jobs' collection
   console.log('Scheduler: Clearing previous "fetcher" schedule');
   await deleteScraperJobsCollection();
@@ -129,7 +129,7 @@ export async function agendaStart(): Promise<void> {
   console.log('Scheduler: Agenda started!');
 }
 
-// agendaStart();
+// startAgenda();
 
 // Handle graceful shutdown (.on)
 async function gracefulShutdown() {

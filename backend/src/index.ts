@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { prisma } from './config/config';
 import { createServer, Server } from 'http';
 import process from 'process';
+import apiRoutes from './routes/api';
 import { startAgenda } from './schedule/scheduler';
 
 dotenv.config();
@@ -10,6 +11,12 @@ dotenv.config();
 const app: Express = express();
 const port: string | number = process.env.PORT || 3000;
 const httpServer: Server = createServer(app);
+
+// Middleware
+app.use(express.json());
+
+// Routes
+app.use('/api', apiRoutes(prisma));
 
 async function startServer() {
   // Database connection

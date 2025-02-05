@@ -1,19 +1,14 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { createServer } from 'http';
+import { createServer, Server } from 'http';
 import process from 'process';
 import { startAgenda } from './schedule/scheduler';
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
-const httpServer = createServer(app);
-
-// Define main route
-app.get('/', (req: Request, res: Response) => {
-  res.send('Server Running.');
-});
+const port: string | number = process.env.PORT || 3000;
+const httpServer: Server = createServer(app);
 
 async function startServer() {
   try {
@@ -26,6 +21,7 @@ async function startServer() {
   }
 }
 
+// Function calls
 startServer();
 startAgenda();
 

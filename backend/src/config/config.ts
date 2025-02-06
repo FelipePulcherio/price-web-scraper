@@ -1,8 +1,12 @@
 import dotenv from 'dotenv';
 import { ConnectOptions } from 'mongoose';
+import { PrismaClient } from '@prisma/client';
 
 // Read .env file
 dotenv.config();
+
+// Prisma Configuration
+export const prisma = new PrismaClient();
 
 // Define interface for Mongo Configuration object
 interface IMongoConfig {

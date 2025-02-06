@@ -52,5 +52,19 @@ export interface IUser {
   email: string;
   phone: string;
   password: string;
-  role: Role;
+  role?: Role;
+}
+
+// Define interface for short user (API)
+export interface IShortUser {
+  userName: string;
+  email: string;
+}
+
+// Define interface for APIs
+export interface IAPI<T = unknown> {
+  timestamp: Date;
+  success: boolean;
+  message: string;
+  data: T;
 }

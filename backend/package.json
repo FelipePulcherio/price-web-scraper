@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --watch",
-    "start": "nodemon -r tsconfig-paths/register ./dist/app.js",
+    "start": "nodemon -r tsconfig-paths/register /dist/app.js",
     "dev": "concurrently \"npm run build\" \"npm run start\" "
   },
   "keywords": [
@@ -19,7 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@hokify/agenda": "^6.3.0",
-    "@prisma/client": "^6.3.0",
+    "@prisma/client": "^6.3.1",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "mongoose": "^8.5.2",
@@ -30,7 +30,7 @@
     "@types/node": "^22.8.2",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
-    "prisma": "^6.2.1",
+    "prisma": "^6.3.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.6.3"

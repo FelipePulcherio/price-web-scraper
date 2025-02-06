@@ -1,7 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { IAPI } from '../types/types';
-import { createUser } from '../db/operations/dbCreate';
+import { createUser } from '../database/operations/dbCreate';
 
 function apiResponse<T>(success: boolean, message: string, data: T): IAPI<T> {
   return {

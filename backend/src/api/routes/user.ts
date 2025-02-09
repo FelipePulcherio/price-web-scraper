@@ -7,7 +7,7 @@ const route = Router();
 export default (app: Router) => {
   app.use('/users', route);
 
-  // POST /api/v1/auth/register
+  // POST /api/v1/users/register
   // Used when user tries to create an account
   route.post('/register', async (req: Request, res: Response) => {
     try {

@@ -35,7 +35,7 @@ export interface IShortItem {
 export interface IEvent {
   id?: number;
   itemId?: number;
-  itemName: string;
+  itemName?: string;
   storeId?: number;
   storeName: string;
   price: number;

@@ -5,13 +5,13 @@ export interface IStore {
   id?: number;
   name: string;
   logo?: string;
+  url: string;
 }
 
 // Define interface for store info inside Item
 export interface IShortStore {
   id?: number;
   name: string;
-  url: string;
 }
 
 // Define interface for Category
@@ -21,14 +21,22 @@ export interface ICategory {
 }
 
 // Define interface for item
-export interface IShortItem {
+export interface IItem {
   id?: number;
   name: string;
   model: string;
   brand: string;
   categories: ICategory[];
-  description?: Prisma.JsonObject;
-  stores: IShortStore[];
+  description: Prisma.JsonObject;
+  stores: IStore[];
+}
+
+// Define interface for item
+export interface IShortItem {
+  id?: number;
+  name: string;
+  model: string;
+  brand: string;
 }
 
 // Define interface for event

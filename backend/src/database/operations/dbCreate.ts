@@ -1,11 +1,9 @@
-import { PrismaClient, Prisma } from '@prisma/client';
-import { IUser, IShortUser } from '../../types/types';
+import { Prisma } from '@prisma/client';
+import { IUser, IShortUser } from '@/interfaces/interfaces';
+import prisma from '@/loaders/prisma';
 
 // FUNCTIONS
-export async function createUser(
-  prisma: PrismaClient,
-  data: IUser
-): Promise<IShortUser | undefined> {
+export async function createUser(data: IUser): Promise<IShortUser | undefined> {
   try {
     const { firstName, lastName, userName, email, phone, password } = data;
 

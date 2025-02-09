@@ -12,6 +12,7 @@ export interface IStore {
 export interface IShortStore {
   id?: number;
   name: string;
+  logo: string;
 }
 
 // Define interface for Category

@@ -99,11 +99,15 @@ export async function getAllCategories(): Promise<ICategory[]> {
 }
 
 export async function getItemsByCategoryId(
-  categoryId: number
+  categoryId: number,
+  pageSize: number,
+  page: number
 ): Promise<IShortItem[]> {
   try {
     // Try to find item
     const items: IShortItem[] = await prisma.item.findMany({
+      skip: (page - 1) * pageSize,
+      take: pageSize,
       where: {
         isActive: true,
         categories: {

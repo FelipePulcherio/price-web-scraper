@@ -46,16 +46,23 @@ export default (app: Router) => {
     }
   });
 
-  // GET /api/v1/items/category/:categoryId
+  // GET /api/v1/items/category/:categoryId?page=
   // Used to find all items that are related to a categoryId
   route.get('/category/:categoryId', async (req: Request, res: Response) => {
     try {
       const categoryId = parseInt(req.params.categoryId, 10);
+      const pageSize = 24;
+      const page = parseInt(req.query.page as string, 10) || 1;
+
       console.log(
         `GET /api/v1/items/category/:categoryId Request param: ${categoryId}`
       );
 
-      const fetchedItems = await getItemsByCategoryId(categoryId);
+      const fetchedItems = await getItemsByCategoryId(
+        categoryId,
+        pageSize,
+        page
+      );
       // console.log(fetchedItems);
 
       res

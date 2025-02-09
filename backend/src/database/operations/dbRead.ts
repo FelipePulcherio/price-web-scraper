@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { IShortItem, ICategory } from '@/interfaces/interfaces';
+import { IItem, IShortItem, ICategory } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
 
 // FUNCTIONS
@@ -57,7 +57,7 @@ export async function getItemById(id: number): Promise<IShortItem> {
     });
 
     // Transform data
-    const result: IShortItem = {
+    const result: IItem = {
       name: item.name,
       model: item.model,
       brand: item.brand,
@@ -94,6 +94,43 @@ export async function getAllCategories(): Promise<ICategory[]> {
   } catch (error) {
     // Throw error to whoever called this
     // console.error('Error fetching categories:', error);
+    throw error;
+  }
+}
+
+export async function getItemsByCategoryId(
+  categoryId: number
+): Promise<IShortItem[]> {
+  try {
+    // Try to find item
+    const items: IShortItem[] = await prisma.item.findMany({
+      where: {
+        isActive: true,
+        categories: {
+          some: {
+            categoryId,
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        model: true,
+        brand: true,
+      },
+    });
+
+    console.log(items);
+
+    // If item was not found
+    if (items.length === 0) {
+      throw new Error('Not found');
+    }
+
+    return items;
+  } catch (error) {
+    // Throw error to whoever called this
+    // console.error(`Error fetching items:`, error);
     throw error;
   }
 }

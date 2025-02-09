@@ -4,7 +4,7 @@ import {
   ICategory,
   IEvent,
   IUser,
-} from '../../types/types';
+} from '@/interfaces/interfaces';
 
 export const ITEMS_LIST: IShortItem[] = [
   {

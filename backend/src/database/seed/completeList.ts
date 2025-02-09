@@ -32,11 +32,11 @@ export const CATEGORIES_LIST: ICategory[] = [
 ];
 
 export const STORES_LIST: IShortStore[] = [
-  { name: 'AMAZON CA' },
-  { name: 'BEST BUY CA' },
-  { name: 'CANADA COMPUTERS' },
-  { name: 'NEW EGG CA' },
-  { name: 'WALMART CA' },
+  { name: 'AMAZON CA', logo: '' },
+  { name: 'BEST BUY CA', logo: '' },
+  { name: 'CANADA COMPUTERS', logo: '' },
+  { name: 'NEW EGG CA', logo: '' },
+  { name: 'WALMART CA', logo: '' },
 ];
 
 export const EVENTS_LIST: IEvent[] = [

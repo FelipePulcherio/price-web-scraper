@@ -1,47 +1,40 @@
 import dotenv from 'dotenv';
-import { ConnectOptions } from 'mongoose';
-import { PrismaClient } from '@prisma/client';
+
+// Code based on: https://github.com/santiq/bulletproof-nodejs/
+// Set the NODE_ENV to 'development' by default
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Read .env file
-dotenv.config();
-
-// Prisma Configuration
-export const prisma = new PrismaClient();
-
-// Define interface for Mongo Configuration object
-interface IMongoConfig {
-  MONGO_USER: string;
-  MONGO_PASSWORD: string;
-  MONGO_URL: string;
-  MONGO_DATABASE: string;
-  MONGO_URI: string;
-  MONGO_CONNECT_OPTIONS: ConnectOptions;
+const envFound = dotenv.config();
+if (envFound.error) {
+  // This error should crash whole process
+  throw new Error("Couldn't find .env file");
 }
 
-const MONGO_USER: string = process.env.MONGO_USER || '';
-const MONGO_PASSWORD: string = process.env.MONGO_PASSWORD || '';
-const MONGO_URL: string = process.env.MONGO_URL || '';
-const MONGO_DATABASE: string = process.env.MONGO_DATABASE || '';
-const MONGO_CONNECT_OPTIONS: ConnectOptions = {
-  retryWrites: true,
-  w: 'majority',
-};
+export default {
+  // Port
+  port: parseInt(process.env.PORT ?? '3000', 10),
 
-export const mongoConfig: IMongoConfig = {
-  MONGO_USER,
-  MONGO_PASSWORD,
-  MONGO_URL,
-  MONGO_DATABASE,
-  MONGO_URI: `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}`,
-  MONGO_CONNECT_OPTIONS,
-};
+  // MongoDB Atlas
+  mongoUri: process.env.MONGODB_URI,
 
-interface IBrightConfig {
-  BRIGHT_ENDPOINT: string;
-}
+  // PostgreSQL
+  postgresUrl: process.env.DATABASE_URL,
 
-const BRIGHT_ENDPOINT: string = process.env.BRIGHT_ENDPOINT || '';
+  // BrighData
+  brightData: process.env.BRIGHTDATA_ENDPOINT,
 
-export const brightDataConfig: IBrightConfig = {
-  BRIGHT_ENDPOINT: BRIGHT_ENDPOINT,
+  // Agenda.js
+  agenda: {
+    dbCollection: process.env.AGENDA_DB_COLLECTION,
+  },
+
+  // JWT
+  jwtSecret: process.env.JWT_SECRET,
+  jwtAlgorithm: process.env.JWT_ALGO,
+
+  // API
+  api: {
+    prefix: '/api/v1',
+  },
 };

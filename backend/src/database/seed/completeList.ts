@@ -1,12 +1,12 @@
 import {
-  IStore,
-  IShortItem,
+  IShortStore,
+  IItem,
   ICategory,
   IEvent,
   IUser,
 } from '@/interfaces/interfaces';
 
-export const ITEMS_LIST: IShortItem[] = [
+export const ITEMS_LIST: IItem[] = [
   {
     name: 'TV 65" Q60C 2024',
     model: 'QN65Q60DAFXZC',
@@ -31,7 +31,7 @@ export const CATEGORIES_LIST: ICategory[] = [
   { name: 'TV' },
 ];
 
-export const STORES_LIST: IStore[] = [
+export const STORES_LIST: IShortStore[] = [
   { name: 'AMAZON CA' },
   { name: 'BEST BUY CA' },
   { name: 'CANADA COMPUTERS' },

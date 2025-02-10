@@ -2,7 +2,6 @@ import { Router, Request, Response } from 'express';
 import {
   getItemById,
   getItemsByCategoryId,
-  searchItemQuick,
 } from '@/database/operations/dbRead';
 import resFormatter from '@/helpers/apiResponseFormatter';
 

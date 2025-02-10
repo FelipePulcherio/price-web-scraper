@@ -170,11 +170,16 @@ export async function getAllStores(): Promise<IShortStore[]> {
   }
 }
 
-export async function searchItemQuick(query: string): Promise<IShortItem[]> {
+export async function searchItemByString(
+  query: string,
+  pageSize: number,
+  page: number
+): Promise<IShortItem[]> {
   try {
     // Try to find item
     const items = await prisma.item.findMany({
-      take: 5,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
       where: {
         isActive: true,
         OR: [

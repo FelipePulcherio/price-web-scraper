@@ -146,7 +146,7 @@ export async function getItemsByCategoryId(
 
 export async function getAllStores(): Promise<IShortStore[]> {
   try {
-    // Try to find item
+    // Try to find store
     const stores: IShortStore[] = await prisma.store.findMany({
       select: {
         id: true,
@@ -163,6 +163,61 @@ export async function getAllStores(): Promise<IShortStore[]> {
     }
 
     return stores;
+  } catch (error) {
+    // Throw error to whoever called this
+    // console.error('Error fetching categories:', error);
+    throw error;
+  }
+}
+
+export async function searchItemQuick(query: string): Promise<IShortItem[]> {
+  try {
+    // Try to find item
+    const items = await prisma.item.findMany({
+      take: 5,
+      where: {
+        isActive: true,
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
+          { model: { contains: query, mode: 'insensitive' } },
+          { brand: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        model: true,
+        brand: true,
+        stores: {
+          select: {
+            events: {
+              orderBy: { price: 'asc' },
+              take: 1,
+              select: {
+                price: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    console.log(items);
+
+    const result: IShortItem[] = items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      model: item.model,
+      brand: item.brand,
+      price: item.stores[0].events[0].price,
+    }));
+
+    // If item was not found
+    if (items.length === 0) {
+      throw new Error('Not found');
+    }
+
+    return result;
   } catch (error) {
     // Throw error to whoever called this
     // console.error('Error fetching categories:', error);

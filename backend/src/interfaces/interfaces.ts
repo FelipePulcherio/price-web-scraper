@@ -32,7 +32,7 @@ export interface IItem {
   stores: IStore[];
 }
 
-// Define interface for item
+// Define interface for short item
 export interface IShortItem {
   id?: number;
   name: string;
@@ -51,6 +51,12 @@ export interface IEvent {
   price: number;
   date?: Date;
   fromJob: string;
+}
+
+// Define interface for short event
+export interface IShortEvent {
+  price: number;
+  date: Date;
 }
 
 // Define interface for user

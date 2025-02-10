@@ -40,7 +40,7 @@ export default (app: Router) => {
     }
   });
 
-  // GET /api/v1/search/quick?q=
+  // GET /api/v1/search?q=
   // Used on regular searches. Use pages with 24 items
   route.get('/', async (req: Request, res: Response) => {
     try {

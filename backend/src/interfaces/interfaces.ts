@@ -38,6 +38,7 @@ export interface IShortItem {
   name: string;
   model: string;
   brand: string;
+  price?: number;
 }
 
 // Define interface for event

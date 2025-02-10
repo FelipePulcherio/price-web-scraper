@@ -4,6 +4,7 @@ import {
   IShortItem,
   ICategory,
   IShortStore,
+  IShortEvent,
 } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
 
@@ -226,6 +227,37 @@ export async function searchItemByString(
   } catch (error) {
     // Throw error to whoever called this
     // console.error('Error fetching categories:', error);
+    throw error;
+  }
+}
+
+export async function getLowestPricesByItemId(
+  id: number,
+  days: number
+): Promise<IShortEvent[]> {
+  const dateStartFilter = new Date();
+  dateStartFilter.setHours(dateStartFilter.getHours() - 24 * days);
+
+  try {
+    const dailyLowestPrices = await prisma.$queryRaw<IShortEvent[]>`
+      SELECT MIN(price) as price, DATE(date) as date
+      FROM "Events"
+      WHERE "itemId" = ${id} AND date >= ${dateStartFilter}
+      GROUP BY DATE(date)
+      ORDER BY date ASC;
+    `;
+
+    console.log(dailyLowestPrices);
+
+    // If item was not found
+    if (!dailyLowestPrices) {
+      throw new Error('Not found');
+    }
+
+    return dailyLowestPrices;
+  } catch (error) {
+    // Throw error to whoever called this
+    // console.error(`Error fetching item ID=${id}:`, error);
     throw error;
   }
 }

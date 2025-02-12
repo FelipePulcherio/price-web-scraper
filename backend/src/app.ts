@@ -2,7 +2,7 @@ import 'module-alias/register';
 import express, { Express } from 'express';
 import process from 'process';
 import config from '@/config';
-// import { startAgenda } from './schedule/scheduler';
+import { startAgenda } from './schedule/scheduler';
 
 async function startServer() {
   const app: Express = express();
@@ -26,8 +26,10 @@ async function startServer() {
   // Graceful shutdown
   process.on('SIGINT', gracefulShutdown);
   process.on('SIGTERM', gracefulShutdown);
+
+  // Agenda start
+  startAgenda();
 }
 
 // Function calls
 startServer();
-//startAgenda();

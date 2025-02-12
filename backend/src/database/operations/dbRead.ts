@@ -286,7 +286,7 @@ export async function getAllItemsForScraper(): Promise<IScraperItem[]> {
       },
     });
 
-    console.log(item);
+    // console.log(item);
 
     // Transform data
     const result: IScraperItem[] = item.map((item) => ({

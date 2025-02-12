@@ -16,7 +16,7 @@ export default {
   port: parseInt(process.env.PORT ?? '3000', 10),
 
   // MongoDB Atlas
-  mongoUri: process.env.MONGODB_URI,
+  mongoUri: process.env.MONGODB_URI || '',
 
   // PostgreSQL
   postgresUrl: process.env.DATABASE_URL,

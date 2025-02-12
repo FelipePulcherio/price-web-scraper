@@ -6,6 +6,8 @@ import {
   IUser,
 } from '@/interfaces/interfaces';
 
+import { Status } from '@prisma/client';
+
 export const ITEMS_LIST: IItem[] = [
   {
     name: 'TV 65" Q60C 2024',
@@ -45,12 +47,14 @@ export const EVENTS_LIST: IEvent[] = [
     storeName: 'BEST BUY CA',
     price: 1099.0,
     fromJob: 'Scraper',
+    status: Status.OK,
   },
   {
     itemName: 'TV 65" Q60C 2024',
     storeName: 'WALMART CA',
     price: 1095.0,
     fromJob: 'Scraper',
+    status: Status.OK,
   },
 ];
 

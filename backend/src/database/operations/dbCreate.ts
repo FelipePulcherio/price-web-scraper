@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { IUser, IShortUser } from '@/interfaces/interfaces';
+import { IUser, IShortUser, IEvent } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
 
 // FUNCTIONS
@@ -36,5 +36,26 @@ export async function createUser(data: IUser): Promise<IShortUser | undefined> {
         error instanceof Error ? error.message : 'Unknown error.'
       );
     }
+  }
+}
+
+export async function createEvent(data: IEvent[]): Promise<void> {
+  try {
+    const events: IEvent[] = data;
+
+    await prisma.events.createMany({
+      data: events.map((event) => ({
+        itemId: event.itemId!,
+        storeId: event.storeId!,
+        price: event.price,
+        fromJob: event.fromJob,
+        status: event.status,
+      })),
+      skipDuplicates: true,
+    });
+  } catch (error) {
+    // Throw error to whoever called this
+    console.error('Error creating events:', error);
+    throw new Error(error instanceof Error ? error.message : 'Unknown error.');
   }
 }

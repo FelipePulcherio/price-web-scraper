@@ -134,6 +134,7 @@ async function populateDB() {
             storeId: store.id,
             price: event.price,
             fromJob: event.fromJob,
+            status: event.status,
           },
         });
 

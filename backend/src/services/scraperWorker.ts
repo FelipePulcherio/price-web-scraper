@@ -1,99 +1,66 @@
 import { scraperMain } from './scraperMain';
-import { IItem, IStore } from '../types/types';
+import { IScraperItem, IScraperStore, IEvent } from '@/interfaces/interfaces';
 
 // FUNCTIONS
-// Define an interface for scraperWorker props data
-interface scraperWorkerProps {
-  itemData: IItem[];
-}
-
-export async function scraperWorker({
-  itemData,
-}: scraperWorkerProps): Promise<IStore[]> {
-  // Restructure data with focus in store.name
-  const stores: IStore[] = [];
+export async function scraperWorker(
+  itemData: IScraperItem[]
+): Promise<IEvent[]> {
+  // Restructure data with focus in store
+  const storeMap = new Map<number, IScraperStore>();
 
   itemData.forEach((item) => {
     item.stores.forEach((store) => {
-      const existingStoreIndex = stores.findIndex(
-        (obj) => obj.storeName === store.name
-      );
-
-      if (existingStoreIndex !== -1) {
-        stores[existingStoreIndex].items.push({
-          _id: item._id,
-          url: store.url,
-          price: 0,
-          lastUpdated: new Date(),
-          status: null,
-          storeName: store.name,
-        });
-      } else {
-        stores.push({
-          storeName: store.name,
-          items: [
-            {
-              _id: item._id,
-              url: store.url,
-              price: 0,
-              lastUpdated: new Date(),
-              status: null,
-              storeName: store.name,
-            },
-          ],
+      if (!storeMap.has(store.id)) {
+        storeMap.set(store.id, {
+          id: store.id,
+          name: store.name,
+          items: [],
         });
       }
+
+      storeMap.get(store.id)!.items.push({
+        id: item.id,
+        url: store.url,
+        price: store.price,
+      });
     });
   });
 
+  const stores: IScraperStore[] = Array.from(storeMap.values());
+
   // console.log(stores);
+  // console.log('========================================');
   // console.log(stores[0]);
+  // console.log('========================================');
   // console.log(stores[0].items);
+  // console.log('========================================');
+  // console.log(stores[0].items[0]);
+  // console.log('========================================');
 
   // FOR DEVELOPMENT: Run one by one, always waiting the last Promise to resolve before starting a new scraperMain() call.
-  // return new Promise(async (resolve, reject) => {
-  //   // Outside try...catch is used to handle errors in the looping part
+  // const eventsArray: IEvent[] = [];
+  // for (const store of stores) {
   //   try {
-  //     // loop trough all stores
-  //     for (const storeSet of stores) {
-  //       // Inside try...catch is used to handle errors in scraperMain().
-  //       try {
-  //         // Send whole storeSet to scraperMain() and wait for promise to resolve on storeSet
-  //         await scraperMain({ storeSet: storeSet });
-  //       } catch (error) {
-  //         console.error(`Error scraping ${storeSet.storeName}: ${error}`);
-  //         // More error handling here!
-  //       }
-  //     }
-
-  //     // console.log(stores[0].items);
-
-  //     resolve(stores);
-  //   } catch (err) {
-  //     console.error(err);
-  //     reject(err);
+  //     const events = await scraperMain({ storeSet: store });
+  //     eventsArray.push(...events);
+  //   } catch (error) {
+  //     console.error(`Error scraping ${store.name}: ${error}`);
+  //     // Continue to the next store ...
   //   }
-  // });
+  // }
+  // return eventsArray;
 
   // FOR PRODUCTION: If everything is working as intended, run all scraperMain() at the same time.
-  return Promise.all(
-    stores.map(async (storeSet) => {
+  const events = await Promise.all(
+    stores.map(async (store) => {
       try {
-        await scraperMain({ storeSet: storeSet });
-        // Additional processing if needed
+        return await scraperMain({ storeSet: store });
       } catch (error) {
-        console.error(`Error scraping ${storeSet.storeName}: ${error}`);
-        // Handle error or rethrow as necessary
+        console.error(`Error scraping ${store.name}: ${error}`);
+        return [];
       }
     })
-  )
-    .then(() => {
-      // Return the stores array after all promises have resolved
-      // console.log(stores[0].items);
-      return stores;
-    })
-    .catch((err) => {
-      console.error(err);
-      throw err; // Rethrow error to ensure Promise<IStore[]> type is met
-    });
+  );
+
+  return events.flat();
 }

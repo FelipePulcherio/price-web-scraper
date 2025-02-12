@@ -63,6 +63,11 @@ model ItemStore {
   @@id([itemId, storeId])
 }
 
+enum Status {
+  OK
+  FAILED
+}
+
 model Events {
   id        Int       @id @default(autoincrement())
   itemId    Int
@@ -71,6 +76,7 @@ model Events {
   price     Float
   date      DateTime  @updatedAt
   fromJob   String
+  status    Status
 }
 
 enum Role {

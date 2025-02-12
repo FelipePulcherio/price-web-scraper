@@ -1,20 +1,20 @@
 import puppeteer, { Browser, Page } from 'puppeteer-core';
-import { brightDataConfig } from '../config/config';
-import { IStore } from '../types/types';
+import config from '@/config';
+import { IScraperStore, IEvent } from '@/interfaces/interfaces';
+// import { promises as fs } from 'fs';
 
 // FUNCTIONS
 // Define an interface for scraperWorker props data
 interface scraperMainProps {
-  storeSet: IStore;
+  storeSet: IScraperStore;
   retryCount?: number;
 }
 
 export async function scraperMain({
   storeSet,
   retryCount = 3,
-}: scraperMainProps) {
-  // Global vars
-  const BRIGHT_ENDPOINT = brightDataConfig.BRIGHT_ENDPOINT;
+}: scraperMainProps): Promise<IEvent[]> {
+  let events: IEvent[] = [];
 
   return new Promise(async (resolve, reject) => {
     // Iterate trough all items
@@ -31,8 +31,9 @@ export async function scraperMain({
         // Main Connection Try...Catch
         try {
           console.log('Main_scraper: Connecting to Scraping Browser...');
+
           browser = await puppeteer.connect({
-            browserWSEndpoint: BRIGHT_ENDPOINT,
+            browserWSEndpoint: config.brightData,
           });
 
           console.log('Main_scraper: Connected!');
@@ -76,57 +77,63 @@ export async function scraperMain({
           // Set navigation timeout
           page.setDefaultNavigationTimeout(2 * 60 * 1000); // 2 minutes
 
-          // Set User Agent
-          await page.setUserAgent(
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-          );
+          // // Set User Agent
+          // await page.setUserAgent(
+          //   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+          // );
         } catch (err) {
-          console.error(err);
-          reject(err);
+          console.error('Error connecting to browser:', err);
+          return resolve([]);
           // Handle ERRORs 5** from Bright Data Here + Others related to browser/proxy
         }
 
         // Scraping Try...Catch
+        let price = 0;
         if (browser && page) {
           try {
-            switch (storeSet.storeName) {
-              case 'amazon.ca':
-                item.price = await amazon_scraper({
+            switch (storeSet.name) {
+              case 'AMAZON CA':
+                price = await amazonScraper({
                   page: page,
                   url: item.url,
                 });
                 break;
-              case 'bestbuy.ca':
-                item.price = await bestbuyScraper({
+              case 'BEST BUY CA':
+                price = await bestbuyScraper({
                   page: page,
                   url: item.url,
                 });
                 break;
-              case 'canadacomputers.com':
-                item.price = await canadacomputers_scraper({
+              case 'CANADA COMPUTERS':
+                price = await canadacomputersScraper({
                   page: page,
                   url: item.url,
                 });
                 break;
-              case 'newegg.ca':
-                item.price = await newegg_scraper({
+              case 'NEW EGG CA':
+                price = await neweggScraper({
                   page: page,
                   url: item.url,
                 });
                 break;
-              case 'walmart.ca':
-                item.price = await walmartScraper({
+              case 'WALMART CA':
+                price = await walmartScraper({
                   page: page,
                   url: item.url,
                 });
                 break;
               default:
-                console.log(`Main_scraper: ${storeSet.storeName} not found!`);
+                console.log(`Main_scraper: ${storeSet.name} not found!`);
             }
 
-            // Add the scraped price to the item in storeSet
-            item.lastUpdated = new Date();
-            item.status = 'OK';
+            // Save info
+            events.push({
+              itemId: item.id,
+              storeId: storeSet.id,
+              price: price,
+              fromJob: 'Scraper',
+              status: 'OK',
+            });
 
             // Exit retry loop
             success = true;
@@ -159,9 +166,14 @@ export async function scraperMain({
 
       // If scraping failed after all retries, set price to null and status to 'failed'
       if (!success) {
-        item.price = 0;
-        item.lastUpdated = new Date();
-        item.status = 'Failed';
+        // Save info
+        events.push({
+          itemId: item.id,
+          storeId: storeSet.id,
+          price: 0,
+          fromJob: 'Scraper',
+          status: 'FAILED',
+        });
 
         console.error(`Main_scraper: Error scraping ${item.url}`);
         console.log('Main_scraper: Moving to next URL...');
@@ -169,7 +181,7 @@ export async function scraperMain({
     }
 
     // When finish looping all items resolve
-    resolve(storeSet);
+    resolve(events);
   });
 }
 
@@ -237,7 +249,7 @@ async function walmartScraper({ page, url }: storeScraperProps) {
   //   path: 'screenshot.jpg',
   // });
 
-  // Save HTML from page
+  // // Save HTML from page
   // const html = await page.content();
   // // Save the HTML content to a file
   // await fs.writeFile('output.html', html, 'utf-8');
@@ -297,7 +309,7 @@ async function walmartScraper({ page, url }: storeScraperProps) {
   return price;
 }
 
-async function amazon_scraper({ page, url }: storeScraperProps) {
+async function amazonScraper({ page, url }: storeScraperProps) {
   //Navigate to url
   console.log(`Main_scraper (AM): Navigating to ${url}...`);
   await page.goto(url);
@@ -363,7 +375,7 @@ async function amazon_scraper({ page, url }: storeScraperProps) {
   return price;
 }
 
-async function canadacomputers_scraper({ page, url }: storeScraperProps) {
+async function canadacomputersScraper({ page, url }: storeScraperProps) {
   //Navigate to url
   console.log(`Main_scraper (CC): Navigating to ${url}...`);
   await page.goto(url);
@@ -409,7 +421,7 @@ async function canadacomputers_scraper({ page, url }: storeScraperProps) {
   return price;
 }
 
-async function newegg_scraper({ page, url }: storeScraperProps) {
+async function neweggScraper({ page, url }: storeScraperProps) {
   //Navigate to url
   console.log(`Main_scraper (NE): Navigating to ${url}...`);
   await page.goto(url);

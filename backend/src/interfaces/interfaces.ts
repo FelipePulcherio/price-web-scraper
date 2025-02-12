@@ -41,16 +41,39 @@ export interface IShortItem {
   price?: number;
 }
 
+// Define interface for scraper item
+export interface IScraperItem {
+  id: number;
+  stores: {
+    id: number;
+    name: string;
+    url: string;
+    price: number;
+  }[];
+}
+
+// Define interface for scraper store
+export interface IScraperStore {
+  id: number;
+  name: string;
+  items: {
+    id: number;
+    url: string;
+    price: number;
+  }[];
+}
+
 // Define interface for event
 export interface IEvent {
   id?: number;
   itemId?: number;
   itemName?: string;
   storeId?: number;
-  storeName: string;
+  storeName?: string;
   price: number;
   date?: Date;
   fromJob: string;
+  status: 'OK' | 'FAILED';
 }
 
 // Define interface for short event

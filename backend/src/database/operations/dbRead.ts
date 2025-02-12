@@ -5,11 +5,12 @@ import {
   ICategory,
   IShortStore,
   IShortEvent,
+  IScraperItem,
 } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
 
 // FUNCTIONS
-export async function getItemById(id: number): Promise<IShortItem> {
+export async function getItemById(id: number): Promise<IItem> {
   try {
     // Try to find item
     const item = await prisma.item.findUnique({
@@ -259,5 +260,49 @@ export async function getLowestPricesByItemId(
     // Throw error to whoever called this
     // console.error(`Error fetching item ID=${id}:`, error);
     throw error;
+  }
+}
+
+export async function getAllItemsForScraper(): Promise<IScraperItem[]> {
+  try {
+    // Try to find item
+    const item = await prisma.item.findMany({
+      where: {
+        isActive: true,
+      },
+      select: {
+        id: true,
+        stores: {
+          select: {
+            store: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            url: true,
+          },
+        },
+      },
+    });
+
+    console.log(item);
+
+    // Transform data
+    const result: IScraperItem[] = item.map((item) => ({
+      id: item.id,
+      stores: item.stores.map((s) => ({
+        id: s.store.id,
+        name: s.store.name,
+        url: s.url,
+        price: 0,
+      })),
+    }));
+
+    return result;
+  } catch (error) {
+    // Handle Error
+    console.error(`Error fetching all items:`, error);
+    return [];
   }
 }

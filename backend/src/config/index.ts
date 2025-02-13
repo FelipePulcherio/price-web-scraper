@@ -30,8 +30,11 @@ export default {
   },
 
   // JWT
-  jwtSecret: process.env.JWT_SECRET,
-  jwtAlgorithm: process.env.JWT_ALGO,
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    algorithm: process.env.JWT_ALGO,
+    maxAge: parseInt(process.env.JWT_MAX_AGE ?? '3600', 2),
+  },
 
   // API
   api: {

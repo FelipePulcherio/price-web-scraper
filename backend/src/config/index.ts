@@ -11,29 +11,36 @@ if (envFound.error) {
   throw new Error("Couldn't find .env file");
 }
 
+function getEnvVariable(key: string): string {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing environment variable: ${key}`);
+  }
+  return value;
+}
+
 export default {
   // Port
-  port: parseInt(process.env.PORT ?? '3000', 10),
+  port: parseInt(getEnvVariable('PORT'), 10),
 
   // MongoDB Atlas
-  mongoUri: process.env.MONGODB_URI || '',
+  mongoUri: getEnvVariable('MONGODB_URI'),
 
   // PostgreSQL
-  postgresUrl: process.env.DATABASE_URL,
+  postgresUrl: getEnvVariable('DATABASE_URL'),
 
   // BrighData
-  brightData: process.env.BRIGHTDATA_ENDPOINT,
+  brightData: getEnvVariable('BRIGHTDATA_ENDPOINT'),
 
   // Agenda.js
   agenda: {
-    dbCollection: process.env.AGENDA_DB_COLLECTION,
+    dbCollection: getEnvVariable('AGENDA_DB_COLLECTION'),
   },
 
   // JWT
   jwt: {
-    secret: process.env.JWT_SECRET,
-    algorithm: process.env.JWT_ALGO,
-    maxAge: parseInt(process.env.JWT_MAX_AGE ?? '3600', 2),
+    secret: getEnvVariable('JWT_SECRET'),
+    maxAge: parseInt(getEnvVariable('JWT_MAX_AGE'), 10),
   },
 
   // API

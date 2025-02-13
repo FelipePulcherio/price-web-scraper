@@ -87,7 +87,6 @@ export interface IUser {
   id?: string;
   firstName: string;
   lastName: string;
-  userName: string;
   email: string;
   phone: string;
   password: string;
@@ -96,7 +95,6 @@ export interface IUser {
 
 // Define interface for short user (API)
 export interface IShortUser {
-  userName: string;
   email: string;
 }
 

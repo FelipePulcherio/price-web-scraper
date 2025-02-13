@@ -9,6 +9,11 @@ const signupSchema = z.object({
   password: z.string().min(8),
 });
 
+const signinSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
 export function validateSignup(
   req: Request,
   res: Response,
@@ -16,6 +21,19 @@ export function validateSignup(
 ) {
   try {
     signupSchema.parse(req.body);
+    next();
+  } catch (err) {
+    next(err);
+  }
+}
+
+export function validateSignin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    signinSchema.parse(req.body);
     next();
   } catch (err) {
     next(err);

@@ -21,7 +21,7 @@ export default (app: Router) => {
         .json(
           resFormatter(
             true,
-            'Categories fetched successfully',
+            ['Categories fetched successfully'],
             fetchedCategories
           )
         );
@@ -33,13 +33,13 @@ export default (app: Router) => {
 
       // Not found
       if (errorMessage.includes('Not found')) {
-        res.status(404).json(resFormatter(false, errorMessage, null));
+        res.status(404).json(resFormatter(false, [errorMessage], null));
       }
       // All other errors
       else {
         res
           .status(500)
-          .json(resFormatter(false, 'Internal server error', null));
+          .json(resFormatter(false, ['Internal server error'], null));
       }
     }
   });

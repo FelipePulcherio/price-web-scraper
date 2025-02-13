@@ -23,7 +23,7 @@ export default (app: Router) => {
 
       res
         .status(200)
-        .json(resFormatter(true, 'Item fetched successfully', fetchedItem));
+        .json(resFormatter(true, ['Item fetched successfully'], fetchedItem));
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Uknown error';
@@ -32,17 +32,17 @@ export default (app: Router) => {
 
       // Not found
       if (errorMessage.includes('Not found')) {
-        res.status(404).json(resFormatter(false, errorMessage, null));
+        res.status(404).json(resFormatter(false, [errorMessage], null));
       }
       // Forbidden
       else if (errorMessage.includes('Forbidden')) {
-        res.status(403).json(resFormatter(false, errorMessage, null));
+        res.status(403).json(resFormatter(false, [errorMessage], null));
       }
       // All other errors
       else {
         res
           .status(500)
-          .json(resFormatter(false, 'Internal server error', null));
+          .json(resFormatter(false, ['Internal server error'], null));
       }
     }
   });
@@ -68,7 +68,7 @@ export default (app: Router) => {
 
       res
         .status(200)
-        .json(resFormatter(true, 'Items fetched successfully', fetchedItems));
+        .json(resFormatter(true, ['Items fetched successfully'], fetchedItems));
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Uknown error';
@@ -77,13 +77,13 @@ export default (app: Router) => {
 
       // Not found
       if (errorMessage.includes('Not found')) {
-        res.status(404).json(resFormatter(false, errorMessage, null));
+        res.status(404).json(resFormatter(false, [errorMessage], null));
       }
       // All other errors
       else {
         res
           .status(500)
-          .json(resFormatter(false, 'Internal server error', null));
+          .json(resFormatter(false, ['Internal server error'], null));
       }
     }
   });
@@ -103,7 +103,7 @@ export default (app: Router) => {
         .json(
           resFormatter(
             true,
-            'Lowest prices fetched successfully',
+            ['Lowest prices fetched successfully'],
             fetchedPrices
           )
         );
@@ -115,13 +115,13 @@ export default (app: Router) => {
 
       // Not found
       if (errorMessage.includes('Not found')) {
-        res.status(404).json(resFormatter(false, errorMessage, null));
+        res.status(404).json(resFormatter(false, [errorMessage], null));
       }
       // All other errors
       else {
         res
           .status(500)
-          .json(resFormatter(false, 'Internal server error', null));
+          .json(resFormatter(false, ['Internal server error'], null));
       }
     }
   });

@@ -102,6 +102,6 @@ export interface IShortUser {
 export interface IAPI<T = unknown> {
   timestamp: Date;
   success: boolean;
-  message: string;
+  messages: string[];
   data: T;
 }

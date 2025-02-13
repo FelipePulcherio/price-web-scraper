@@ -10,7 +10,7 @@ import { Status } from '@prisma/client';
 
 export const ITEMS_LIST: IItem[] = [
   {
-    name: 'TV 65" Q60C 2024',
+    name: 'TV 65" Q60D 2024',
     model: 'QN65Q60DAFXZC',
     brand: 'Samsung',
     description: {},
@@ -23,6 +23,14 @@ export const ITEMS_LIST: IItem[] = [
       {
         name: 'WALMART CA',
         url: 'https://www.walmart.ca/en/ip/Samsung-65-QLED-SMART-4K-TV-Q60D-Series/6000207606889',
+      },
+      {
+        name: 'CANADA COMPUTERS',
+        url: 'https://www.canadacomputers.com/en/46-and-above/259168/samsung-q60d-65-qled-4k-smart-tv-qn65q60dafxzc.html',
+      },
+      {
+        name: 'AMAZON CA',
+        url: 'https://www.amazon.ca/SAMSUNG-65-Inch-Quantum-Q-Symphony-Xcelerator/dp/B0CXR45YRM/?th=1',
       },
     ],
   },
@@ -43,14 +51,14 @@ export const STORES_LIST: IShortStore[] = [
 
 export const EVENTS_LIST: IEvent[] = [
   {
-    itemName: 'TV 65" Q60C 2024',
+    itemName: 'TV 65" Q60D 2024',
     storeName: 'BEST BUY CA',
     price: 1099.0,
     fromJob: 'Scraper',
     status: Status.OK,
   },
   {
-    itemName: 'TV 65" Q60C 2024',
+    itemName: 'TV 65" Q60D 2024',
     storeName: 'WALMART CA',
     price: 1095.0,
     fromJob: 'Scraper',

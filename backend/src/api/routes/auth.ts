@@ -1,5 +1,4 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import resFormatter from '@/helpers/apiResponseFormatter';
 import middlewares from '../middlewares';
 
 const route = Router();

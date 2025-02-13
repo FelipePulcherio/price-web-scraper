@@ -91,7 +91,6 @@ model User {
   id        String   @id @default(uuid())
   firstName String
   lastName  String
-  userName  String   @unique
   email     String   @unique
   country   Country  @default(CANADA)
   phone     String

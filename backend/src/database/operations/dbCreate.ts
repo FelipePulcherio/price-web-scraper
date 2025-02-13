@@ -1,10 +1,13 @@
 import { IUser, IShortUser, IEvent } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
+import bcrypt from 'bcrypt';
 
 // FUNCTIONS
 export async function createUser(data: IUser): Promise<IShortUser | undefined> {
   try {
     const { firstName, lastName, email, phone, password } = data;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
       data: {
@@ -12,7 +15,7 @@ export async function createUser(data: IUser): Promise<IShortUser | undefined> {
         lastName,
         email,
         phone,
-        password,
+        password: hashedPassword,
         updatedById: '01010101-ffff-1111-ffff-010101010101',
       },
     });

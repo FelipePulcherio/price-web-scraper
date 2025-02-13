@@ -1,4 +1,5 @@
 import { Prisma, Role } from '@prisma/client';
+import { Request } from 'express';
 
 // Define interface for Store
 export interface IStore {
@@ -96,6 +97,7 @@ export interface IUser {
 // Define interface for short user (API)
 export interface IShortUser {
   email: string;
+  password?: string;
 }
 
 // Define interface for APIs
@@ -104,4 +106,11 @@ export interface IAPI<T = unknown> {
   success: boolean;
   messages: string[];
   data: T;
+}
+
+// Define extended version of Express Request to add IUser
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: IUser;
+  }
 }

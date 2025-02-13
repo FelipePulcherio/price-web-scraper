@@ -71,7 +71,6 @@ export const USERS_LIST: IUser[] = [
     id: '01010101-ffff-1111-ffff-010101010101',
     firstName: 'SYSTEM',
     lastName: 'SYSTEM',
-    userName: 'SYSTEM_MAIN',
     email: 'system@findadeal.com',
     phone: '000-000-0000',
     password: 'qwerty',
@@ -80,7 +79,6 @@ export const USERS_LIST: IUser[] = [
   {
     firstName: 'ADMIN',
     lastName: 'ADMIN',
-    userName: 'ADMIN_FSP',
     email: 'adminfsp@findadeal.com',
     phone: '000-000-0000',
     password: 'qwerty',
@@ -89,7 +87,6 @@ export const USERS_LIST: IUser[] = [
   {
     firstName: 'Felipe',
     lastName: 'Pulcherio',
-    userName: 'FelipePulcherio',
     email: 'felipe@test.com',
     phone: '000-000-0000',
     password: 'qwerty',

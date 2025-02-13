@@ -11,7 +11,7 @@ const signupSchema = z.object({
 
 const signinSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string(),
 });
 
 export function validateSignup(

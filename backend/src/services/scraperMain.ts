@@ -201,7 +201,7 @@ async function bestbuyScraper({ page, url }: storeScraperProps) {
   // Wait for the selector to appear
   console.log('Main_scraper (BB): Waiting for selector...');
   await page.waitForSelector('span[data-automation="product-price"]', {
-    timeout: 1 * 30 * 1000, // 30 seconds
+    timeout: 1 * 15 * 1000, // 15 seconds
   });
 
   let priceContent: string | null = null;
@@ -223,8 +223,12 @@ async function bestbuyScraper({ page, url }: storeScraperProps) {
 
     if (priceContent) {
       // Remove dollar symbol
-      price = Number(Number(priceContent.split('$')[1]).toFixed(2));
+      price = parseFloat(priceContent.replace(/[$,]/g, ''));
       console.log(`Main_scraper (BB): Scraped value: ${price}`);
+
+      if (isNaN(price)) {
+        throw new Error('Main_scraper (WM): Scraped price is NaN');
+      }
     } else {
       throw new Error(
         'Main_scraper (BB): Could not evaluate "textContent" of HTML Element.'
@@ -275,7 +279,7 @@ async function walmartScraper({ page, url }: storeScraperProps) {
   // Wait for the selector to appear
   console.log('Main_scraper (WM): Waiting for selector...');
   await page.waitForSelector('div[data-testid="add-to-cart-section"]', {
-    timeout: 1 * 30 * 1000, // 30 seconds
+    timeout: 1 * 15 * 1000, // 15 seconds
   });
 
   let priceContent: string | null = null;
@@ -295,8 +299,12 @@ async function walmartScraper({ page, url }: storeScraperProps) {
 
     if (priceContent) {
       // Remove dollar symbol and comma
-      price = Number(Number(priceContent.replace(/[$,]/g, '')).toFixed(2));
+      price = parseFloat(priceContent.replace(/[$,]/g, ''));
       console.log(`Main_scraper (WM): Scraped value: ${price}`);
+
+      if (isNaN(price)) {
+        throw new Error('Main_scraper (WM): Scraped price is NaN');
+      }
     } else {
       throw new Error(
         'Main_scraper (WM): Could not evaluate "textContent" of HTML Element.'
@@ -339,7 +347,7 @@ async function amazonScraper({ page, url }: storeScraperProps) {
   // Wait for the selector to appear
   console.log('Main_scraper (AM): Waiting for selector...');
   await page.waitForSelector('div.a-spacing-top-mini', {
-    timeout: 1 * 30 * 1000, // 30 seconds
+    timeout: 1 * 15 * 1000, // 15 seconds
   });
 
   let priceContent: string | null = null;
@@ -361,8 +369,12 @@ async function amazonScraper({ page, url }: storeScraperProps) {
 
     if (priceContent) {
       // Remove dollar symbol and comma
-      price = Number(Number(priceContent.replace(/[$,]/g, '')).toFixed(2));
+      price = parseFloat(priceContent.replace(/[$,]/g, ''));
       console.log(`Main_scraper (AM): Scraped value: ${price}`);
+
+      if (isNaN(price)) {
+        throw new Error('Main_scraper (WM): Scraped price is NaN');
+      }
     } else {
       throw new Error(
         'Main_scraper (AM): Could not evaluate "textContent" of HTML Element.'
@@ -385,7 +397,7 @@ async function canadacomputersScraper({ page, url }: storeScraperProps) {
   // Wait for the selector to appear
   console.log('Main_scraper (CC): Waiting for selector...');
   await page.waitForSelector('div.current-price', {
-    timeout: 1 * 30 * 1000, // 30 seconds
+    timeout: 1 * 15 * 1000, // 15 seconds
   });
 
   let priceContent: string | null = null;
@@ -407,8 +419,12 @@ async function canadacomputersScraper({ page, url }: storeScraperProps) {
 
     if (priceContent) {
       // Remove dollar symbol
-      price = parseFloat(priceContent.replace(/[^0-9.]/g, ''));
+      price = parseFloat(priceContent.replace(/[$,]/g, ''));
       console.log(`Main_scraper (CC): Scraped value: ${price}`);
+
+      if (isNaN(price)) {
+        throw new Error('Main_scraper (WM): Scraped price is NaN');
+      }
     } else {
       throw new Error(
         'Main_scraper (CC): Could not evaluate "textContent" of HTML Element.'
@@ -431,7 +447,7 @@ async function neweggScraper({ page, url }: storeScraperProps) {
   // Wait for the selector to appear
   console.log('Main_scraper (NE): Waiting for selector...');
   await page.waitForSelector('ul.price', {
-    timeout: 1 * 30 * 1000, // 30 seconds
+    timeout: 1 * 15 * 1000, // 15 seconds
   });
 
   let priceContent: string | null = null;
@@ -451,8 +467,12 @@ async function neweggScraper({ page, url }: storeScraperProps) {
 
     if (priceContent) {
       // Remove dollar symbol and comma
-      price = Number(Number(priceContent.replace(/[$,]/g, '')).toFixed(2));
+      price = parseFloat(priceContent.replace(/[$,]/g, ''));
       console.log(`Main_scraper (NE): Scraped value: ${price}`);
+
+      if (isNaN(price)) {
+        throw new Error('Main_scraper (WM): Scraped price is NaN');
+      }
     } else {
       throw new Error(
         'Main_scraper (CC): Could not evaluate "textContent" of HTML Element.'

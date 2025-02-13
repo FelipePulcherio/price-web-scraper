@@ -157,7 +157,6 @@ async function populateDB() {
         id: user.id ?? undefined,
         firstName: user.firstName,
         lastName: user.lastName,
-        userName: user.userName,
         email: user.email,
         phone: user.phone,
         password: user.password,

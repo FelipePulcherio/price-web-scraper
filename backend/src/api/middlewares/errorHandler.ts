@@ -23,11 +23,19 @@ export default function errorHandler(
   }
 
   // Handle Prisma Errors
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  else if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === 'P2002') {
       // Unique constraint error
       statusCode = 409;
       messages = [`${err.meta?.target}: Already in use`];
+    }
+  }
+
+  // Handle Regular Errors
+  else if (err instanceof Error) {
+    if (err.message.includes('Invalid email or password')) {
+      statusCode = 401;
+      messages = [err.message];
     }
   }
 

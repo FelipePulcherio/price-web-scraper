@@ -6,6 +6,7 @@ import {
   EVENTS_LIST,
   USERS_LIST,
 } from './completeList';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -151,6 +152,9 @@ async function populateDB() {
 
   let createdIds: string[] = [];
   for (const user of USERS_LIST) {
+    // Hash password
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+
     // Find or Create without specifying connection
     const result = await prisma.user.create({
       data: {
@@ -159,7 +163,7 @@ async function populateDB() {
         lastName: user.lastName,
         email: user.email,
         phone: user.phone,
-        password: user.password,
+        password: hashedPassword,
         role: user.role,
         updatedById: undefined,
       },

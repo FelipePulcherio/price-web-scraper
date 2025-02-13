@@ -6,6 +6,8 @@ import {
   IShortStore,
   IShortEvent,
   IScraperItem,
+  IUser,
+  IShortUser,
 } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
 
@@ -304,5 +306,33 @@ export async function getAllItemsForScraper(): Promise<IScraperItem[]> {
     // Handle Error
     console.error(`Error fetching all items:`, error);
     return [];
+  }
+}
+
+export async function getUserByEmail(email: string): Promise<IUser> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        password: true,
+        role: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    return user;
+  } catch (error) {
+    // Throw error to who called this
+    throw error;
   }
 }

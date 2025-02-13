@@ -1,20 +1,25 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import middlewares from '../middlewares';
+import { createUser } from '@/database/operations/dbCreate';
+import resFormatter from '@/helpers/apiResponseFormatter';
 
 const route = Router();
 
 export default (app: Router) => {
-  app.use('/user', route);
+  app.use('/auth', route);
 
-  // GET /api/v1/user/me
-  // Used when user tries to keep connected
-  route.get('/me', async (req: Request, res: Response, next: NextFunction) => {
-    console.log('POST /api/v1/user/me Request Body:');
-    console.log(req.body);
+  // POST /api/v1/auth/signup
+  route.post('/signup', middlewares.validateSignup, async (req, res, next) => {
+    console.log('POST /api/v1/auth/signup Request Body:', req.body);
 
     try {
+      const newUser = await createUser(req.body);
+      res
+        .status(201)
+        .json(resFormatter(true, ['User registered successfully'], newUser));
     } catch (error) {
-      next(error); // Pass errors to middleware
+      // Pass errors to middlewares.errorHandler
+      next(error);
     }
   });
 

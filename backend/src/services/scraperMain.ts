@@ -384,7 +384,7 @@ async function canadacomputersScraper({ page, url }: storeScraperProps) {
 
   // Wait for the selector to appear
   console.log('Main_scraper (CC): Waiting for selector...');
-  await page.waitForSelector('div.col-auto.col-md-12.order-2.order-md-1>span', {
+  await page.waitForSelector('div.current-price', {
     timeout: 1 * 30 * 1000, // 30 seconds
   });
 
@@ -394,20 +394,20 @@ async function canadacomputersScraper({ page, url }: storeScraperProps) {
   // Query div with price info (first match only)
   console.log('Main_scraper (CC): Scraping prices...');
   const priceLocation = await page.$(
-    'div.col-auto.col-md-12.order-2.order-md-1>span'
+    'div.current-price span.current-price-value'
   );
 
   // Check if element it exists
   if (priceLocation) {
     // Get the value from div
     priceContent = await page.evaluate(
-      (element) => element.textContent,
+      (element) => element.textContent.trim(),
       priceLocation
     );
 
     if (priceContent) {
       // Remove dollar symbol
-      price = Number(Number(priceContent.split('$')[1]).toFixed(2));
+      price = parseFloat(priceContent.replace(/[^0-9.]/g, ''));
       console.log(`Main_scraper (CC): Scraped value: ${price}`);
     } else {
       throw new Error(

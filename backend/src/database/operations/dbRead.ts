@@ -87,12 +87,12 @@ export async function getAllCategories(): Promise<ICategory[]> {
     // Try to find item
     const categories: ICategory[] = await prisma.category.findMany({});
 
-    console.log(categories);
-
-    // If item was not found
+    // If categories was not found
     if (!categories) {
       throw new Error('Not found');
     }
+
+    // console.log(categories);
 
     return categories;
   } catch (error) {

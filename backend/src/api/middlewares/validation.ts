@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
-const signupSchema = z.object({
+const signupSchema = z.strictObject({
   firstName: z.string().min(2).max(50),
   lastName: z.string().min(2).max(50),
   email: z.string().email(),
@@ -22,7 +22,7 @@ export function validateSignup(
   }
 }
 
-const signinSchema = z.object({
+const signinSchema = z.strictObject({
   email: z.string().email(),
   password: z.string(),
 });

@@ -16,7 +16,7 @@ export async function getItemById(id: number): Promise<IItem> {
   try {
     // Try to find item
     const item = await prisma.item.findUnique({
-      where: { id },
+      where: { id, isActive: true },
       select: {
         name: true,
         model: true,
@@ -47,19 +47,14 @@ export async function getItemById(id: number): Promise<IItem> {
       },
     });
 
-    console.log(item);
+    // console.log(item);
 
     // If item was not found
     if (!item) {
       throw new Error('Not found');
     }
 
-    // If item was found and isActive = false
-    if (!item.isActive) {
-      throw new Error('Forbidden');
-    }
-
-    // If item was found and isActive = true
+    // If item was found add 1 to searchCount
     await prisma.item.update({
       where: { id },
       data: { searchCount: { increment: 1 } },
@@ -133,7 +128,7 @@ export async function getItemsByCategoryId(
       },
     });
 
-    console.log(items);
+    // console.log(items);
 
     // If item was not found
     if (items.length === 0) {
@@ -211,7 +206,7 @@ export async function searchItemByString(
       },
     });
 
-    console.log(items);
+    // console.log(items);
 
     const result: IShortItem[] = items.map((item) => ({
       id: item.id,
@@ -252,10 +247,10 @@ export async function getLowestPricesByItemId(
       ORDER BY date ASC;
     `;
 
-    console.log(dailyLowestPrices);
+    //console.log(dailyLowestPrices);
 
     // If item was not found
-    if (!dailyLowestPrices) {
+    if (dailyLowestPrices.length === 0) {
       throw new Error('Not found');
     }
 
@@ -306,7 +301,7 @@ export async function getAllItemsForScraper(): Promise<IScraperItem[]> {
     return result;
   } catch (error) {
     // Handle Error
-    console.error(`Error fetching all items:`, error);
+    // console.error(`Error fetching all items:`, error);
     return [];
   }
 }

@@ -193,6 +193,9 @@ export async function searchItemByString(
         model: true,
         brand: true,
         stores: {
+          where: {
+            events: { some: {} },
+          },
           select: {
             events: {
               orderBy: { price: 'asc' },
@@ -206,7 +209,13 @@ export async function searchItemByString(
       },
     });
 
+    // If item was not found
+    if (items.length === 0) {
+      throw new Error('Not found');
+    }
+
     // console.log(items);
+    // console.log(items[0].stores);
 
     const result: IShortItem[] = items.map((item) => ({
       id: item.id,
@@ -216,15 +225,10 @@ export async function searchItemByString(
       price: item.stores[0].events[0].price,
     }));
 
-    // If item was not found
-    if (items.length === 0) {
-      throw new Error('Not found');
-    }
-
     return result;
   } catch (error) {
     // Throw error to whoever called this
-    // console.error('Error fetching categories:', error);
+    // console.error('Error fetching items:', error);
     throw error;
   }
 }
@@ -247,12 +251,12 @@ export async function getLowestPricesByItemId(
       ORDER BY date ASC;
     `;
 
-    //console.log(dailyLowestPrices);
-
     // If item was not found
     if (dailyLowestPrices.length === 0) {
       throw new Error('Not found');
     }
+
+    // console.log(dailyLowestPrices);
 
     return dailyLowestPrices;
   } catch (error) {

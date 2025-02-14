@@ -145,7 +145,7 @@ export async function getItemsByCategoryId(
 
 export async function getAllStores(): Promise<IShortStore[]> {
   try {
-    // Try to find store
+    // Try to find stores
     const stores: IShortStore[] = await prisma.store.findMany({
       select: {
         id: true,
@@ -154,17 +154,17 @@ export async function getAllStores(): Promise<IShortStore[]> {
       },
     });
 
-    console.log(stores);
-
     // If item was not found
     if (!stores) {
       throw new Error('Not found');
     }
 
+    // console.log(stores);
+
     return stores;
   } catch (error) {
     // Throw error to whoever called this
-    // console.error('Error fetching categories:', error);
+    // console.error('Error fetching stores:', error);
     throw error;
   }
 }

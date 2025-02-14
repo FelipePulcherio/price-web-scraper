@@ -16,9 +16,16 @@ export default function errorHandler(
   // Handle Zod Errors
   if (err instanceof ZodError) {
     statusCode = 400;
-    messages = [];
+    messages = ['Bad Request'];
     err.errors.map((error: any) => {
-      messages.push(`${error.path.join('.')}: ${error.message}`);
+      if (
+        !(
+          error.message.includes('Required') ||
+          error.message.includes('Unrecognized key')
+        )
+      ) {
+        messages.push(`${error.path.join('.')}: ${error.message}`);
+      }
     });
   }
 

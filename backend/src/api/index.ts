@@ -5,6 +5,7 @@ import category from './routes/category';
 import store from './routes/store';
 import search from './routes/search';
 import auth from './routes/auth';
+import middlewares from './middlewares';
 
 export default () => {
   const app = Router();
@@ -14,6 +15,8 @@ export default () => {
   category(app);
   store(app);
   search(app);
+
+  app.use(middlewares.errorHandler);
 
   return app;
 };

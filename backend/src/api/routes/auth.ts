@@ -70,6 +70,4 @@ export default (app: Router) => {
       }
     }
   );
-
-  app.use(middlewares.errorHandler);
 };

@@ -39,3 +39,21 @@ export function validateSignin(
     next(err);
   }
 }
+
+const searchSchema = z.strictObject({
+  q: z.string().min(1),
+  page: z.string().min(1).optional(),
+});
+
+export function validateSearch(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    searchSchema.parse(req.query);
+    next();
+  } catch (err) {
+    next(err);
+  }
+}

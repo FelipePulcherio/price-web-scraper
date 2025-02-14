@@ -245,7 +245,9 @@ export async function getLowestPricesByItemId(
     const dailyLowestPrices = await prisma.$queryRaw<IShortEvent[]>`
       SELECT MIN(price) as price, DATE(date) as date
       FROM "Events"
-      WHERE "itemId" = ${id} AND date >= ${dateStartFilter}
+      WHERE "itemId" = ${id} 
+        AND date >= ${dateStartFilter}
+        AND price > 0
       GROUP BY DATE(date)
       ORDER BY date ASC;
     `;

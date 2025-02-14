@@ -12,6 +12,7 @@ export default async function verifyPassword(
   try {
     // Find user by email
     const user = await getUserByEmail(email);
+
     if (!user) {
       return next(new Error('Invalid email or password'));
     }

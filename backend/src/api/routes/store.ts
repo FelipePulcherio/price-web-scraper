@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { getAllStores } from '@/database/operations/dbRead';
 import resFormatter from '@/helpers/apiResponseFormatter';
 
@@ -9,9 +9,9 @@ export default (app: Router) => {
 
   // GET /api/v1/stores/
   // Used to find all stores
-  route.get('/', async (req: Request, res: Response) => {
+  route.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log('GET /api/v1/categories/');
+      console.log('GET /api/v1/stores/');
 
       const fetchedStores = await getAllStores();
       // console.log(fetchedStores);
@@ -22,21 +22,8 @@ export default (app: Router) => {
           resFormatter(true, ['Stores fetched successfully'], fetchedStores)
         );
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Uknown error';
-
-      console.error('GET /api/v1/stores/', errorMessage);
-
-      // Not found
-      if (errorMessage.includes('Not found')) {
-        res.status(404).json(resFormatter(false, [errorMessage], null));
-      }
-      // All other errors
-      else {
-        res
-          .status(500)
-          .json(resFormatter(false, ['Internal server error'], null));
-      }
+      // Pass errors to middlewares.errorHandler
+      next(error);
     }
   });
 };

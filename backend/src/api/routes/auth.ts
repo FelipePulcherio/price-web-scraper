@@ -51,8 +51,6 @@ export default (app: Router) => {
           { expiresIn: config.jwt.maxAge }
         );
 
-        console.log('Token is fine!');
-
         // Attach token to cookie
         res.cookie('jwt', token, {
           httpOnly: true,

@@ -310,7 +310,8 @@ export async function getAllItemsForScraper(): Promise<IScraperItem[]> {
   }
 }
 
-export async function getUserByEmail(email: string): Promise<IUser> {
+export async function getUserByEmail(email: string): Promise<IUser | null> {
+  // This is exclusively used by middleware.verifyPassword
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -326,10 +327,6 @@ export async function getUserByEmail(email: string): Promise<IUser> {
         role: true,
       },
     });
-
-    if (!user) {
-      throw new Error('User not found.');
-    }
 
     return user;
   } catch (error) {

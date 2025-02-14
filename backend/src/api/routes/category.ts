@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { getAllCategories } from '@/database/operations/dbRead';
 import resFormatter from '@/helpers/apiResponseFormatter';
 
@@ -9,7 +9,7 @@ export default (app: Router) => {
 
   // GET /api/v1/categories/
   // Used to find all categories
-  route.get('/', async (req: Request, res: Response) => {
+  route.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
       console.log('GET /api/v1/categories/');
 
@@ -26,21 +26,8 @@ export default (app: Router) => {
           )
         );
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Uknown error';
-
-      console.error('GET /api/v1/categories/', errorMessage);
-
-      // Not found
-      if (errorMessage.includes('Not found')) {
-        res.status(404).json(resFormatter(false, [errorMessage], null));
-      }
-      // All other errors
-      else {
-        res
-          .status(500)
-          .json(resFormatter(false, ['Internal server error'], null));
-      }
+      // Pass errors to middlewares.errorHandler
+      next(error);
     }
   });
 };

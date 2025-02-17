@@ -17,28 +17,45 @@ async function populateDB() {
 
   await prisma.events.deleteMany({});
   await prisma.itemStore.deleteMany({});
-  await prisma.itemCategory.deleteMany({});
   await prisma.store.deleteMany({});
+  await prisma.subSubCategory.deleteMany({});
+  await prisma.subCategory.deleteMany({});
   await prisma.category.deleteMany({});
   await prisma.item.deleteMany({});
   await prisma.user.deleteMany({});
 
   console.log('All tables have been cleared.');
 
-  // STEP 2: Find or Create categories
+  // STEP 2: Create categories
   console.log('Creating categories...');
 
-  const createdCategories = await Promise.all(
-    CATEGORIES_LIST.map(async (category) => {
-      return prisma.category.upsert({
-        where: { name: category.name },
-        update: {},
-        create: { name: category.name },
-      });
-    })
-  );
+  for (const cat of CATEGORIES_LIST) {
+    const createdCategories = await prisma.category.create({
+      data: {
+        name: cat.name,
+        hasDepth: cat.hasDepth,
+        subCategories: {
+          connectOrCreate: cat.subCategories.map((subCategory) => ({
+            where: { name: subCategory.name },
+            create: {
+              name: subCategory.name,
+              hasDepth: subCategory.hasDepth,
+              subSubCategories: {
+                connectOrCreate: subCategory.subSubCategories.map(
+                  (subSubCategory) => ({
+                    where: { name: subSubCategory.name },
+                    create: { name: subSubCategory.name },
+                  })
+                ),
+              },
+            },
+          })),
+        },
+      },
+    });
 
-  console.log('Created categories:', createdCategories);
+    console.log('Created category:', createdCategories);
+  }
 
   // STEP 3: Find or Create stores
   console.log('Creating stores...');
@@ -53,7 +70,7 @@ async function populateDB() {
     })
   );
 
-  console.log('Created or Updated stores:', createdCategories);
+  console.log('Created or Updated stores:', createdStores);
 
   // STEP 4: Create Items and connect them to a Category (ItemCategory) and a Store (ItemStore) sequentially
   console.log('Creating items...');
@@ -66,25 +83,33 @@ async function populateDB() {
         brand: item.brand,
         description: item.description,
 
-        // Connect to a ItemCategory or create the category and then connect
+        // Connect to a Category
         categories: {
-          create: item.categories.map((category) => ({
-            category: {
-              connectOrCreate: {
-                where: { name: category.name },
-                create: { name: category.name },
-              },
-            },
+          connect: item.categories.map((category) => ({
+            name: category.name,
           })),
         },
 
-        // Connect to a ItemStore or create the store and then connect. Also add URL
+        // Connect to a SubCategory
+        subCategories: {
+          connect: item.subCategories.map((subCategory) => ({
+            name: subCategory.name,
+          })),
+        },
+
+        // Connect to a subSubCategory
+        subSubCategories: {
+          connect: item.subSubCategories.map((subSubCategory) => ({
+            name: subSubCategory.name,
+          })),
+        },
+
+        // Connect to a ItemStore and add URL
         stores: {
           create: item.stores.map((store) => ({
             store: {
-              connectOrCreate: {
-                where: { name: store.name },
-                create: { name: store.name },
+              connect: {
+                name: store.name,
               },
             },
             url: store.url,

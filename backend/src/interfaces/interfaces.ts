@@ -20,6 +20,20 @@ export interface IShortStore {
 export interface ICategory {
   id?: number;
   name: string;
+  hasDepth: boolean;
+  subCategories: {
+    id?: number;
+    name: string;
+    hasDepth: boolean;
+    subSubCategories: { id?: number; name: string }[];
+  }[];
+}
+
+// Define interface for Category
+export interface IShortCategory {
+  id?: number;
+  name: string;
+  hasDepth?: boolean;
 }
 
 // Define interface for item
@@ -28,7 +42,9 @@ export interface IItem {
   name: string;
   model: string;
   brand: string;
-  categories: ICategory[];
+  categories: IShortCategory[];
+  subCategories: IShortCategory[];
+  subSubCategories: IShortCategory[];
   description: Prisma.JsonObject;
   stores: IStore[];
 }

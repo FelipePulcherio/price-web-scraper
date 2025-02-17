@@ -23,11 +23,17 @@ export async function getItemById(id: number): Promise<IItem> {
         brand: true,
         categories: {
           select: {
-            category: {
-              select: {
-                name: true,
-              },
-            },
+            name: true,
+          },
+        },
+        subCategories: {
+          select: {
+            name: true,
+          },
+        },
+        subSubCategories: {
+          select: {
+            name: true,
           },
         },
         description: true,
@@ -65,7 +71,9 @@ export async function getItemById(id: number): Promise<IItem> {
       name: item.name,
       model: item.model,
       brand: item.brand,
-      categories: item.categories.map((c) => ({ name: c.category.name })),
+      categories: item.categories,
+      subCategories: item.subCategories,
+      subSubCategories: item.subSubCategories,
       description: item.description as Prisma.JsonObject,
       stores: item.stores.map((s) => ({
         name: s.store.name,
@@ -85,7 +93,26 @@ export async function getItemById(id: number): Promise<IItem> {
 export async function getAllCategories(): Promise<ICategory[]> {
   try {
     // Try to find item
-    const categories: ICategory[] = await prisma.category.findMany({});
+    const categories: ICategory[] = await prisma.category.findMany({
+      select: {
+        id: true,
+        name: true,
+        hasDepth: true,
+        subCategories: {
+          select: {
+            id: true,
+            name: true,
+            hasDepth: true,
+            subSubCategories: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
     // If categories was not found
     if (!categories) {
@@ -116,7 +143,7 @@ export async function getItemsByCategoryId(
         isActive: true,
         categories: {
           some: {
-            categoryId,
+            id: categoryId,
           },
         },
       },

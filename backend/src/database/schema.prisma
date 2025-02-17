@@ -8,33 +8,48 @@ datasource db {
 }
 
 model Item {
-  id          Int            @id @default(autoincrement())
-  name        String         @unique
-  model       String
-  brand       String
-  categories  ItemCategory[]
-  description Json           @default("{}")
-  isActive    Boolean        @default(true)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  stores      ItemStore[]
-  searchCount Int            @default(0)
+  id               Int              @id @default(autoincrement())
+  name             String           @unique
+  model            String
+  brand            String
+  categories       Category[]
+  subCategories    SubCategory[]
+  subSubCategories SubSubCategory[]
+  description      Json             @default("{}")
+  isActive         Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  stores           ItemStore[]
+  searchCount      Int              @default(0)
 }
 
 model Category {
-  id   Int            @id @default(autoincrement())
-  name String         @unique
-  item ItemCategory[]
+  id            Int           @id @default(autoincrement())
+  name          String        @unique
+  hasDepth      Boolean
+  subCategories SubCategory[]
+  item          Item[]
 }
 
-model ItemCategory {
-  itemId Int
-  item   Item @relation(fields: [itemId], references: [id])
+model SubCategory {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  hasDepth Boolean
 
-  categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId       Int
+  category         Category         @relation(fields: [categoryId], references: [id])
+  subSubCategories SubSubCategory[]
+  item             Item[]
+}
 
-  @@id([itemId, categoryId])
+model SubSubCategory {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  hasDepth Boolean @default(false)
+
+  subCategoryId Int
+  SubCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
+  item          Item[]
 }
 
 enum Country {

@@ -14,7 +14,9 @@ export const ITEMS_LIST: IItem[] = [
     model: 'QN65Q60DAFXZC',
     brand: 'Samsung',
     description: {},
-    categories: [{ name: 'Electronics' }, { name: 'TV' }],
+    categories: [{ name: 'TV & Home Theatre' }],
+    subCategories: [{ name: 'Televisions' }],
+    subSubCategories: [{ name: '65 - 69 Inch TVs' }, { name: 'QLED TVs' }],
     stores: [
       {
         name: 'BEST BUY CA',
@@ -34,11 +36,61 @@ export const ITEMS_LIST: IItem[] = [
       },
     ],
   },
+  {
+    name: 'TV TEST',
+    model: 'Test',
+    brand: 'Test',
+    description: {},
+    categories: [{ name: 'TV & Home Theatre' }],
+    subCategories: [{ name: 'Televisions' }],
+    subSubCategories: [],
+    stores: [],
+  },
 ];
 
 export const CATEGORIES_LIST: ICategory[] = [
-  { name: 'Electronics' },
-  { name: 'TV' },
+  {
+    name: 'TV & Home Theatre',
+    hasDepth: true,
+    subCategories: [
+      {
+        name: 'Televisions',
+        hasDepth: true,
+        subSubCategories: [
+          { name: '85 Inch and Larger TVs' },
+          { name: '75 - 84 Inch TVs' },
+          { name: '70 - 74 Inch TVs' },
+          { name: '65 - 69 Inch TVs' },
+          { name: '55 - 59 Inch TVs' },
+          { name: '50 - 54 Inch TVs' },
+          { name: '43 - 49 Inch TVs' },
+          { name: '33 - 42 Inch TVs' },
+          { name: '32 Inch and Smaller TVs' },
+          { name: 'Smart TVs' },
+          { name: 'OLED TVs' },
+          { name: 'QLED TVs' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'Computers, Tablets & Accessories',
+    hasDepth: true,
+    subCategories: [
+      {
+        name: 'Laptops & MacBooks',
+        hasDepth: true,
+        subSubCategories: [
+          { name: 'Windows Laptops' },
+          { name: 'Copilot+ PC' },
+          { name: 'MacBooks' },
+          { name: 'Chromebooks' },
+          { name: 'Gaming Laptops' },
+          { name: '2 in 1 Laptops' },
+        ],
+      },
+    ],
+  },
 ];
 
 export const STORES_LIST: IShortStore[] = [

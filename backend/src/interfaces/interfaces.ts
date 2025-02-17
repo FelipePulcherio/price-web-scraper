@@ -1,5 +1,4 @@
 import { Prisma, Role } from '@prisma/client';
-import { Request } from 'express';
 
 // Define interface for Store
 export interface IStore {

@@ -17,6 +17,7 @@ export const ITEMS_LIST: IItem[] = [
     categories: [{ name: 'TV & Home Theatre' }],
     subCategories: [{ name: 'Televisions' }],
     subSubCategories: [{ name: '65 - 69 Inch TVs' }, { name: 'QLED TVs' }],
+    images: [{}],
     stores: [
       {
         name: 'BEST BUY CA',
@@ -44,6 +45,7 @@ export const ITEMS_LIST: IItem[] = [
     categories: [{ name: 'TV & Home Theatre' }],
     subCategories: [{ name: 'Televisions' }],
     subSubCategories: [],
+    images: [{}],
     stores: [],
   },
 ];

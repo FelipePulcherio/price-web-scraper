@@ -63,6 +63,7 @@ export interface IShortItem {
   name: string;
   model: string;
   brand: string;
+  image: IImage;
   price?: number;
 }
 

@@ -10,7 +10,7 @@ import { Status } from '@prisma/client';
 
 export const ITEMS_LIST: IItem[] = [
   {
-    name: 'TV 65" Q60D 2024',
+    name: 'TV 65" Q60D 4K UHD HDR QLED 2024',
     model: 'QN65Q60DAFXZC',
     brand: 'Samsung',
     description: {},
@@ -34,6 +34,38 @@ export const ITEMS_LIST: IItem[] = [
       {
         name: 'AMAZON CA',
         url: 'https://www.amazon.ca/SAMSUNG-65-Inch-Quantum-Q-Symphony-Xcelerator/dp/B0CXR45YRM/?th=1',
+      },
+    ],
+  },
+  {
+    name: 'TV 65" C4 evo 4K UHD HDR OLED 2024',
+    model: 'OLED65C4PUA',
+    brand: 'LG',
+    description: {},
+    categories: [{ name: 'TV & Home Theatre' }],
+    subCategories: [{ name: 'Televisions' }],
+    subSubCategories: [{ name: '65 - 69 Inch TVs' }, { name: 'OLED TVs' }],
+    images: [{}],
+    stores: [
+      {
+        name: 'BEST BUY CA',
+        url: 'https://www.bestbuy.ca/en-ca/product/lg-c4-65-4k-uhd-hdr-oled-evo-webos-smart-tv-oled65c4pua-2024/17921979',
+      },
+      {
+        name: 'WALMART CA',
+        url: 'https://www.walmart.ca/en/ip/LG-65-Inch-C4-OLED-evo-4K-Smart-TV-9-AI-Processor-4K-Alexa-Built-In-144Hz-Refresh-Rate-HDMI-2-1-G-Sync-FreeSync-VRR-WebOS-24-Dolby-Vision-Atmos-OLED6/6000208142842',
+      },
+      {
+        name: 'CANADA COMPUTERS',
+        url: 'https://www.canadacomputers.com/en/46-and-above/256908/lg-oled-evo-c4-65-4k-smart-tv-oled65c4pua-oled65c4puaacc.html',
+      },
+      {
+        name: 'AMAZON CA',
+        url: 'https://www.amazon.ca/LG-65-Inch-OLED-Smart-Built/dp/B0D3WV1CM9/?th=1',
+      },
+      {
+        name: 'NEW EGG CA',
+        url: 'https://www.newegg.ca/lg-c4-65/p/N82E16889482040',
       },
     ],
   },
@@ -120,17 +152,31 @@ export const STORES_LIST: IShortStore[] = [
 
 export const EVENTS_LIST: IEvent[] = [
   {
-    itemName: 'TV 65" Q60D 2024',
+    itemName: 'TV 65" Q60D 4K UHD HDR QLED 2024',
     storeName: 'BEST BUY CA',
-    price: 1099.0,
-    fromJob: 'Scraper',
+    price: 999.99,
+    fromJob: 'Seed',
     status: Status.OK,
   },
   {
-    itemName: 'TV 65" Q60D 2024',
+    itemName: 'TV 65" Q60D 4K UHD HDR QLED 2024',
     storeName: 'WALMART CA',
-    price: 1095.0,
-    fromJob: 'Scraper',
+    price: 998.0,
+    fromJob: 'Seed',
+    status: Status.OK,
+  },
+  {
+    itemName: 'TV 65" C4 evo 4K UHD HDR OLED 2024',
+    storeName: 'BEST BUY CA',
+    price: 2299.99,
+    fromJob: 'Seed',
+    status: Status.OK,
+  },
+  {
+    itemName: 'TV 65" C4 evo 4K UHD HDR OLED 2024',
+    storeName: 'WALMART CA',
+    price: 2397.99,
+    fromJob: 'Seed',
     status: Status.OK,
   },
 ];

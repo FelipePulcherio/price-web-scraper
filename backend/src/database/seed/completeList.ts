@@ -96,11 +96,26 @@ export const CATEGORIES_LIST: ICategory[] = [
 ];
 
 export const STORES_LIST: IShortStore[] = [
-  { name: 'AMAZON CA', logo: '' },
-  { name: 'BEST BUY CA', logo: '' },
-  { name: 'CANADA COMPUTERS', logo: '' },
-  { name: 'NEW EGG CA', logo: '' },
-  { name: 'WALMART CA', logo: '' },
+  {
+    name: 'AMAZON CA',
+    logo: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/b_rgb:0046BF,c_pad,h_100,r_max,w_100/v1/Stores/Amazon_Logo_1?_a=BAMCkGRi0',
+  },
+  {
+    name: 'BEST BUY CA',
+    logo: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/b_rgb:0046BF,c_pad,h_100,r_max,w_100/v1/Stores/Bestbuy_Logo_1?_a=BAMCkGRi0',
+  },
+  {
+    name: 'CANADA COMPUTERS',
+    logo: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/b_rgb:0046BF,c_pad,h_100,r_max,w_100/v1/Stores/CanadaComputers_Logo_1?_a=BAMCkGRi0',
+  },
+  {
+    name: 'NEW EGG CA',
+    logo: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/b_rgb:0046BF,c_pad,h_100,r_max,w_100/v1/Stores/Newegg_Logo_1?_a=BAMCkGRi0',
+  },
+  {
+    name: 'WALMART CA',
+    logo: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/b_rgb:0046BF,c_pad,h_100,r_max,w_100/v1/Stores/Walmart_Logo_1?_a=BAMCkGRi0',
+  },
 ];
 
 export const EVENTS_LIST: IEvent[] = [

@@ -70,7 +70,7 @@ async function populateDB() {
       return prisma.store.upsert({
         where: { name: store.name },
         update: {},
-        create: { name: store.name },
+        create: { name: store.name, logo: store.logo },
       });
     })
   );
@@ -229,6 +229,11 @@ async function populateCloudinary() {
 
   // Loop all images
   for (const fileName of fileNames) {
+    if (fileName.includes('Logo')) {
+      console.warn(`Skipping invalid filename: ${fileName}`);
+      continue;
+    }
+
     let imageData = {
       model: '',
       brand: '',

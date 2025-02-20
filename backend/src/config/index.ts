@@ -37,6 +37,13 @@ export default {
     dbCollection: getEnvVariable('AGENDA_DB_COLLECTION'),
   },
 
+  // Cloudinary
+  cloudinary: {
+    cloudName: getEnvVariable('CLOUDINARY_NAME'),
+    key: getEnvVariable('CLOUDINARY_KEY'),
+    secret: getEnvVariable('CLOUDINARY_SECRET'),
+  },
+
   // JWT
   jwt: {
     secret: getEnvVariable('JWT_SECRET'),

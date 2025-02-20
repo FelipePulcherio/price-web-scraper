@@ -15,12 +15,22 @@ model Item {
   categories       Category[]
   subCategories    SubCategory[]
   subSubCategories SubSubCategory[]
+  images           Image[]
   description      Json             @default("{}")
   isActive         Boolean          @default(true)
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   stores           ItemStore[]
   searchCount      Int              @default(0)
+}
+
+model Image {
+  id           Int    @id @default(autoincrement())
+  name         String @unique
+  cloudinaryId String @default("")
+  url          String @default("")
+  itemId       Int?
+  Item         Item?  @relation(fields: [itemId], references: [id])
 }
 
 model Category {

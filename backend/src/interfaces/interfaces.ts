@@ -35,6 +35,14 @@ export interface IShortCategory {
   hasDepth?: boolean;
 }
 
+// Define interface for Image
+export interface IImage {
+  id?: number;
+  name?: string;
+  cloudinaryId?: string;
+  url?: string;
+}
+
 // Define interface for item
 export interface IItem {
   id?: number;
@@ -44,6 +52,7 @@ export interface IItem {
   categories: IShortCategory[];
   subCategories: IShortCategory[];
   subSubCategories: IShortCategory[];
+  images: IImage[];
   description: Prisma.JsonObject;
   stores: IStore[];
 }

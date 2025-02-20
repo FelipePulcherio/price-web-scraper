@@ -7,7 +7,6 @@ import {
   IShortEvent,
   IScraperItem,
   IUser,
-  IShortUser,
 } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
 
@@ -34,6 +33,11 @@ export async function getItemById(id: number): Promise<IItem> {
         subSubCategories: {
           select: {
             name: true,
+          },
+        },
+        images: {
+          select: {
+            url: true,
           },
         },
         description: true,
@@ -74,6 +78,7 @@ export async function getItemById(id: number): Promise<IItem> {
       categories: item.categories,
       subCategories: item.subCategories,
       subSubCategories: item.subSubCategories,
+      images: item.images,
       description: item.description as Prisma.JsonObject,
       stores: item.stores.map((s) => ({
         name: s.store.name,
@@ -136,7 +141,7 @@ export async function getItemsByCategoryId(
 ): Promise<IShortItem[]> {
   try {
     // Try to find item
-    const items: IShortItem[] = await prisma.item.findMany({
+    const items = await prisma.item.findMany({
       skip: (page - 1) * pageSize,
       take: pageSize,
       where: {
@@ -152,6 +157,20 @@ export async function getItemsByCategoryId(
         name: true,
         model: true,
         brand: true,
+        images: {
+          where: {
+            name: {
+              contains: '1',
+            },
+          },
+          orderBy: {
+            name: 'asc',
+          },
+          take: 1,
+          select: {
+            url: true,
+          },
+        },
       },
     });
 
@@ -162,7 +181,16 @@ export async function getItemsByCategoryId(
       throw new Error('Not found');
     }
 
-    return items;
+    // Transform data
+    const result: IShortItem[] = items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      model: item.model,
+      brand: item.brand,
+      image: item.images.length > 0 ? item.images[0] : { url: '' },
+    }));
+
+    return result;
   } catch (error) {
     // Throw error to whoever called this
     // console.error(`Error fetching items:`, error);
@@ -219,6 +247,20 @@ export async function searchItemByString(
         name: true,
         model: true,
         brand: true,
+        images: {
+          where: {
+            name: {
+              contains: '1',
+            },
+          },
+          orderBy: {
+            name: 'asc',
+          },
+          take: 1,
+          select: {
+            url: true,
+          },
+        },
         stores: {
           where: {
             events: { some: {} },
@@ -244,11 +286,13 @@ export async function searchItemByString(
     // console.log(items);
     // console.log(items[0].stores);
 
+    // Transform data
     const result: IShortItem[] = items.map((item) => ({
       id: item.id,
       name: item.name,
       model: item.model,
       brand: item.brand,
+      image: item.images.length > 0 ? item.images[0] : { url: '' },
       price: item.stores[0].events[0].price,
     }));
 

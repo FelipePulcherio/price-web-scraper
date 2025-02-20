@@ -20,5 +20,8 @@ dist/
 # Environment variables
 .env*
 
+# Seeding
+backend/src/database/seed/images
+
 # Backup files
 *.backup.ts

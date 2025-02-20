@@ -1,4 +1,7 @@
 import { PrismaClient } from '@prisma/client';
+import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
+import path from 'path';
 import {
   ITEMS_LIST,
   CATEGORIES_LIST,
@@ -6,6 +9,7 @@ import {
   EVENTS_LIST,
   USERS_LIST,
 } from './completeList';
+import config from '../../config';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -21,6 +25,7 @@ async function populateDB() {
   await prisma.subSubCategory.deleteMany({});
   await prisma.subCategory.deleteMany({});
   await prisma.category.deleteMany({});
+  await prisma.image.deleteMany({});
   await prisma.item.deleteMany({});
   await prisma.user.deleteMany({});
 
@@ -210,6 +215,132 @@ async function populateDB() {
   console.log('Created user:', createdUser);
 }
 
-populateDB()
+async function populateCloudinary() {
+  cloudinary.config({
+    cloud_name: config.cloudinary.cloudName,
+    api_key: config.cloudinary.key,
+    api_secret: config.cloudinary.secret,
+  });
+
+  // STEP 7: Upload new images to Cloudinary
+  // Get all images
+  const imageDir = path.join(__dirname, 'images');
+  const fileNames = fs.readdirSync(imageDir);
+
+  // Loop all images
+  for (const fileName of fileNames) {
+    let imageData = {
+      model: '',
+      brand: '',
+      number: '',
+    };
+
+    // Get info from fileName
+    const parts = fileName.split('_');
+    imageData = {
+      brand: parts[0],
+      model: parts[1],
+      number: parts[2].split('.')[0],
+    };
+
+    if (parts.length != 3) {
+      throw new Error(`Invalid filename format: ${fileName}`);
+    }
+
+    const publicId = `${imageData.brand}/${imageData.model}/${imageData.brand}_${imageData.model}_${imageData.number}`;
+
+    // Check if image is already in Cloudinary
+    let image;
+    try {
+      image = await cloudinary.api.resource(`Items/${publicId}`);
+    } catch (error: any) {
+      if (error.error.message.includes('not found')) {
+        console.error('Image not found on Cloudinary');
+      }
+    }
+
+    // console.log(image);
+
+    // If image was not found we try to upload
+    if (!image) {
+      console.log('Uploading image to Cloudinary...');
+      const result = await cloudinary.uploader.upload(
+        path.join(imageDir, fileName),
+        {
+          public_id: publicId,
+          folder: 'Items',
+          use_filename: true,
+          unique_filename: false,
+          overwrite: false,
+        }
+      );
+
+      // console.log(result);
+    } else {
+      console.log('Image found in Cloudinary...');
+    }
+
+    // Generate url
+    const url = cloudinary.url(`Items/${publicId}`, {
+      transformation: [
+        {
+          quality: 'auto',
+          fetch_format: 'auto',
+        },
+        {
+          crop: 'fill',
+          gravity: 'auto',
+        },
+      ],
+    });
+
+    // Save publicId in DB as cloudinaryId
+    // Find the Item and then update
+    console.log('Updating Item in DB...');
+
+    const item = await prisma.item.findFirst({
+      where: {
+        AND: [
+          {
+            model: {
+              equals: imageData.model,
+            },
+          },
+          {
+            brand: {
+              equals: imageData.brand,
+            },
+          },
+        ],
+      },
+    });
+
+    await prisma.item.update({
+      where: {
+        id: item?.id,
+      },
+      data: {
+        images: {
+          connectOrCreate: {
+            where: {
+              name: `${imageData.brand}_${imageData.model}_${imageData.number}`,
+            },
+            create: {
+              name: `${imageData.brand}_${imageData.model}_${imageData.number}`,
+              cloudinaryId: publicId,
+              url: url,
+            },
+          },
+        },
+      },
+    });
+
+    console.log('Image updated in Item id:', item?.id);
+  }
+}
+
+populateDB().catch((e) => console.error(e));
+
+populateCloudinary()
   .catch((e) => console.error(e))
   .finally(() => prisma.$disconnect());

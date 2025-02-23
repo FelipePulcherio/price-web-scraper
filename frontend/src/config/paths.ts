@@ -1,7 +1,20 @@
 export const paths = {
-  home: {
+  root: {
     path: '/',
     getHref: () => '/',
+  },
+  allCategories: {
+    path: '/all-categories',
+    getHref: () => '/all-categories',
+  },
+  search: {
+    path: '/search',
+    getHref: (query: string) => `/search?q=${encodeURIComponent(query)}`,
+  },
+  item: {
+    path: '/item/:brand/:model',
+    getHref: (brand: string, model: string) =>
+      `/item/${encodeURIComponent(brand)}/${encodeURIComponent(model)}`,
   },
 
   auth: {
@@ -18,22 +31,6 @@ export const paths = {
         `/auth/login${
           redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''
         }`,
-    },
-  },
-
-  app: {
-    allCategories: {
-      path: '/all-categories',
-      getHref: () => '/all-categories',
-    },
-    search: {
-      path: '/search',
-      getHref: (query: string) => `/search?q=${encodeURIComponent(query)}`,
-    },
-    item: {
-      path: '/item/:brand/:model',
-      getHref: (brand: string, model: string) =>
-        `/item/${encodeURIComponent(brand)}/${encodeURIComponent(model)}`,
     },
   },
 } as const;

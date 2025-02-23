@@ -1,37 +1,49 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import { paths } from '@/config/paths';
+
+import {
+  default as AppRoot,
+  ErrorBoundary as AppRootErrorBoundary,
+} from './routes/root';
+
+import {
+  default as AuthRoot,
+  ErrorBoundary as AuthRootErrorBoundary,
+} from './routes/auth/root';
+
 import LandingRoute from './routes/landing';
-import AllCategoriesRoute from './routes/app/allCategories';
-import SearchRoute from './routes/app/search';
-import ItemRoute from './routes/app/item';
+import AllCategoriesRoute from './routes/allCategories';
+import SearchRoute from './routes/search';
+import ItemRoute from './routes/item';
 import LoginRoute from './routes/auth/login';
 import RegisterRoute from './routes/auth/register';
 
 export const createAppRouter = () =>
   createBrowserRouter([
     {
-      path: paths.home.path,
-      element: <LandingRoute />,
-    },
-    {
-      path: paths.app.allCategories.path,
-      element: <AllCategoriesRoute />,
-    },
-    {
-      path: paths.app.search.path,
-      element: <SearchRoute />,
-    },
-    {
-      path: paths.app.item.path,
-      element: <ItemRoute />,
+      path: paths.root.path,
+      element: <AppRoot />,
+      ErrorBoundary: AppRootErrorBoundary,
+      children: [
+        { path: paths.root.path, element: <LandingRoute /> },
+        { path: paths.allCategories.path, element: <AllCategoriesRoute /> },
+        { path: paths.search.path, element: <SearchRoute /> },
+        { path: paths.item.path, element: <ItemRoute /> },
+      ],
     },
     {
       path: paths.auth.login.path,
-      element: <LoginRoute />,
+      element: <AuthRoot />,
+      ErrorBoundary: AuthRootErrorBoundary,
+      children: [{ path: paths.auth.login.path, element: <LoginRoute /> }],
     },
     {
       path: paths.auth.register.path,
-      element: <RegisterRoute />,
+      element: <AuthRoot />,
+      ErrorBoundary: AuthRootErrorBoundary,
+      children: [
+        { path: paths.auth.register.path, element: <RegisterRoute /> },
+      ],
     },
   ]);
 

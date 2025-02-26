@@ -4,9 +4,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: GeistSans;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+  font-variation-settings: 'wght' 100;
+  src: url('../src/assets/fonts/Geist[wght].woff2');
+}
+
 body {
   margin: 0;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background: #fafafa;
+  font-family: GeistSans, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -20,4 +30,8 @@ body {
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+}
+
+@theme {
+  --font-geist: GeistSans, 'sans-serif';
 }

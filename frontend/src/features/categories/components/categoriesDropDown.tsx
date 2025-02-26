@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, CircleChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -127,7 +127,7 @@ export const CategoriesDropDown = () => {
               {subCategory.name}
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
-              <DropdownMenuSubContent>
+              <DropdownMenuSubContent alignOffset={-5} sideOffset={3.5}>
                 {renderSubSubCategories(subCategory.subSubCategories)}
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
@@ -152,7 +152,7 @@ export const CategoriesDropDown = () => {
               {category.name}
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
-              <DropdownMenuSubContent>
+              <DropdownMenuSubContent alignOffset={-5} sideOffset={3.5}>
                 {renderSubCategories(category.subCategories)}
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
@@ -190,7 +190,22 @@ export const CategoriesDropDown = () => {
           </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-[30vw] max-w-xs'>
+      <DropdownMenuContent
+        className='w-[30vw] max-w-xs'
+        align='start'
+        alignOffset={-8}
+        sideOffset={10}
+      >
+        <svg
+          width='36'
+          height='36'
+          viewBox='0 0 15 15'
+          fill='#FFFFFF'
+          xmlns='http://www.w3.org/2000/svg'
+          className='fixed top-[-20px] left-[40px]'
+        >
+          <path d='M4 9H11L7.5 4.5L4 9Z'></path>
+        </svg>
         {renderCategories(CATEGORIES_LIST)}
       </DropdownMenuContent>
     </DropdownMenu>

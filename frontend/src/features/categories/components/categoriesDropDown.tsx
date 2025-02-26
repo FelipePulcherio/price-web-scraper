@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, CircleChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,

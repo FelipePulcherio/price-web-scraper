@@ -179,8 +179,8 @@ export const CategoriesDropDown = () => {
           variant='ghost'
           size='defaultCustom'
         >
-          <div className='text-zinc-50 hidden md:flex md:justify-center md:items-center md:gap-2'>
-            <span>Categories</span>
+          <div className='text-zinc-50 hidden sm:flex sm:justify-center sm:items-center sm:gap-2'>
+            <div>Categories</div>
             <ChevronDown
               className={`transition duration-300 ${
                 isOpen ? 'rotate-180' : ''
@@ -194,7 +194,7 @@ export const CategoriesDropDown = () => {
         className='w-[30vw] max-w-xs'
         align='start'
         alignOffset={-8}
-        sideOffset={10}
+        sideOffset={8}
       >
         <svg
           width='36'

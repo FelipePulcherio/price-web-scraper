@@ -51,7 +51,7 @@ export interface IItem {
   subCategories: IShortCategory[];
   subSubCategories: IShortCategory[];
   images: IImage[];
-  description: JS;
+  description: JSON;
   stores: IStore[];
 }
 

@@ -1,64 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { SearchInput } from './searchInput';
 import { SearchResults } from './searchResults';
+import { quickSearch } from '../api/getItems';
 
 import { IShortItem } from '@/types/interfaces';
-
-const ITEMS_LIST: IShortItem[] = [
-  {
-    name: 'TV 65" Q60D 4K UHD HDR QLED 2024',
-    model: 'QN65Q60DAFXZC',
-    brand: 'Samsung',
-    image: {
-      name: 'Samsung Q60D TV Image',
-      url: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/w_150,h_150/v1/Items/Samsung/QN65Q60DAFXZC/Samsung_QN65Q60DAFXZC_1',
-    },
-    price: 899.99,
-  },
-  {
-    name: 'TV 75" Q60D 4K UHD HDR QLED 2024',
-    model: 'QN75Q60DAFXZC',
-    brand: 'Samsung',
-    image: {
-      name: 'Samsung Q60D TV Image',
-      url: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/w_150,h_150/v1/Items/Samsung/QN65Q60DAFXZC/Samsung_QN65Q60DAFXZC_1',
-    },
-    price: 1399.99,
-  },
-  {
-    name: 'TV 85" Q60D 4K UHD HDR QLED 2024',
-    model: 'QN85Q60DAFXZC',
-    brand: 'Samsung',
-    image: {
-      name: 'Samsung Q60D TV Image',
-      url: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/w_150,h_150/v1/Items/Samsung/QN65Q60DAFXZC/Samsung_QN65Q60DAFXZC_1',
-    },
-    price: 1999.99,
-  },
-  {
-    name: 'TV 55" Q60D 4K UHD HDR QLED 2024',
-    model: 'QN55Q60DAFXZC',
-    brand: 'Samsung',
-    image: {
-      name: 'Samsung Q60D TV Image',
-      url: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/w_150,h_150/v1/Items/Samsung/QN65Q60DAFXZC/Samsung_QN65Q60DAFXZC_1',
-    },
-    price: 749.99,
-  },
-  {
-    name: 'TV 50" Q60D 4K UHD HDR QLED 2024',
-    model: 'QN50Q60DAFXZC',
-    brand: 'Samsung',
-    image: {
-      name: 'Samsung Q60D TV Image',
-      url: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/w_150,h_150/v1/Items/Samsung/QN65Q60DAFXZC/Samsung_QN65Q60DAFXZC_1',
-    },
-    price: 699.99,
-  },
-];
+import { ZodError } from 'zod';
 
 export const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [results, setResults] = useState<IShortItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -97,6 +47,28 @@ export const Search = () => {
     };
   }, [isOpen]);
 
+  // Fetch results from API
+  useEffect(() => {
+    if (searchQuery.length === 0) {
+      setResults([]);
+      return;
+    }
+
+    const fetchResults = async () => {
+      try {
+        const response = await quickSearch(searchQuery);
+        setResults(response.data as IShortItem[]);
+      } catch (error) {
+        if (!(error instanceof ZodError)) {
+          console.log(error);
+        }
+      }
+    };
+
+    const delay = setTimeout(fetchResults, 300); // Delay API call
+    return () => clearTimeout(delay);
+  }, [searchQuery]);
+
   const handleSearch = (value: string) => {
     setSearchQuery(value);
     if (value.length > 0) {
@@ -111,7 +83,7 @@ export const Search = () => {
       <SearchInput searchQuery={searchQuery} onSearch={handleSearch} />
       <SearchResults
         searchQuery={searchQuery}
-        results={ITEMS_LIST}
+        results={results}
         isOpen={isOpen}
         shouldRender={shouldRender}
       />

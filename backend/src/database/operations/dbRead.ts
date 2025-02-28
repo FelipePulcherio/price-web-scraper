@@ -267,6 +267,7 @@ export async function searchItemByString(
           },
           select: {
             events: {
+              where: { status: 'OK' },
               orderBy: { price: 'asc' },
               take: 1,
               select: {

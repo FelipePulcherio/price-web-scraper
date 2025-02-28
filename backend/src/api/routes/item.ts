@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
   getItemById,
+  getItemDeals,
   getItemsByCategoryId,
   getLowestPricesByItemId,
 } from '@/database/operations/dbRead';
@@ -11,24 +12,26 @@ const route = Router();
 export default (app: Router) => {
   app.use('/items', route);
 
-  // GET /api/v1/items/:id
-  // Used to find a specific item
-  route.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const itemId = parseInt(req.params.id, 10);
-      console.log(`GET /api/v1/items/:id Request param: ${itemId}`);
+  // GET /api/v1/items/mainDeals
+  // Used to get main deals
+  route.get(
+    '/mainDeals',
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        console.log(`GET /api/v1/items/mainDeals`);
 
-      const fetchedItem = await getItemById(itemId);
-      // console.log(fetchedItem);
+        const fetchedItem = await getItemDeals(5);
+        // console.log(fetchedItem);
 
-      res
-        .status(200)
-        .json(resFormatter(true, ['Item fetched successfully'], fetchedItem));
-    } catch (error) {
-      // Pass errors to middlewares.errorHandler
-      next(error);
+        res
+          .status(200)
+          .json(resFormatter(true, ['Item fetched successfully'], fetchedItem));
+      } catch (error) {
+        // Pass errors to middlewares.errorHandler
+        next(error);
+      }
     }
-  });
+  );
 
   // GET /api/v1/items/category/:categoryId?page=
   // Used to find all items that are related to a categoryId
@@ -90,4 +93,23 @@ export default (app: Router) => {
       }
     }
   );
+
+  // GET /api/v1/items/:id
+  // Used to find a specific item
+  route.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const itemId = parseInt(req.params.id, 10);
+      console.log(`GET /api/v1/items/:id Request param: ${itemId}`);
+
+      const fetchedItem = await getItemById(itemId);
+      // console.log(fetchedItem);
+
+      res
+        .status(200)
+        .json(resFormatter(true, ['Item fetched successfully'], fetchedItem));
+    } catch (error) {
+      // Pass errors to middlewares.errorHandler
+      next(error);
+    }
+  });
 };

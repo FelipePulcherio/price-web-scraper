@@ -406,3 +406,90 @@ export async function getUserByEmail(email: string): Promise<IUser | null> {
     throw error;
   }
 }
+
+export async function getItemDeals(qty: number): Promise<IShortItem[]> {
+  try {
+    // Try to get items
+    const item = await prisma.item.findMany({
+      take: qty,
+      where: {
+        isActive: true,
+        stores: {
+          some: {
+            events: {
+              some: {},
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        model: true,
+        brand: true,
+        images: {
+          where: {
+            name: {
+              contains: '1',
+            },
+          },
+          orderBy: {
+            name: 'asc',
+          },
+          take: 1,
+          select: {
+            url: true,
+          },
+        },
+        stores: {
+          select: {
+            store: {
+              select: {
+                name: true,
+              },
+            },
+            events: {
+              orderBy: { price: 'asc' },
+              take: 1,
+              select: {
+                price: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // console.log(item);
+    // console.log(item[1].stores);
+    // console.log(item[1].stores.map((store) => console.log(store.events)));
+
+    // If no item was retrieved
+    if (!item) {
+      throw new Error('Not found');
+    }
+
+    // Transform data
+    const result: IShortItem[] = item.map((item) => {
+      const allPrices = item.stores.flatMap((store) => store.events[0].price);
+      const lowestPrice = Math.min(...allPrices.filter((n) => n > 0));
+
+      return {
+        id: item.id,
+        name: item.name,
+        model: item.model,
+        brand: item.brand,
+        image: { url: item.images[0].url },
+        price: lowestPrice,
+        storesQty: item.stores.filter((store) => store.events[0].price > 0)
+          .length,
+      };
+    });
+
+    return result;
+  } catch (error) {
+    // Throw error to whoever called this
+    // console.error(`Error fetching items`, error);
+    throw error;
+  }
+}

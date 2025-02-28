@@ -63,6 +63,7 @@ export interface IShortItem {
   brand: string;
   image: IImage;
   price?: number;
+  storesQty?: number;
 }
 
 // Define interface for scraper item

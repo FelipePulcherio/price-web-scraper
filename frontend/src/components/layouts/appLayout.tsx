@@ -17,7 +17,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <header className='bg-gradient-to-t from-zinc-700 to-zinc-950 flex justify-center items-center'>
-        <div className='wrapper w-full max-w-7xl p-2 gap-y-2 flex flex-row flex-wrap sm:gap-x-4 md:px-4'>
+        <div className='wrapper w-full max-w-5xl p-2 gap-y-2 flex flex-row flex-wrap sm:gap-x-4 md:px-4'>
           <div className='order-1 w-1/2 sm:w-fit h-9 flex justify-start items-center text-zinc-50 md:flex-1'>
             Find a Deal
           </div>
@@ -104,16 +104,18 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </Button>
           </div>
-          <div className='SEARCH order-4 min-w-[100px] flex-1 sm:order-2 sm:-mr-2 md:mr-0 md:min-w-md md:max-w-lg lg:min-w-xl xl:min-w-2xl'>
+          <div className='order-4 min-w-[100px] flex-1 sm:order-2 sm:-mr-2 md:mr-0 md:min-w-md md:max-w-lg lg:min-w-xl xl:min-w-2xl'>
             <Search />
           </div>
         </div>
       </header>
 
-      <main>{children}</main>
+      <main className='wrapper w-full max-w-5xl m-auto px-2 py-4 gap-y-5 flex flex-col justify-center items-center sm:gap-y-4 md:p-4'>
+        {children}
+      </main>
 
       <footer className='bg-gradient-to-t from-zinc-950 to-zinc-700 flex flex-col justify-center items-center'>
-        <div className='w-full p-2 text-center text-zinc-200'>
+        <div className='w-full max-w-5xl p-2 text-sm text-center text-zinc-200'>
           Compare prices and products from diverse retailers.
         </div>
         <div className='w-full mb-2 border-b border-zinc-50'></div>

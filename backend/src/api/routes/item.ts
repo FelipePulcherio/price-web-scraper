@@ -20,8 +20,20 @@ export default (app: Router) => {
       try {
         console.log(`GET /api/v1/items/mainDeals`);
 
-        const fetchedItem = await getItemDeals(5);
+        let fetchedItem = await getItemDeals(5);
         // console.log(fetchedItem);
+
+        // Transform urls
+        fetchedItem = fetchedItem.map((item) => ({
+          ...item,
+          image: {
+            ...item.image,
+            url: item.image.url?.replace(
+              'f_auto,q_auto/',
+              'f_auto,q_auto/w_250,h_250/'
+            ),
+          },
+        }));
 
         res
           .status(200)

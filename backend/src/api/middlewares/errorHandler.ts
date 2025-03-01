@@ -49,6 +49,11 @@ export default function errorHandler(
       statusCode = 404;
       messages = [err.message];
     }
+
+    if (err.message.includes('Unauthorized')) {
+      statusCode = 401;
+      messages = [err.message];
+    }
   }
 
   res.status(statusCode).json(resFormatter(false, messages, null));

@@ -15,6 +15,7 @@ export default () => {
   category(app);
   store(app);
   search(app);
+  user(app);
 
   app.use(middlewares.errorHandler);
 

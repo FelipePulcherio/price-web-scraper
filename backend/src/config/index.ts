@@ -47,6 +47,7 @@ export default {
   // JWT
   jwt: {
     secret: getEnvVariable('JWT_SECRET'),
+    algorithm: getEnvVariable('JWT_ALGO'),
     maxAge: parseInt(getEnvVariable('JWT_MAX_AGE'), 10),
   },
 

@@ -1,6 +1,8 @@
 import errorHandler from './errorHandler';
 import { validateSignup, validateSignin, validateSearch } from './validation';
 import verifyPassword from './verifyPassword';
+import isAuth from './isAuth';
+import attachCurrentUser from './attachCurrentUser';
 
 export default {
   errorHandler,
@@ -8,4 +10,6 @@ export default {
   validateSignin,
   validateSearch,
   verifyPassword,
+  isAuth,
+  attachCurrentUser,
 };

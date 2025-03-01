@@ -81,7 +81,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
                 strokeWidth={1.75}
                 absoluteStrokeWidth={true}
               />
-              <div className='hidden cursor-pointer text-zinc-50 sm:block hover:bg-zinc-500 hover:text-zinc-50'>
+              <div className='hidden cursor-pointer text-zinc-50 sm:block'>
                 Account
               </div>
             </Button>

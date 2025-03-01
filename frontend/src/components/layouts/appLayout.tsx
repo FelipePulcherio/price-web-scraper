@@ -8,6 +8,7 @@ import {
   DropdownMenuCustomRadioItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import { Toaster } from '@/components/ui/sonner';
 
 import { Categories } from '@/features/categories/components/categories';
 import { Search } from '@/features/search/components/search';
@@ -176,6 +177,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
           </svg>
         </div>
       </footer>
+      <Toaster />
     </div>
   );
 };

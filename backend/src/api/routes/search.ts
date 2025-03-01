@@ -19,8 +19,20 @@ export default (app: Router) => {
 
         console.log(`GET /api/v1/search/quick?q=${search}`);
 
-        const fetchedItems = await searchItemByString(search, 5, 1);
+        let fetchedItems = await searchItemByString(search, 5, 1);
         // console.log(fetchedItems);
+
+        // Transform urls
+        fetchedItems = fetchedItems.map((item) => ({
+          ...item,
+          image: {
+            ...item.image,
+            url: item.image.url?.replace(
+              'f_auto,q_auto/',
+              'f_auto,q_auto/w_150,h_150/'
+            ),
+          },
+        }));
 
         res
           .status(200)

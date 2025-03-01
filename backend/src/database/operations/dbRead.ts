@@ -407,6 +407,31 @@ export async function getUserByEmail(email: string): Promise<IUser | null> {
   }
 }
 
+export async function getUserById(id: string): Promise<IUser | null> {
+  // This is exclusively used by middleware.attachCurrentUser
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        password: true,
+        role: true,
+      },
+    });
+
+    return user;
+  } catch (error) {
+    // Throw error to who called this
+    throw error;
+  }
+}
+
 export async function getItemDeals(qty: number): Promise<IShortItem[]> {
   try {
     // Try to get items

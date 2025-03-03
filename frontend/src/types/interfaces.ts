@@ -127,6 +127,16 @@ export interface IUser {
   role?: Role;
 }
 
+// Define interface for Auth User
+export interface IAuthUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: Role;
+}
+
 // Define interface for short user (API)
 export interface IShortUser {
   email: string;

@@ -8,10 +8,24 @@ const attachCurrentUser = async (
   next: NextFunction
 ) => {
   try {
+    let currentUser: IAuthUser;
+
+    // User without a token
     if (!req.token) {
-      return next(new Error('Unauthorized'));
+      currentUser = {
+        id: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        role: 'REGULAR_USER',
+      };
+
+      req.currentUser = currentUser;
+      return next();
     }
 
+    // User with a token
     const userRecord: IUser | null = await getUserById(req.token.id);
 
     if (!userRecord) {
@@ -19,7 +33,7 @@ const attachCurrentUser = async (
     }
 
     // Transform data
-    const currentUser: IAuthUser = {
+    currentUser = {
       id: userRecord.id || '',
       firstName: userRecord.firstName,
       lastName: userRecord.lastName,
@@ -31,8 +45,8 @@ const attachCurrentUser = async (
     req.currentUser = currentUser;
 
     return next();
-  } catch (e) {
-    return next(e);
+  } catch (error) {
+    return next(error);
   }
 };
 

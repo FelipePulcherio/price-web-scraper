@@ -143,10 +143,3 @@ export interface IAPI<T = unknown> {
   messages: string[];
   data: T;
 }
-
-// Define extended version of Express Request to add IUser
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: IUser;
-  }
-}

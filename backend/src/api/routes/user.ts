@@ -14,19 +14,28 @@ export default (app: Router) => {
     middlewares.isAuth,
     middlewares.attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
-      console.log('GET /api/v1/users/me Request Body:');
+      console.log('GET /api/v1/users/me');
       // console.log(req.body);
 
-      res
-        .status(200)
-        .json(
-          resFormatter(true, ['Stores fetched successfully'], {
+      // New user without a token
+      // Won't crash the app but the result is null
+      if (!req.token) {
+        res.status(200).json(
+          resFormatter(true, ['User not authenticated'], {
             user: req.currentUser,
           })
         );
+      } else {
+        res.status(200).json(
+          resFormatter(true, ['User authenticated'], {
+            user: req.currentUser,
+          })
+        );
+      }
 
       try {
       } catch (error) {
+        // console.error('Error fetching user:', error);
         next(error); // Pass errors to middleware
       }
     }

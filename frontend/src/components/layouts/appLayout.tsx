@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Link, useSearchParams } from 'react-router';
+import { paths } from '@/config/paths';
 import { Globe, Bell, CircleUserRound, Zap } from 'lucide-react';
 import { Button } from '../ui/button';
 import {
@@ -8,13 +10,15 @@ import {
   DropdownMenuCustomRadioItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { Toaster } from '@/components/ui/sonner';
 
 import { Categories } from '@/features/categories/components/categories';
 import { Search } from '@/features/search/components/search';
 
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const [language, setLanguage] = React.useState('english');
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo');
+
   return (
     <div>
       <header className='bg-gradient-to-t from-zinc-700 to-zinc-950 flex justify-center items-center'>
@@ -85,21 +89,23 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
               />
               <span className='sr-only'>Set alerts</span>
             </Button>
-            <Button
-              className='bg-cyan-700 cursor-pointer hover:bg-cyan-600'
-              variant='ghost'
-              size='defaultCustom'
-            >
-              <CircleUserRound
-                className='size-5'
-                color='#FAFAFA'
-                strokeWidth={1.75}
-                absoluteStrokeWidth={true}
-              />
-              <div className='hidden cursor-pointer text-zinc-50 sm:block'>
-                Account
-              </div>
-            </Button>
+            <Link to={paths.auth.login.getHref(redirectTo)}>
+              <Button
+                className='bg-cyan-700 cursor-pointer hover:bg-cyan-600'
+                variant='ghost'
+                size='defaultCustom'
+              >
+                <CircleUserRound
+                  className='size-5'
+                  color='#FAFAFA'
+                  strokeWidth={1.75}
+                  absoluteStrokeWidth={true}
+                />
+                <div className='hidden cursor-pointer text-zinc-50 sm:block'>
+                  Account
+                </div>
+              </Button>
+            </Link>
           </div>
           <div className='order-3 w-fit flex justify-start items-center sm:order-4 sm:w-full'>
             <Categories />
@@ -177,7 +183,6 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
           </svg>
         </div>
       </footer>
-      <Toaster />
     </div>
   );
 };

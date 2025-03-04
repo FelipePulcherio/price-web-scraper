@@ -3,6 +3,7 @@ import { validateSignup, validateSignin, validateSearch } from './validation';
 import verifyPassword from './verifyPassword';
 import isAuth from './isAuth';
 import attachCurrentUser from './attachCurrentUser';
+import detachCurrentUser from './detachCurrentUser';
 
 export default {
   errorHandler,
@@ -12,4 +13,5 @@ export default {
   verifyPassword,
   isAuth,
   attachCurrentUser,
+  detachCurrentUser,
 };

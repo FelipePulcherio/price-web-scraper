@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Toaster } from '@/components/ui/sonner';
 
 export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -29,7 +28,6 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         {children}
       </main>
       <footer className='w-full h-16 md:h-21 bg-gradient-to-t from-zinc-950 to-zinc-700 flex flex-col justify-center items-center'></footer>
-      <Toaster />
     </div>
   );
 };

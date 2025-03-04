@@ -23,8 +23,18 @@ export default async function verifyPassword(
       return next(new Error('Invalid email or password'));
     }
 
-    // Attach user to request for next middleware
-    req.user = user;
+    // Transform data
+    const currentUser = {
+      id: user.id || '',
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      role: user.role || 'LOGGED_USER',
+    };
+
+    req.currentUser = currentUser;
+
     next();
   } catch (err) {
     next(err);

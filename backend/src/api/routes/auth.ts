@@ -16,7 +16,7 @@ export default (app: Router) => {
     '/signup',
     middlewares.validateSignup,
     async (req: Request, res: Response, next: NextFunction) => {
-      console.log('POST /api/v1/auth/signup Request Body:', req.body);
+      console.log('POST /api/v1/auth/signup');
 
       try {
         const newUser = await createUser(req.body);
@@ -36,7 +36,7 @@ export default (app: Router) => {
     middlewares.validateSignin,
     middlewares.verifyPassword,
     async (req: Request, res: Response, next: NextFunction) => {
-      console.log('POST /api/v1/auth/signin Request Body:', req.body);
+      console.log('POST /api/v1/auth/signin');
       try {
         // Make sure currentUser was attached
         if (!req.currentUser) {
@@ -79,7 +79,7 @@ export default (app: Router) => {
     middlewares.isAuth,
     middlewares.detachCurrentUser,
     (req: Request, res: Response, next: NextFunction) => {
-      console.log('POST /api/v1/auth/logout Request Body:', req.body);
+      console.log('POST /api/v1/auth/logout');
 
       try {
         res.status(200).json(

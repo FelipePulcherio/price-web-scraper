@@ -9,7 +9,7 @@ function authRequestInterceptor(config: InternalAxiosRequestConfig) {
     config.headers.Accept = 'application/json';
   }
 
-  config.withCredentials = true; // When cookies implemented set to true
+  config.withCredentials = true; // Cookies
   return config;
 }
 

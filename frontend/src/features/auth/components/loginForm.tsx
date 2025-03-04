@@ -42,6 +42,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       email: '',
       password: '',
     },
+    shouldUnregister: true,
   });
 
   const login = useLogin({

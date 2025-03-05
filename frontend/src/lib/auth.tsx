@@ -5,18 +5,18 @@ import { Navigate, useLocation } from 'react-router';
 import { paths } from '@/config/paths';
 
 import { api } from './apiClient';
-import { IAPI } from '@/types/interfaces';
+import { IAPI, AuthUser } from '@/types/interfaces';
 
 // APIs, Schemas and types
 // Login
-const getUser = async (): Promise<IAPI> => {
+const getUser = async (): Promise<AuthUser> => {
   const response = await api.get('/users/me');
-
-  return response.data.user;
+  return response.data;
 };
 
-const logout = (): Promise<IAPI> => {
-  return api.post('/auth/logout');
+const logout = async (): Promise<AuthUser> => {
+  const response = await api.post('/auth/logout');
+  return response.data;
 };
 
 export const loginInputSchema = z.object({
@@ -30,7 +30,9 @@ export const loginInputSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginInputSchema>;
 
-const loginWithEmailAndPassword = (data: LoginInput): Promise<IAPI> => {
+const loginWithEmailAndPassword = (
+  data: LoginInput
+): Promise<IAPI<AuthUser>> => {
   return api.post('/auth/signin', data);
 };
 
@@ -77,7 +79,9 @@ export const registerInputSchema = z.object({
 
 export type RegisterInput = z.infer<typeof registerInputSchema>;
 
-const registerWithEmailAndPassword = (data: RegisterInput): Promise<IAPI> => {
+const registerWithEmailAndPassword = (
+  data: RegisterInput
+): Promise<IAPI<AuthUser>> => {
   return api.post('/auth/signup', data);
 };
 
@@ -87,11 +91,11 @@ const authConfig = {
   userFn: getUser,
   loginFn: async (data: LoginInput) => {
     const response = await loginWithEmailAndPassword(data);
-    return response;
+    return response.data;
   },
   registerFn: async (data: RegisterInput) => {
     const response = await registerWithEmailAndPassword(data);
-    return response;
+    return response.data;
   },
   logoutFn: logout,
 };

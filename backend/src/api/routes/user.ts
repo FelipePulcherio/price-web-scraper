@@ -20,17 +20,15 @@ export default (app: Router) => {
       // New user without a token
       // Won't crash the app but the result is null
       if (!req.token) {
-        res.status(200).json(
-          resFormatter(true, ['User not authenticated'], {
-            user: req.currentUser,
-          })
-        );
+        res
+          .status(200)
+          .json(
+            resFormatter(true, ['User not authenticated'], req.currentUser)
+          );
       } else {
-        res.status(200).json(
-          resFormatter(true, ['User authenticated'], {
-            user: req.currentUser,
-          })
-        );
+        res
+          .status(200)
+          .json(resFormatter(true, ['User authenticated'], req.currentUser));
       }
 
       try {

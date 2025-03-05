@@ -120,15 +120,15 @@ export interface IUser {
   role?: Role;
 }
 
-// Define interface for Auth User
-export interface IAuthUser {
+// Define type for Auth User
+export type AuthUser = {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
   role: Role;
-}
+};
 
 // Define interface for short user (API)
 export interface IShortUser {
@@ -136,10 +136,10 @@ export interface IShortUser {
   password?: string;
 }
 
-// Define interface for APIs
-export interface IAPI<T = unknown> {
+// Define type for APIs
+export type API<T = unknown> = {
   timestamp: Date;
   success: boolean;
   messages: string[];
   data: T;
-}
+};

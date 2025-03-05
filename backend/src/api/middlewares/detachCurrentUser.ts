@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { IAuthUser } from '@/interfaces/interfaces';
+import { AuthUser } from '@/interfaces/interfaces';
 
 const detachCurrentUser = async (
   req: Request,
@@ -7,7 +7,7 @@ const detachCurrentUser = async (
   next: NextFunction
 ) => {
   try {
-    const currentUser: IAuthUser = {
+    const currentUser: AuthUser = {
       id: '',
       firstName: '',
       lastName: '',

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { IUser, IAuthUser } from '@/interfaces/interfaces';
+import { IUser, AuthUser } from '@/interfaces/interfaces';
 import { getUserById } from '@/database/operations/dbRead';
 
 const attachCurrentUser = async (
@@ -8,7 +8,7 @@ const attachCurrentUser = async (
   next: NextFunction
 ) => {
   try {
-    let currentUser: IAuthUser;
+    let currentUser: AuthUser;
 
     // User without a token
     if (!req.token) {

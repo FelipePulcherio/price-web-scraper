@@ -1,9 +1,9 @@
-import { IUser, IShortUser, IEvent } from '@/interfaces/interfaces';
+import { IUser, IEvent } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
 import bcrypt from 'bcrypt';
 
 // FUNCTIONS
-export async function createUser(data: IUser): Promise<IShortUser | undefined> {
+export async function createUser(data: IUser): Promise<IUser | undefined> {
   try {
     const { firstName, lastName, email, phone, password } = data;
 
@@ -20,7 +20,7 @@ export async function createUser(data: IUser): Promise<IShortUser | undefined> {
       },
     });
 
-    return { email: newUser.email };
+    return newUser;
   } catch (error) {
     // Throw error to whoever called this
     throw error;

@@ -23,9 +23,9 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <header className='bg-gradient-to-t from-zinc-700 to-zinc-950 flex justify-center items-center'>
-        <div className='wrapper w-full max-w-5xl p-2 gap-y-2 flex flex-row flex-wrap sm:gap-x-4 md:px-4'>
-          <Logo className='order-1 w-1/2 sm:w-fit h-9 gap-1 flex justify-start items-center text-zinc-50 md:flex-1' />
-          <div className='order-2 w-1/2 sm:order-3 sm:w-fit md:flex-1 flex justify-end items-center gap-2'>
+        <div className='wrapper w-full max-w-5xl p-2 gap-y-2 flex flex-row flex-wrap justify-between sm:gap-x-4 md:px-4 md:gap-x-6 lg:gap-x-8'>
+          <Logo className='order-1 w-1/2 sm:max-w-fit h-9 gap-1 flex justify-start items-center text-zinc-50 ' />
+          <div className='order-2 w-1/2 sm:order-3 sm:w-fit md:flex-1 md:max-w-fit flex justify-end items-center gap-2'>
             <div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -110,7 +110,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </Button>
           </div>
-          <div className='order-4 min-w-[100px] flex-1 sm:order-2 sm:-mr-2 md:mr-0 md:min-w-md md:max-w-lg lg:min-w-xl xl:min-w-2xl'>
+          <div className='order-4 min-w-[100px] flex-1 sm:order-2 sm:-mr-2 md:mr-0 lg:min-w-lg xl:min-w-xl'>
             <Search />
           </div>
         </div>

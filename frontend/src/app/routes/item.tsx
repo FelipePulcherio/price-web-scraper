@@ -60,7 +60,6 @@ const ItemRoute = () => {
   );
   const [chartData, setchartData] =
     useState<IShortEvent[]>(chartDataPlaceholder);
-  const [timeRange, setTimeRange] = useState('30d');
 
   const compareRef = useRef<HTMLDivElement | null>(null);
   const historyRef = useRef<HTMLDivElement | null>(null);
@@ -79,23 +78,25 @@ const ItemRoute = () => {
     },
   } satisfies ChartConfig;
 
-  const filteredData = chartData.filter((item) => {
-    const date = new Date(item.date);
-    const referenceDate = new Date(chartData[chartData.length - 1].date);
-    let daysToSubtract = 30;
-    if (timeRange === '365d') {
-      daysToSubtract = 365;
-    } else if (timeRange === '180d') {
-      daysToSubtract = 180;
-    } else if (timeRange === '90d') {
-      daysToSubtract = 90;
-    } else if (timeRange === '30d') {
-      daysToSubtract = 30;
-    }
-    const startDate = new Date(referenceDate);
-    startDate.setDate(startDate.getDate() - daysToSubtract);
-    return date >= startDate;
-  });
+  // TO DO: Filter chart data
+  // const [timeRange, setTimeRange] = useState('30d');
+  // const filteredData = chartData.filter((item) => {
+  //   const date = new Date(item.date);
+  //   const referenceDate = new Date(chartData[chartData.length - 1].date);
+  //   let daysToSubtract = 30;
+  //   if (timeRange === '365d') {
+  //     daysToSubtract = 365;
+  //   } else if (timeRange === '180d') {
+  //     daysToSubtract = 180;
+  //   } else if (timeRange === '90d') {
+  //     daysToSubtract = 90;
+  //   } else if (timeRange === '30d') {
+  //     daysToSubtract = 30;
+  //   }
+  //   const startDate = new Date(referenceDate);
+  //   startDate.setDate(startDate.getDate() - daysToSubtract);
+  //   return date >= startDate;
+  // });
 
   // Fetch stores and deals from API
   useEffect(() => {
@@ -328,7 +329,7 @@ const ItemRoute = () => {
               config={chartConfig}
               className='aspect-auto h-[250px] w-full'
             >
-              <AreaChart data={filteredData}>
+              <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id='fillPrice' x1='0' y1='0' x2='0' y2='1'>
                     <stop offset='5%' stopColor='#0891B2' stopOpacity={0.8} />

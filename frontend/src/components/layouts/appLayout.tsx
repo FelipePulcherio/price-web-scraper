@@ -116,7 +116,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </header>
 
-      <main className='wrapper w-full max-w-5xl m-auto px-2 py-4 gap-y-5 flex flex-col justify-center items-center sm:gap-y-4 md:p-4'>
+      <main className='wrapper w-full max-w-5xl m-auto px-2 py-4 gap-y-5 overflow-x-hidden flex flex-col justify-center items-center sm:gap-y-4 md:p-4'>
         {children}
       </main>
 
@@ -128,7 +128,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
         <div className='w-full py-2 pb-4 max-w-2xl flex justify-around items-center gap-5'>
           <span className='sr-only'>Share</span>
           <svg
-            className='size-6 sm:size-8'
+            className='size-6 sm:size-7'
             fill='#FAFAFA'
             viewBox='0 0 24 24'
             xmlns='http://www.w3.org/2000/svg'
@@ -138,7 +138,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
           </svg>
 
           <svg
-            className='size-6 sm:size-8'
+            className='size-6 sm:size-7'
             fill='#FAFAFA'
             viewBox='0 0 24 24'
             xmlns='http://www.w3.org/2000/svg'
@@ -148,7 +148,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
           </svg>
 
           <svg
-            className='size-6 sm:size-8'
+            className='size-6 sm:size-7'
             fill='#FAFAFA'
             viewBox='0 0 24 24'
             xmlns='http://www.w3.org/2000/svg'
@@ -158,7 +158,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
           </svg>
 
           <svg
-            className='size-6 sm:size-8'
+            className='size-6 sm:size-7'
             fill='#FAFAFA'
             viewBox='0 0 24 24'
             xmlns='http://www.w3.org/2000/svg'

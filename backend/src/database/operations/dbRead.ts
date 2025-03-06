@@ -7,8 +7,10 @@ import {
   IShortEvent,
   IScraperItem,
   IUser,
+  ICurrentPrice,
 } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
+import { unknown } from 'zod';
 
 // FUNCTIONS
 export async function getItemById(id: number): Promise<IItem> {
@@ -301,6 +303,64 @@ export async function searchItemByString(
   } catch (error) {
     // Throw error to whoever called this
     // console.error('Error fetching items:', error);
+    throw error;
+  }
+}
+
+export async function getCurrentPricesByItemId(
+  id: number
+): Promise<ICurrentPrice> {
+  try {
+    // Try to find item
+    const item = await prisma.item.findUnique({
+      where: { id, isActive: true },
+      select: {
+        stores: {
+          select: {
+            store: {
+              select: {
+                name: true,
+                logo: true,
+              },
+            },
+            url: true,
+            events: {
+              orderBy: {
+                date: 'desc',
+              },
+              take: 1,
+              select: {
+                price: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // console.log(item);
+
+    // If item was not found
+    if (!item) {
+      throw new Error('Not found');
+    }
+
+    // Transform data
+    const result: ICurrentPrice = {
+      stores: item.stores
+        .map((s) => ({
+          name: s.store.name,
+          logo: s.store.logo,
+          url: s.url,
+          price: s.events[0]?.price || 0,
+        }))
+        .sort((a, b) => a.price - b.price),
+    };
+
+    return result;
+  } catch (error) {
+    // Throw error to whoever called this
+    // console.error(`Error fetching item ID=${id}:`, error);
     throw error;
   }
 }

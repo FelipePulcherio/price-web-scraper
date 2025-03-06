@@ -11,6 +11,8 @@ import { StoreAvatar } from '@/features/stores/components/storeAvatar';
 import { ItemCard } from '@/features/items/components/itemCard';
 
 import { IShortStore, IShortItem } from '@/types/interfaces';
+import { StoreNameFormat } from '@/utils/storeNameFormat';
+
 import { getAllStores } from '@/features/stores/api/getStores';
 import { getMainDeals } from '@/features/items/api/getDeals';
 import { AdsCard } from '@/features/ads/components/adsCard';
@@ -20,19 +22,6 @@ function StoresCarousel({
 }: {
   stores: IShortStore[];
 }): React.ReactNode {
-  function StoreNameFormatter(name: string): string {
-    const words = name.split(' ');
-
-    // Handle country initials (if exist)
-    if (words[words.length - 1].split('').length === 2) {
-      words.pop();
-    }
-
-    return words
-      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-      .join(' ');
-  }
-
   return (
     <Carousel
       opts={{
@@ -48,7 +37,7 @@ function StoresCarousel({
             className={`pl-0 basis-1/4 sm:basis-1/6 lg:basis-1/8 xl:basis-1/10 2xl:basis-1/12`}
           >
             <StoreAvatar
-              subtitle={StoreNameFormatter(store.name)}
+              subtitle={StoreNameFormat(store.name)}
               url={store.logo}
               fallback={store.name}
             />

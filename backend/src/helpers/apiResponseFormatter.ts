@@ -1,10 +1,10 @@
-import { IAPI } from '@/interfaces/interfaces';
+import { API } from '@/interfaces/interfaces';
 
 export default function apiResponseFormatter<T>(
   success: boolean,
   messages: string[],
   data: T
-): IAPI<T> {
+): API<T> {
   return {
     timestamp: new Date(),
     success,

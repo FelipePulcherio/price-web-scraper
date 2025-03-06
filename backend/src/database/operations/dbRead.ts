@@ -38,6 +38,9 @@ export async function getItemById(id: number): Promise<IItem> {
           },
         },
         images: {
+          orderBy: {
+            url: 'asc',
+          },
           select: {
             url: true,
           },

@@ -354,6 +354,7 @@ export async function getCurrentPricesByItemId(
           url: s.url,
           price: s.events[0]?.price || 0,
         }))
+        .filter((store) => store.price > 0)
         .sort((a, b) => a.price - b.price),
     };
 

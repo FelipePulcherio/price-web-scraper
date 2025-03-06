@@ -116,7 +116,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </header>
 
-      <main className='wrapper w-full max-w-5xl m-auto px-2 py-4 gap-y-5 overflow-x-hidden flex flex-col justify-center items-center sm:gap-y-4 md:p-4'>
+      <main className='w-full max-w-5xl m-auto px-2 py-4 md:p-4'>
         {children}
       </main>
 

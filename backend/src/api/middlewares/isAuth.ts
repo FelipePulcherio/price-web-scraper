@@ -3,7 +3,7 @@ import { expressjwt, TokenGetter } from 'express-jwt';
 import { Algorithm } from 'jsonwebtoken';
 import config from '@/config';
 
-const getTokenFromHeader = (req: Request, next: NextFunction) => {
+const getTokenFromHeader = (req: Request) => {
   if (
     (req.headers.authorization &&
       req.headers.authorization.split(' ')[0] === 'Token') ||
@@ -12,7 +12,8 @@ const getTokenFromHeader = (req: Request, next: NextFunction) => {
   ) {
     return req.headers.authorization.split(' ')[1];
   }
-  return next(new Error('Unauthorized'));
+  // console.log('Token or Bearer not found');
+  return undefined;
 };
 
 const isAuth = expressjwt({
@@ -20,6 +21,7 @@ const isAuth = expressjwt({
   algorithms: [config.jwt.algorithm as Algorithm],
   requestProperty: 'token',
   getToken: getTokenFromHeader as TokenGetter,
+  credentialsRequired: false, // Allows requests without a token (Handles new User)
 });
 
 export default isAuth;

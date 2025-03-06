@@ -13,6 +13,16 @@ export interface IShortStore {
   logo: string;
 }
 
+// Define interface for current prices
+export interface ICurrentPrice {
+  stores: {
+    name: string;
+    logo: string;
+    url: string;
+    price: number;
+  }[];
+}
+
 // Define interface for Category
 export interface ICategory {
   id?: number;
@@ -57,7 +67,7 @@ export interface IItem {
 
 // Define interface for short item
 export interface IShortItem {
-  id?: number;
+  id: number;
   name: string;
   model: string;
   brand: string;

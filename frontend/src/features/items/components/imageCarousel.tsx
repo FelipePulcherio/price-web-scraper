@@ -40,15 +40,15 @@ export function ImageCarousel({ item }: ImageCarouselProps) {
   };
 
   return (
-    <div className='w-full max-w-3xl mx-auto'>
+    <>
       <Carousel setApi={setCarouselApi} className='w-full'>
         <CarouselContent>
           {item.images.map((image, index) => (
             <CarouselItem
               key={index}
-              className='flex items-center justify-center'
+              className='flex items-center justify-center sm:pl-0'
             >
-              <div className='aspect-square w-3xs'>
+              <div className='aspect-square w-3xs md:w-xs lg:w-lg'>
                 <img
                   src={image.url || '/images/imagePlaceholder.svg'}
                   alt={`${item.brand} ${item.name} - Image ${index + 1}`}
@@ -58,11 +58,11 @@ export function ImageCarousel({ item }: ImageCarouselProps) {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className='left-2' />
-        <CarouselNext className='right-2' />
+        <CarouselPrevious className='left-2 sm:left-0 md:left-1 lg:top-133 lg:left-6' />
+        <CarouselNext className='right-2 sm:right-3 md:right-5 lg:top-133 lg:right-10' />
       </Carousel>
 
-      <div className='flex justify-center items-center gap-2 mt-4'>
+      <div className='flex justify-center items-center gap-2 mt-4 sm:mt-2 lg:mt-4'>
         {item.images.map((_, index) => (
           <button
             key={index}
@@ -77,6 +77,6 @@ export function ImageCarousel({ item }: ImageCarouselProps) {
           />
         ))}
       </div>
-    </div>
+    </>
   );
 }

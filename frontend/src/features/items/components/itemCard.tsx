@@ -15,7 +15,7 @@ export function ItemCard({
 }: IShortItem): React.ReactNode {
   return (
     <NavLink key={name} to={paths.item.getHref(id, brand, model)} caseSensitive>
-      <Card key={id} className='p-4 h-full'>
+      <Card key={id} className='p-4 h-full shadow-none'>
         <CardContent className='p-0 aspect-square flex flex-col justify-start items-center'>
           <img
             className='w-full max-w-[250px] aspect-square'

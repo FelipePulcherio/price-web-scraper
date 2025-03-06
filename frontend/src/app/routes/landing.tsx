@@ -103,7 +103,7 @@ function AdsCarousel(): React.ReactNode {
       ]}
       className='w-full'
     >
-      <CarouselContent className='sm:ml-6 sm:mr-10'>
+      <CarouselContent className='ml-2 mr-6 md:ml-4 md:mr-8 lg:ml-16 lg:mr-18 xl:ml-32 xl:mr-36 2xl:ml-64 2xl:mr-68'>
         {Array.from({ length: 5 }).map((_, index) => (
           <CarouselItem key={index} className={`basis-full`}>
             <AdsCard />
@@ -149,8 +149,8 @@ const LandingRoute = () => {
   }, []);
 
   return (
-    <>
-      <div className='w-full'>
+    <div className='flex flex-col justify-start items-center'>
+      <div className='w-dvw pb-4'>
         <AdsCarousel />
       </div>
 
@@ -165,7 +165,7 @@ const LandingRoute = () => {
         </div>
         <DealsCarousel items={items} />
       </div>
-    </>
+    </div>
   );
 };
 

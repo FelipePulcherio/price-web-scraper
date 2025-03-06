@@ -391,6 +391,24 @@ export async function getLowestPricesByItemId(
 
     // console.log(dailyLowestPrices);
 
+    // Transform data - Fill missing days
+    let protection = 0;
+    while (dailyLowestPrices.length < days) {
+      const oldestDate = new Date(dailyLowestPrices[0].date);
+      oldestDate.setDate(oldestDate.getDate() - 1); // Move one day back
+
+      // Insert new entry at the beginning
+      dailyLowestPrices.unshift({
+        price: 0,
+        date: oldestDate,
+      });
+
+      protection++;
+      if (protection > 180) {
+        break;
+      }
+    }
+
     return dailyLowestPrices;
   } catch (error) {
     // Throw error to whoever called this

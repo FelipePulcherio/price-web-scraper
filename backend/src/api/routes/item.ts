@@ -1,5 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
+  getCurrentPricesByItemId,
   getItemById,
   getItemDeals,
   getItemsByCategoryId,
@@ -11,6 +12,30 @@ const route = Router();
 
 export default (app: Router) => {
   app.use('/items', route);
+
+  // GET /api/v1/items/current/:itemId
+  // Used to get main deals
+  route.get(
+    '/current/:itemId',
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const itemId = parseInt(req.params.itemId, 10);
+        console.log(
+          `GET /api/v1/items/current/:itemId Request param: ${itemId}`
+        );
+
+        let fetchedItem = await getCurrentPricesByItemId(itemId);
+        // console.log(fetchedItem);
+
+        res
+          .status(200)
+          .json(resFormatter(true, ['Item fetched successfully'], fetchedItem));
+      } catch (error) {
+        // Pass errors to middlewares.errorHandler
+        next(error);
+      }
+    }
+  );
 
   // GET /api/v1/items/mainDeals
   // Used to get main deals

@@ -12,9 +12,11 @@ export const paths = {
     getHref: (query: string) => `/search?q=${encodeURIComponent(query)}`,
   },
   item: {
-    path: '/item/:brand/:model',
-    getHref: (brand: string, model: string) =>
-      `/item/${encodeURIComponent(brand)}/${encodeURIComponent(model)}`,
+    path: '/item/:id/:brand/:model',
+    getHref: (id: number, brand: string, model: string) =>
+      `/item/${encodeURIComponent(id)}/${encodeURIComponent(
+        brand
+      )}/${encodeURIComponent(model)}`,
   },
 
   auth: {

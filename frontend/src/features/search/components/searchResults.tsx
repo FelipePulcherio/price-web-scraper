@@ -1,3 +1,6 @@
+import { NavLink } from 'react-router';
+import { paths } from '@/config/paths';
+
 import { IShortItem } from '@/types/interfaces';
 
 interface SearchResultsProps {
@@ -34,29 +37,35 @@ export const SearchResults = ({
         <div className='my-1 h-px bg-zinc-200' />
         <div className=''>
           {results.length > 0 ? (
-            results.map((item) => (
-              <div
-                key={item.model}
-                className='flex items-center gap-4 rounded-sm px-2 py-1.5 text-sm text-zinc-900 cursor-pointer select-none hover:text-cyan-600 hover:bg-zinc-100'
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
+            results.map((item, index) => (
+              <NavLink
+                key={index}
+                to={paths.item.getHref(item.id, item.brand, item.model)}
+                caseSensitive
               >
-                <div className='relative h-16 w-16 flex-shrink-0 overflow-hidden rounded'>
-                  <img
-                    src={item.image.url || ''}
-                    alt={item.image.name || item.name}
-                    className='object-cover w-full h-full'
-                  />
+                <div
+                  key={item.model}
+                  className='flex items-center gap-4 rounded-sm px-2 py-1.5 text-sm text-zinc-900 cursor-pointer select-none hover:text-cyan-600 hover:bg-zinc-100'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <div className='relative h-16 w-16 flex-shrink-0 overflow-hidden rounded'>
+                    <img
+                      src={item.image.url || ''}
+                      alt={item.image.name || item.name}
+                      className='object-cover w-full h-full'
+                    />
+                  </div>
+                  <div className='min-w-0 flex-1'>
+                    <div className='truncate font-medium'>{item.name}</div>
+                    <div className='text-zinc-500'>{`${item.brand} - ${item.model}`}</div>
+                  </div>
+                  <div className='flex-shrink-0 font-medium text-zinc-900'>
+                    {item.price ? formatPrice(item.price) : 'N/A'}
+                  </div>
                 </div>
-                <div className='min-w-0 flex-1'>
-                  <div className='truncate font-medium'>{item.name}</div>
-                  <div className='text-zinc-500'>{`${item.brand} - ${item.model}`}</div>
-                </div>
-                <div className='flex-shrink-0 font-medium text-zinc-900'>
-                  {item.price ? formatPrice(item.price) : 'N/A'}
-                </div>
-              </div>
+              </NavLink>
             ))
           ) : (
             <div className='px-2 py-1.5 text-sm text-zinc-500'>

@@ -15,10 +15,6 @@ async function startServer() {
     console.log(`[Server]: Server is listening on port: ${config.port}`);
   });
 
-  app.get('/test', (req, res) => {
-    res.json({ message: 'API Server is running!' });
-  });
-
   function gracefulShutdown(): void {
     console.log('Shutting down gracefully...');
     server.close(() => {

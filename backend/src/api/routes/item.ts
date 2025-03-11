@@ -131,10 +131,6 @@ export default (app: Router) => {
     }
   );
 
-  route.get('/test', (req, res) => {
-    res.json({ message: 'API is working!' });
-  });
-
   // GET /api/v1/items/:id
   // Used to find a specific item
   route.get('/:id', async (req: Request, res: Response, next: NextFunction) => {

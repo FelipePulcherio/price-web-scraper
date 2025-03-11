@@ -8,7 +8,7 @@ import routes from '@/api';
 export default ({ app }: { app: express.Application }) => {
   // Use cors for integration with frontend
   const corsOptions = {
-    origin: ['http://localhost:5173'],
+    origin: ['https://price-web-scraper-frontend.vercel.app'],
     credentials: true,
   };
 

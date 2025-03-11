@@ -131,7 +131,7 @@ export default (app: Router) => {
     }
   );
 
-  app.get('/test', (req, res) => {
+  route.get('/test', (req, res) => {
     res.json({ message: 'API is working!' });
   });
 

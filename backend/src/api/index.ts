@@ -9,12 +9,6 @@ import middlewares from './middlewares';
 
 export default () => {
   const app = Router();
-
-  // Basic redirect
-  app.get('/', (req, res) => {
-    res.json({ message: 'API Server is running!' });
-  });
-
   auth(app);
   user(app);
   item(app);

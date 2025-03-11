@@ -39,7 +39,7 @@ scraperAgenda.define('Scraper', async (job) => {
 
 // Schedule the "Scraper" job to run every X hours
 const runJobs = async () => {
-  await scraperAgenda.every('12 hours', 'Scraper');
+  await scraperAgenda.every('24 hours', 'Scraper');
 };
 
 // Start Agenda

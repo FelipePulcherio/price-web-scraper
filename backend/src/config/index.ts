@@ -21,7 +21,7 @@ function getEnvVariable(key: string): string {
 
 export default {
   // Port
-  port: process.env.PORT ? parseInt(getEnvVariable('PORT'), 10) : 3000,
+  port: parseInt(getEnvVariable('PORT'), 10),
 
   // MongoDB Atlas
   mongoUri: getEnvVariable('MONGODB_URI'),

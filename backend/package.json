@@ -20,6 +20,13 @@
   "author": "Felipe S. Pulcherio",
   "license": "ISC",
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.8",
+    "@types/module-alias": "^2.0.4",
+    "@types/node": "^22.8.2",
     "@hokify/agenda": "^6.3.0",
     "@prisma/client": "^6.3.1",
     "bcrypt": "^5.1.1",
@@ -36,13 +43,6 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/cookie-parser": "^1.4.8",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/jsonwebtoken": "^9.0.8",
-    "@types/module-alias": "^2.0.4",
-    "@types/node": "^22.8.2",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
     "prisma": "^6.3.1",

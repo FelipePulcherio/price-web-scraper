@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "vercel-build": "tsc",
-    "regular-build": "npm install && tsc",
+    "render-build": "npm install && tsc",
     "build": "tsc --watch",
     "start": "nodemon ./dist/app.js",
+    "render-start": "node ./dist/app.js",
     "dev": "concurrently \"npm run build\" \"npm run start\" "
   },
   "keywords": [

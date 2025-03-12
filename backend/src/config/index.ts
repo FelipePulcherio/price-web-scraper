@@ -4,11 +4,13 @@ import dotenv from 'dotenv';
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-// Read .env file
-const envFound = dotenv.config();
-if (envFound.error) {
-  // This error should crash whole process
-  throw new Error("Couldn't find .env file");
+// Read .env file (Skips in production)
+if (process.env.NODE_ENV === 'development') {
+  const envFound = dotenv.config();
+  if (envFound.error) {
+    // This error should crash whole process
+    throw new Error("Couldn't find .env file");
+  }
 }
 
 function getEnvVariable(key: string): string {

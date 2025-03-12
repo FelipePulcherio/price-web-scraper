@@ -19,7 +19,7 @@ lerna-debug.log*
 .eslintcache
 
 # Built TS files
-dist/
+# dist/
 dist-ssr
 *.local
 

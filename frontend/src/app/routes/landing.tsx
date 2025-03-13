@@ -136,9 +136,7 @@ const LandingRoute = () => {
     const fetchMainDeals = async () => {
       try {
         const response = await getMainDeals();
-        const responseData = response.data as IShortItem[];
-        const response2 = responseData.concat(responseData);
-        setItems(response2 as IShortItem[]); // response.data
+        setItems(response.data as IShortItem[]);
       } catch (error) {
         console.log(error);
       }

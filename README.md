@@ -132,7 +132,7 @@ The app will allow users to:
 
 ## Database Schema
 
-![Screenshot of database schema](./assets/ERD-diagram.jpg)
+![Screenshot of database schema](./assets/ERD-diagram.png)
 
 <br>
 
@@ -187,7 +187,7 @@ Each API response will follow a specific schema independently of a successful re
 - **Description:** Register a new user
 - **Method:** POST
 - **Endpoint:** /api/v1/auth/signup
-- **Roles allowed:** SYSTEM, ADMIN
+- **Roles allowed:** ALL
 - **Request Body:**
 
 ```json
@@ -498,3 +498,8 @@ If you would like to contribute to this project:
 1. Fork the Repository and create a branch for your feature or bug fix.
 
 2. Once your changes are ready, push your branch to GitHub and submit a pull request.
+
+## References:
+
+- https://github.com/santiq/bulletproof-nodejs
+- https://github.com/alan2207/bulletproof-react

@@ -35,6 +35,7 @@ This project aims to solve these challenges by creating a transparent, intuitive
   - [Stores](#stores)
     - [All Stores](#1-all-stores)
 - [Contributing](#contributing)
+- [References](#references)
 
 <br>
 

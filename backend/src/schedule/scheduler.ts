@@ -45,8 +45,8 @@ const runJobs = async () => {
 // Start Agenda
 export async function startAgenda(): Promise<void> {
   // Delete all documents in 'Scraper' collection
-  console.log('Scheduler: Clearing previous "Scraper" schedules');
-  await deleteScraperCollection();
+  // console.log('Scheduler: Clearing previous "Scraper" schedules');
+  // await deleteScraperCollection();
 
   // Actually start scraperAgenda
   await scraperAgenda.start();

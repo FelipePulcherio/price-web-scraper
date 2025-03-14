@@ -17,19 +17,19 @@ const prisma = new PrismaClient();
 // Seeding function will follow a set of steps to clear and re-populate all tables
 async function populateDB() {
   // STEP 1: Clear all tables
-  console.log('Deleting all records...');
+  // console.log('Deleting all records...');
 
-  await prisma.events.deleteMany({});
-  await prisma.itemStore.deleteMany({});
-  await prisma.store.deleteMany({});
-  await prisma.subSubCategory.deleteMany({});
-  await prisma.subCategory.deleteMany({});
-  await prisma.category.deleteMany({});
-  await prisma.image.deleteMany({});
-  await prisma.item.deleteMany({});
-  await prisma.user.deleteMany({});
+  // await prisma.events.deleteMany({});
+  // await prisma.itemStore.deleteMany({});
+  // await prisma.store.deleteMany({});
+  // await prisma.subSubCategory.deleteMany({});
+  // await prisma.subCategory.deleteMany({});
+  // await prisma.category.deleteMany({});
+  // await prisma.image.deleteMany({});
+  // await prisma.item.deleteMany({});
+  // await prisma.user.deleteMany({});
 
-  console.log('All tables have been cleared.');
+  // console.log('All tables have been cleared.');
 
   // STEP 2: Create categories
   console.log('Creating categories...');
@@ -63,19 +63,19 @@ async function populateDB() {
   }
 
   // STEP 3: Find or Create stores
-  console.log('Creating stores...');
+  // console.log('Creating stores...');
 
-  const createdStores = await Promise.all(
-    STORES_LIST.map(async (store) => {
-      return prisma.store.upsert({
-        where: { name: store.name },
-        update: {},
-        create: { name: store.name, logo: store.logo },
-      });
-    })
-  );
+  // const createdStores = await Promise.all(
+  //   STORES_LIST.map(async (store) => {
+  //     return prisma.store.upsert({
+  //       where: { name: store.name },
+  //       update: {},
+  //       create: { name: store.name, logo: store.logo },
+  //     });
+  //   })
+  // );
 
-  console.log('Created or Updated stores:', createdStores);
+  // console.log('Created or Updated stores:', createdStores);
 
   // STEP 4: Create Items and connect them to a Category (ItemCategory) and a Store (ItemStore) sequentially
   console.log('Creating items...');
@@ -178,41 +178,41 @@ async function populateDB() {
   await createEvents();
 
   // STEP 6: Find or Create users
-  console.log('Creating users...');
+  // console.log('Creating users...');
 
-  let createdIds: string[] = [];
-  for (const user of USERS_LIST) {
-    // Hash password
-    const hashedPassword = await bcrypt.hash(user.password, 10);
+  // let createdIds: string[] = [];
+  // for (const user of USERS_LIST) {
+  //   // Hash password
+  //   const hashedPassword = await bcrypt.hash(user.password, 10);
 
-    // Find or Create without specifying connection
-    const result = await prisma.user.create({
-      data: {
-        id: user.id ?? undefined,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone,
-        password: hashedPassword,
-        role: user.role,
-        updatedById: undefined,
-      },
-    });
+  //   // Find or Create without specifying connection
+  //   const result = await prisma.user.create({
+  //     data: {
+  //       id: user.id ?? undefined,
+  //       firstName: user.firstName,
+  //       lastName: user.lastName,
+  //       email: user.email,
+  //       phone: user.phone,
+  //       password: hashedPassword,
+  //       role: user.role,
+  //       updatedById: undefined,
+  //     },
+  //   });
 
-    createdIds.push(result.id);
-  }
+  //   createdIds.push(result.id);
+  // }
 
-  // Specify the connection: SYSTEM created all new accounts
-  const createdUser = await prisma.user.update({
-    where: { id: '01010101-ffff-1111-ffff-010101010101' },
-    data: {
-      updatedUsers: {
-        connect: createdIds.map((id) => ({ id })),
-      },
-    },
-  });
+  // // Specify the connection: SYSTEM created all new accounts
+  // const createdUser = await prisma.user.update({
+  //   where: { id: '01010101-ffff-1111-ffff-010101010101' },
+  //   data: {
+  //     updatedUsers: {
+  //       connect: createdIds.map((id) => ({ id })),
+  //     },
+  //   },
+  // });
 
-  console.log('Created user:', createdUser);
+  // console.log('Created user:', createdUser);
 }
 
 async function populateCloudinary() {
@@ -344,7 +344,7 @@ async function populateCloudinary() {
   }
 }
 
-populateDB().catch((e) => console.error(e));
+// populateDB().catch((e) => console.error(e));
 
 populateCloudinary()
   .catch((e) => console.error(e))

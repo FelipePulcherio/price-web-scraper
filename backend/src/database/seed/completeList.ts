@@ -9,7 +9,7 @@ import {
 import { Status } from '@prisma/client';
 
 export const ITEMS_LIST: IItem[] = [
-  {
+  /*{
     name: 'TV 65" Q60D 4K UHD HDR QLED 2024',
     model: 'QN65Q60DAFXZC',
     brand: 'Samsung',
@@ -68,11 +68,71 @@ export const ITEMS_LIST: IItem[] = [
         url: 'https://www.newegg.ca/lg-c4-65/p/N82E16889482040',
       },
     ],
+  },*/
+  {
+    name: 'PlayStation 5 Slim Digital Edition Console',
+    model: 'CFI-2015-Digital',
+    brand: 'PlayStation',
+    description: {},
+    categories: [{ name: 'Video Games & VR' }],
+    subCategories: [{ name: 'PlayStation 5' }],
+    subSubCategories: [{ name: 'PS5 Consoles' }],
+    images: [{}],
+    stores: [
+      {
+        name: 'BEST BUY CA',
+        url: 'https://www.bestbuy.ca/en-ca/product/playstation-5-slim-digital-edition-console/17477495',
+      },
+      {
+        name: 'WALMART CA',
+        url: 'https://www.walmart.ca/en/ip/PlayStation-5-Digital-Edition-model-group-slim/6000207352799',
+      },
+      {
+        name: 'CANADA COMPUTERS',
+        url: 'https://www.canadacomputers.com/en/playstation/247955/sony-playstation-5-slim-console-digital-edition-711719573418.html',
+      },
+      {
+        name: 'AMAZON CA',
+        url: 'https://www.amazon.ca/PlayStation-5-Digital-Console-slim/dp/B0CL7NKBBL?th=1',
+      },
+    ],
+  },
+  {
+    name: 'Nintendo Switch (OLED Model) Console - White',
+    model: 'HEGSKAAAA',
+    brand: 'Nintendo',
+    description: {},
+    categories: [{ name: 'Video Games & VR' }],
+    subCategories: [{ name: 'Nintendo Switch' }],
+    subSubCategories: [{ name: 'Nintendo Switch Consoles' }],
+    images: [{}],
+    stores: [
+      {
+        name: 'BEST BUY CA',
+        url: 'https://www.bestbuy.ca/en-ca/product/nintendo-switch-oled-model-console-white/15598575',
+      },
+      {
+        name: 'WALMART CA',
+        url: 'https://www.walmart.ca/en/ip/Nintendo-Switch-OLED-Model-w-White-Joy-Con-Nintendo-Switch/6000203472771',
+      },
+      {
+        name: 'CANADA COMPUTERS',
+        url: 'https://www.canadacomputers.com/en/nintendo/208727/nintendo-switch-oled-model-console-white-hegskaaaa.html',
+      },
+      {
+        name: 'AMAZON CA',
+        url: 'https://www.amazon.ca/Nintendo-SwitchTM-OLED-Model-White/dp/B098RKWHHZ?th=1',
+      },
+      {
+        name: 'NEW EGG CA',
+        url: 'https://www.newegg.ca/white-hegskaaaa-nintendo-switch-console/p/N82E16878190943',
+      },
+    ],
   },
 ];
 
 export const CATEGORIES_LIST: ICategory[] = [
-  {
+  /*{
     name: 'TV & Home Theatre',
     hasDepth: true,
     subCategories: [
@@ -113,6 +173,65 @@ export const CATEGORIES_LIST: ICategory[] = [
         ],
       },
     ],
+  },*/
+  {
+    name: 'Video Games & VR',
+    hasDepth: true,
+    subCategories: [
+      {
+        name: 'PlayStation 5',
+        hasDepth: true,
+        subSubCategories: [
+          { name: 'PS5 Consoles' },
+          { name: 'PS5 Games' },
+          { name: 'PS5 Accessories' },
+        ],
+      },
+      {
+        name: 'PlayStation 4',
+        hasDepth: false,
+        subSubCategories: [
+          { name: 'PS4 Consoles' },
+          { name: 'PS4 Games' },
+          { name: 'PS4 Accessories' },
+        ],
+      },
+      {
+        name: 'Xbox Series X/S',
+        hasDepth: false,
+        subSubCategories: [
+          { name: 'Xbox Series X/S Consoles' },
+          { name: 'Xbox Series X/S Games' },
+          { name: 'Xbox Series X/S Accessories' },
+        ],
+      },
+      {
+        name: 'Xbox One',
+        hasDepth: false,
+        subSubCategories: [
+          { name: 'Xbox One Consoles' },
+          { name: 'Xbox One Games' },
+          { name: 'Xbox One Accessories' },
+        ],
+      },
+      {
+        name: 'Nintendo Switch',
+        hasDepth: true,
+        subSubCategories: [
+          { name: 'Nintendo Switch Consoles' },
+          { name: 'Nintendo Switch Games' },
+          { name: 'Nintendo Switch Accessories' },
+        ],
+      },
+      {
+        name: 'Virtual Reality',
+        hasDepth: false,
+        subSubCategories: [
+          { name: 'Virtual Reality Headsets' },
+          { name: 'Virtual Reality Accessories' },
+        ],
+      },
+    ],
   },
 ];
 
@@ -140,7 +259,7 @@ export const STORES_LIST: IShortStore[] = [
 ];
 
 export const EVENTS_LIST: IEvent[] = [
-  {
+  /*{
     itemName: 'TV 65" Q60D 4K UHD HDR QLED 2024',
     storeName: 'BEST BUY CA',
     price: 999.99,
@@ -602,6 +721,78 @@ export const EVENTS_LIST: IEvent[] = [
     price: 2397.99,
     date: new Date('2025-03-06T23:38:55.786Z'),
     fromJob: 'Scraper',
+    status: Status.OK,
+  },*/
+  {
+    itemName: 'PlayStation 5 Slim Digital Edition Console',
+    storeName: 'AMAZON CA',
+    price: 579.96,
+    date: new Date(),
+    fromJob: 'Seed',
+    status: Status.OK,
+  },
+  {
+    itemName: 'PlayStation 5 Slim Digital Edition Console',
+    storeName: 'BEST BUY CA',
+    price: 579.99,
+    date: new Date(),
+    fromJob: 'Seed',
+    status: Status.OK,
+  },
+  {
+    itemName: 'PlayStation 5 Slim Digital Edition Console',
+    storeName: 'CANADA COMPUTERS',
+    price: 579.99,
+    date: new Date(),
+    fromJob: 'Seed',
+    status: Status.OK,
+  },
+  {
+    itemName: 'PlayStation 5 Slim Digital Edition Console',
+    storeName: 'WALMART CA',
+    price: 579.96,
+    date: new Date(),
+    fromJob: 'Seed',
+    status: Status.OK,
+  },
+  {
+    itemName: 'Nintendo Switch (OLED Model) Console - White',
+    storeName: 'AMAZON CA',
+    price: 449.96,
+    date: new Date(),
+    fromJob: 'Seed',
+    status: Status.OK,
+  },
+  {
+    itemName: 'Nintendo Switch (OLED Model) Console - White',
+    storeName: 'BEST BUY CA',
+    price: 449.99,
+    date: new Date(),
+    fromJob: 'Seed',
+    status: Status.OK,
+  },
+  {
+    itemName: 'Nintendo Switch (OLED Model) Console - White',
+    storeName: 'CANADA COMPUTERS',
+    price: 449.99,
+    date: new Date(),
+    fromJob: 'Seed',
+    status: Status.OK,
+  },
+  {
+    itemName: 'Nintendo Switch (OLED Model) Console - White',
+    storeName: 'WALMART CA',
+    price: 449.96,
+    date: new Date(),
+    fromJob: 'Seed',
+    status: Status.OK,
+  },
+  {
+    itemName: 'Nintendo Switch (OLED Model) Console - White',
+    storeName: 'NEW EGG CA',
+    price: 469.99,
+    date: new Date(),
+    fromJob: 'Seed',
     status: Status.OK,
   },
 ];

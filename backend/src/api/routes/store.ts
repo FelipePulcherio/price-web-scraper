@@ -4,11 +4,10 @@ import resFormatter from '@/helpers/apiResponseFormatter';
 
 const route = Router();
 
-export default (app: Router) => {
+function storeRoute(app: Router): void {
   app.use('/stores', route);
 
   // GET /api/v1/stores/
-  // Used to find all stores
   route.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
       console.log('GET /api/v1/stores/');
@@ -21,9 +20,11 @@ export default (app: Router) => {
         .json(
           resFormatter(true, ['Stores fetched successfully'], fetchedStores)
         );
-    } catch (error) {
+    } catch (err) {
       // Pass errors to middlewares.errorHandler
-      next(error);
+      next(err);
     }
   });
-};
+}
+
+export default storeRoute;

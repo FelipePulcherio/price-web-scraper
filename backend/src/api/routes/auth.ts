@@ -8,7 +8,7 @@ import { AuthUser } from '@/interfaces/interfaces';
 
 const route = Router();
 
-export default (app: Router) => {
+function authRoute(app: Router): void {
   app.use('/auth', route);
 
   // POST /api/v1/auth/signup
@@ -34,7 +34,8 @@ export default (app: Router) => {
             role: newUser.role,
           },
           config.jwt.secret,
-          { expiresIn: config.jwt.maxAge } // This is in s
+          // This is in seconds (s)
+          { expiresIn: config.jwt.maxAge }
         );
 
         // Transform data
@@ -50,7 +51,8 @@ export default (app: Router) => {
         // Attach token to cookie
         res.cookie('jwt', token, {
           httpOnly: true,
-          maxAge: config.jwt.maxAge * 1000, // This is in ms
+          // This is in miliseconds (ms)
+          maxAge: config.jwt.maxAge * 1000,
         });
 
         res
@@ -58,9 +60,9 @@ export default (app: Router) => {
           .json(
             resFormatter(true, ['User registered successfully'], currentUser)
           );
-      } catch (error) {
+      } catch (err) {
         // Pass errors to middlewares.errorHandler
-        next(error);
+        next(err);
       }
     }
   );
@@ -88,13 +90,15 @@ export default (app: Router) => {
             role: req.currentUser.role,
           },
           config.jwt.secret,
-          { expiresIn: config.jwt.maxAge } // This is in s
+          // This is in seconds (s)
+          { expiresIn: config.jwt.maxAge }
         );
 
         // Attach token to cookie
         res.cookie('jwt', token, {
           httpOnly: true,
-          maxAge: config.jwt.maxAge * 1000, // This is in ms
+          // This is in miliseconds (ms)
+          maxAge: config.jwt.maxAge * 1000,
         });
 
         res
@@ -102,9 +106,9 @@ export default (app: Router) => {
           .json(
             resFormatter(true, ['User logged in successfully'], req.currentUser)
           );
-      } catch (error) {
+      } catch (err) {
         // Pass errors to middlewares.errorHandler
-        next(error);
+        next(err);
       }
     }
   );
@@ -127,10 +131,12 @@ export default (app: Router) => {
               req.currentUser
             )
           );
-      } catch (error) {
+      } catch (err) {
         // Pass errors to middlewares.errorHandler
-        return next(error);
+        return next(err);
       }
     }
   );
-};
+}
+
+export default authRoute;

@@ -1,10 +1,8 @@
-import { scraperMain } from './scraperMain';
+import scraperMain from './scraperMain';
 import { IScraperItem, IScraperStore, IEvent } from '@/interfaces/interfaces';
 
 // FUNCTIONS
-export async function scraperWorker(
-  itemData: IScraperItem[]
-): Promise<IEvent[]> {
+async function scraperWorker(itemData: IScraperItem[]): Promise<IEvent[]> {
   // Restructure data with focus in store
   const storeMap = new Map<number, IScraperStore>();
 
@@ -43,8 +41,8 @@ export async function scraperWorker(
   //   try {
   //     const events = await scraperMain({ storeSet: store });
   //     eventsArray.push(...events);
-  //   } catch (error) {
-  //     console.error(`Error scraping ${store.name}: ${error}`);
+  //   } catch (err) {
+  //     console.error(`Error scraping ${store.name}: ${err}`);
   //     // Continue to the next store ...
   //   }
   // }
@@ -55,8 +53,8 @@ export async function scraperWorker(
     stores.map(async (store) => {
       try {
         return await scraperMain({ storeSet: store });
-      } catch (error) {
-        console.error(`Error scraping ${store.name}: ${error}`);
+      } catch (err) {
+        console.error(`Error scraping ${store.name}: ${err}`);
         return [];
       }
     })
@@ -64,3 +62,5 @@ export async function scraperWorker(
 
   return events.flat();
 }
+
+export default scraperWorker;

@@ -7,10 +7,8 @@ import { startAgenda } from './schedule/scheduler';
 async function startServer() {
   const app: Express = express();
 
-  // Import loaders
   await require('./loaders').default({ expressApp: app });
 
-  // Server start
   const server = app.listen(config.port, () => {
     console.log(`[Server]: Server is listening on port: ${config.port}`);
   });
@@ -23,11 +21,9 @@ async function startServer() {
     });
   }
 
-  // Graceful shutdown
   process.on('SIGINT', gracefulShutdown);
   process.on('SIGTERM', gracefulShutdown);
 
-  // Agenda start
   startAgenda();
 }
 

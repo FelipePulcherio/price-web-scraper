@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthUser } from '@/interfaces/interfaces';
 
-const detachCurrentUser = async (
+async function detachCurrentUser(
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> {
   try {
     const currentUser: AuthUser = {
       id: '',
@@ -19,9 +19,9 @@ const detachCurrentUser = async (
     req.currentUser = currentUser;
 
     return next();
-  } catch (error) {
-    return next(error);
+  } catch (err) {
+    return next(err);
   }
-};
+}
 
 export default detachCurrentUser;

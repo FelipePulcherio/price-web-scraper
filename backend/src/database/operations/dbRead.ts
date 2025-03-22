@@ -10,7 +10,6 @@ import {
   ICurrentPrice,
 } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
-import { unknown } from 'zod';
 
 // FUNCTIONS
 export async function getItemById(id: number): Promise<IItem> {
@@ -93,10 +92,10 @@ export async function getItemById(id: number): Promise<IItem> {
     };
 
     return result;
-  } catch (error) {
+  } catch (err) {
     // Throw error to whoever called this
-    // console.error(`Error fetching item ID=${id}:`, error);
-    throw error;
+    // console.error(`Error fetching item ID=${id}:`, err);
+    throw err;
   }
 }
 
@@ -132,10 +131,10 @@ export async function getAllCategories(): Promise<ICategory[]> {
     // console.log(categories);
 
     return categories;
-  } catch (error) {
+  } catch (err) {
     // Throw error to whoever called this
-    // console.error('Error fetching categories:', error);
-    throw error;
+    // console.error('Error fetching categories:', err);
+    throw err;
   }
 }
 
@@ -196,10 +195,10 @@ export async function getItemsByCategoryId(
     }));
 
     return result;
-  } catch (error) {
+  } catch (err) {
     // Throw error to whoever called this
-    // console.error(`Error fetching items:`, error);
-    throw error;
+    // console.error(`Error fetching items:`, err);
+    throw err;
   }
 }
 
@@ -222,10 +221,10 @@ export async function getAllStores(): Promise<IShortStore[]> {
     // console.log(stores);
 
     return stores;
-  } catch (error) {
+  } catch (err) {
     // Throw error to whoever called this
-    // console.error('Error fetching stores:', error);
-    throw error;
+    // console.error('Error fetching stores:', err);
+    throw err;
   }
 }
 
@@ -303,10 +302,10 @@ export async function searchItemByString(
     }));
 
     return result;
-  } catch (error) {
+  } catch (err) {
     // Throw error to whoever called this
-    // console.error('Error fetching items:', error);
-    throw error;
+    // console.error('Error fetching items:', err);
+    throw err;
   }
 }
 
@@ -362,10 +361,10 @@ export async function getCurrentPricesByItemId(
     };
 
     return result;
-  } catch (error) {
+  } catch (err) {
     // Throw error to whoever called this
-    // console.error(`Error fetching item ID=${id}:`, error);
-    throw error;
+    // console.error(`Error fetching item ID=${id}:`, err);
+    throw err;
   }
 }
 
@@ -413,10 +412,10 @@ export async function getLowestPricesByItemId(
     }
 
     return dailyLowestPrices;
-  } catch (error) {
+  } catch (err) {
     // Throw error to whoever called this
-    // console.error(`Error fetching item ID=${id}:`, error);
-    throw error;
+    // console.error(`Error fetching item ID=${id}:`, err);
+    throw err;
   }
 }
 
@@ -457,9 +456,9 @@ export async function getAllItemsForScraper(): Promise<IScraperItem[]> {
     }));
 
     return result;
-  } catch (error) {
+  } catch (err) {
     // Handle Error
-    // console.error(`Error fetching all items:`, error);
+    // console.error(`Error fetching all items:`, err);
     return [];
   }
 }
@@ -483,9 +482,9 @@ export async function getUserByEmail(email: string): Promise<IUser | null> {
     });
 
     return user;
-  } catch (error) {
+  } catch (err) {
     // Throw error to who called this
-    throw error;
+    throw err;
   }
 }
 
@@ -508,9 +507,9 @@ export async function getUserById(id: string): Promise<IUser | null> {
     });
 
     return user;
-  } catch (error) {
+  } catch (err) {
     // Throw error to who called this
-    throw error;
+    throw err;
   }
 }
 
@@ -594,9 +593,9 @@ export async function getItemDeals(qty: number): Promise<IShortItem[]> {
     });
 
     return result;
-  } catch (error) {
+  } catch (err) {
     // Throw error to whoever called this
-    // console.error(`Error fetching items`, error);
-    throw error;
+    // console.error(`Error fetching items`, err);
+    throw err;
   }
 }

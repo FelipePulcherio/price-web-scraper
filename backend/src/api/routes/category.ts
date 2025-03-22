@@ -4,11 +4,10 @@ import resFormatter from '@/helpers/apiResponseFormatter';
 
 const route = Router();
 
-export default (app: Router) => {
+function categoryRoute(app: Router): void {
   app.use('/categories', route);
 
   // GET /api/v1/categories/
-  // Used to find all categories
   route.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
       console.log('GET /api/v1/categories/');
@@ -25,9 +24,11 @@ export default (app: Router) => {
             fetchedCategories
           )
         );
-    } catch (error) {
+    } catch (err) {
       // Pass errors to middlewares.errorHandler
-      next(error);
+      next(err);
     }
   });
-};
+}
+
+export default categoryRoute;

@@ -10,11 +10,11 @@ import resFormatter from '@/helpers/apiResponseFormatter';
 
 const route = Router();
 
-export default (app: Router) => {
+function itemRoute(app: Router): void {
   app.use('/items', route);
 
+  /*
   // GET /api/v1/items/current/:itemId
-  // Used to get main deals
   route.get(
     '/current/:itemId',
     async (req: Request, res: Response, next: NextFunction) => {
@@ -30,15 +30,15 @@ export default (app: Router) => {
         res
           .status(200)
           .json(resFormatter(true, ['Item fetched successfully'], fetchedItem));
-      } catch (error) {
+      } catch (err) {
         // Pass errors to middlewares.errorHandler
-        next(error);
+        next(err);
       }
     }
   );
+  */
 
   // GET /api/v1/items/mainDeals
-  // Used to get main deals
   route.get(
     '/mainDeals',
     async (req: Request, res: Response, next: NextFunction) => {
@@ -48,7 +48,7 @@ export default (app: Router) => {
         let fetchedItem = await getItemDeals(5);
         // console.log(fetchedItem);
 
-        // Transform urls
+        // Adjust width and height from cloudinary urls
         fetchedItem = fetchedItem.map((item) => ({
           ...item,
           image: {
@@ -63,9 +63,9 @@ export default (app: Router) => {
         res
           .status(200)
           .json(resFormatter(true, ['Item fetched successfully'], fetchedItem));
-      } catch (error) {
+      } catch (err) {
         // Pass errors to middlewares.errorHandler
-        next(error);
+        next(err);
       }
     }
   );
@@ -96,9 +96,9 @@ export default (app: Router) => {
           .json(
             resFormatter(true, ['Items fetched successfully'], fetchedItems)
           );
-      } catch (error) {
+      } catch (err) {
         // Pass errors to middlewares.errorHandler
-        next(error);
+        next(err);
       }
     }
   );
@@ -124,9 +124,9 @@ export default (app: Router) => {
               fetchedPrices
             )
           );
-      } catch (error) {
+      } catch (err) {
         // Pass errors to middlewares.errorHandler
-        next(error);
+        next(err);
       }
     }
   );
@@ -144,9 +144,11 @@ export default (app: Router) => {
       res
         .status(200)
         .json(resFormatter(true, ['Item fetched successfully'], fetchedItem));
-    } catch (error) {
+    } catch (err) {
       // Pass errors to middlewares.errorHandler
-      next(error);
+      next(err);
     }
   });
-};
+}
+
+export default itemRoute;

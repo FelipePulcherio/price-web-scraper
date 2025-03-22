@@ -10,7 +10,7 @@ interface scraperMainProps {
   retryCount?: number;
 }
 
-export async function scraperMain({
+async function scraperMain({
   storeSet,
   retryCount = 3,
 }: scraperMainProps): Promise<IEvent[]> {
@@ -139,8 +139,8 @@ export async function scraperMain({
             success = true;
 
             // Catch errors
-          } catch (error) {
-            console.error(`Error scraping ${item.url}. ${error}`);
+          } catch (err) {
+            console.error(`Error scraping ${item.url}. ${err}`);
 
             // Capture screenshot
             await page.screenshot({
@@ -484,3 +484,5 @@ async function neweggScraper({ page, url }: storeScraperProps) {
 
   return price;
 }
+
+export default scraperMain;

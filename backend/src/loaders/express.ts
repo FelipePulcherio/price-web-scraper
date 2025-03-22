@@ -4,11 +4,10 @@ import cookieParser from 'cookie-parser';
 import config from '@/config';
 import routes from '@/api';
 
-// Code from: https://github.com/santiq/bulletproof-nodejs/
-export default ({ app }: { app: express.Application }) => {
+function expressLoader({ app }: { app: express.Application }): void {
   // Use cors for integration with frontend
   const corsOptions = {
-    origin: ['https://price-web-scraper-frontend.vercel.app'],
+    origin: ['*'],
     credentials: true,
   };
 
@@ -23,4 +22,6 @@ export default ({ app }: { app: express.Application }) => {
   // Load API routes
   app.use(config.api.prefix, routes());
   console.log(config.api.prefix);
-};
+}
+
+export default expressLoader;

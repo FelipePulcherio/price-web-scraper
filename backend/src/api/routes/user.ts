@@ -4,7 +4,7 @@ import resFormatter from '@/helpers/apiResponseFormatter';
 
 const route = Router();
 
-export default (app: Router) => {
+function userRoute(app: Router): void {
   app.use('/users', route);
 
   // GET /api/v1/users/me
@@ -14,28 +14,25 @@ export default (app: Router) => {
     middlewares.isAuth,
     middlewares.attachCurrentUser,
     async (req: Request, res: Response, next: NextFunction) => {
+      let message = 'User authenticated';
       console.log('GET /api/v1/users/me');
       // console.log(req.body);
 
-      // New user without a token
-      // Won't crash the app but the result is null
+      // New user without a token: won't crash the app but the
+      // result will be an AuthUser with all fields blank
       if (!req.token) {
-        res
-          .status(200)
-          .json(
-            resFormatter(true, ['User not authenticated'], req.currentUser)
-          );
-      } else {
-        res
-          .status(200)
-          .json(resFormatter(true, ['User authenticated'], req.currentUser));
+        message = 'User not authenticated';
       }
 
+      res.status(200).json(resFormatter(true, [message], req.currentUser));
+
       try {
-      } catch (error) {
-        // console.error('Error fetching user:', error);
-        next(error); // Pass errors to middleware
+      } catch (err) {
+        // Pass errors to middlewares.errorHandler
+        next(err);
       }
     }
   );
-};
+}
+
+export default userRoute;

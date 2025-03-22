@@ -3,13 +3,12 @@ import resFormatter from '@/helpers/apiResponseFormatter';
 import { Prisma } from '@prisma/client';
 import { ZodError } from 'zod';
 
-export default function errorHandler(
+function errorHandler(
   err: unknown,
   req: Request,
   res: Response,
   next: NextFunction
 ): void {
-  // Default values
   let statusCode = 500;
   let messages: string[] = ['Internal server error'];
 
@@ -58,3 +57,5 @@ export default function errorHandler(
 
   res.status(statusCode).json(resFormatter(false, messages, null));
 }
+
+export default errorHandler;

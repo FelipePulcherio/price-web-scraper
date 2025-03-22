@@ -5,7 +5,7 @@ import middlewares from '../middlewares';
 
 const route = Router();
 
-export default (app: Router) => {
+function searchRoute(app: Router): void {
   app.use('/search', route);
 
   // GET /api/v1/search/quick?q=
@@ -22,7 +22,7 @@ export default (app: Router) => {
         let fetchedItems = await searchItemByString(search, 5, 1);
         // console.log(fetchedItems);
 
-        // Transform urls
+        // Adjust width and height from cloudinary urls
         fetchedItems = fetchedItems.map((item) => ({
           ...item,
           image: {
@@ -39,13 +39,14 @@ export default (app: Router) => {
           .json(
             resFormatter(true, ['Items fetched successfully'], fetchedItems)
           );
-      } catch (error) {
+      } catch (err) {
         // Pass errors to middlewares.errorHandler
-        next(error);
+        next(err);
       }
     }
   );
 
+  /*
   // GET /api/v1/search?q=
   // Used on regular searches. Use pages with 24 items
   route.get(
@@ -67,10 +68,13 @@ export default (app: Router) => {
           .json(
             resFormatter(true, ['Items fetched successfully'], fetchedItems)
           );
-      } catch (error) {
+      } catch (err) {
         // Pass errors to middlewares.errorHandler
-        next(error);
+        next(err);
       }
     }
   );
-};
+  */
+}
+
+export default searchRoute;

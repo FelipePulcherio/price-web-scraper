@@ -1,6 +1,6 @@
 import { API } from '@/interfaces/interfaces';
 
-export default function apiResponseFormatter<T>(
+function apiResponseFormatter<T>(
   success: boolean,
   messages: string[],
   data: T
@@ -12,3 +12,5 @@ export default function apiResponseFormatter<T>(
     data,
   };
 }
+
+export default apiResponseFormatter;

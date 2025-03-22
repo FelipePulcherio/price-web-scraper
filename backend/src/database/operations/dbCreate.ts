@@ -21,9 +21,9 @@ export async function createUser(data: IUser): Promise<IUser | undefined> {
     });
 
     return newUser;
-  } catch (error) {
+  } catch (err) {
     // Throw error to whoever called this
-    throw error;
+    throw err;
   }
 }
 
@@ -41,9 +41,9 @@ export async function createEvent(data: IEvent[]): Promise<void> {
       })),
       skipDuplicates: true,
     });
-  } catch (error) {
+  } catch (err) {
     // Throw error to whoever called this
-    console.error('Error creating events:', error);
-    throw new Error(error instanceof Error ? error.message : 'Unknown error.');
+    console.error('Error creating events:', err);
+    throw new Error(err instanceof Error ? err.message : 'Unknown error.');
   }
 }

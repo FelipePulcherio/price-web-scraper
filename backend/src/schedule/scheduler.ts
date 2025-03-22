@@ -3,7 +3,7 @@ import { Agenda } from '@hokify/agenda';
 import { IScraperItem, IEvent } from '@/interfaces/interfaces';
 import { deleteScraperCollection } from '@/database/operations/dbDelete';
 import { getAllItemsForScraper } from '@/database/operations/dbRead';
-import { scraperWorker } from '../services/scraperWorker';
+import scraperWorker from '../services/scraperWorker';
 import { createEvent } from '@/database/operations/dbCreate';
 // import { analyzerComparison } from '../analyzer/analyzerComparison';
 
@@ -27,9 +27,11 @@ scraperAgenda.define('Scraper', async (job) => {
   const events: IEvent[] = await scraperWorker(allItems);
   console.log('Scheduler: Scraping done.');
 
-  // console.log(events);
-  // console.log(events.length);
-  // console.log(stores[0].items);
+  /* 
+  console.log(events);
+  console.log(events.length);
+  console.log(stores[0].items); 
+  */
 
   // STEP 4: Create new Events on DB
   await createEvent(events);
@@ -45,8 +47,10 @@ const runJobs = async () => {
 // Start Agenda
 export async function startAgenda(): Promise<void> {
   // Delete all documents in 'Scraper' collection
-  // console.log('Scheduler: Clearing previous "Scraper" schedules');
-  // await deleteScraperCollection();
+  /*
+  console.log('Scheduler: Clearing previous "Scraper" schedules');
+  await deleteScraperCollection(); 
+  */
 
   // Actually start scraperAgenda
   await scraperAgenda.start();

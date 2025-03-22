@@ -2,11 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import { IUser, AuthUser } from '@/interfaces/interfaces';
 import { getUserById } from '@/database/operations/dbRead';
 
-const attachCurrentUser = async (
+async function attachCurrentUser(
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> {
   try {
     let currentUser: AuthUser;
 
@@ -45,9 +45,9 @@ const attachCurrentUser = async (
     req.currentUser = currentUser;
 
     return next();
-  } catch (error) {
-    return next(error);
+  } catch (err) {
+    return next(err);
   }
-};
+}
 
 export default attachCurrentUser;

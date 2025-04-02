@@ -75,6 +75,36 @@ function searchRoute(app: Router): void {
     }
   );
   */
+
+  
+  // GET /api/v1/testSearch?q=
+  // Used on regular searches. Use pages with 24 items
+  route.get(
+    '/testSearch',
+    middlewares.validateSearch,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const search = req.query.q as string;
+        const pageSize = 24;
+        const page = parseInt(req.query.page as string, 10) || 1;
+
+        console.log(`GET /api/v1/testSearch?q=${search}`);
+
+        const fetchedItems = await searchItemByString(search, pageSize, page);
+        // console.log(fetchedItems);
+
+        res
+          .status(200)
+          .json(
+            resFormatter(true, ['Items fetched successfully'], fetchedItems)
+          );
+      } catch (err) {
+        // Pass errors to middlewares.errorHandler
+        next(err);
+      }
+    }
+  );
+  
 }
 
 export default searchRoute;

@@ -6,6 +6,7 @@ export interface IStore {
   name: string;
   logo?: string;
   url: string;
+  specificId?: string;
 }
 
 // Define interface for store info inside Item

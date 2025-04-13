@@ -79,6 +79,33 @@ export interface IShortItem {
   storesQty?: number;
 }
 
+export interface IDiscoverShortCategory {
+  id?: number;
+  name: string;
+  hasDepth?: boolean;
+}
+
+export interface IDiscoverImage {
+  id?: number;
+  name?: string;
+  cloudinaryId?: string;
+  url: string;
+}
+
+export interface IDiscoverItem {
+  id?: number;
+  name: string;
+  model?: string;
+  brand?: string;
+  categories?: IDiscoverShortCategory[];
+  subCategories?: IDiscoverShortCategory[];
+  subSubCategories?: IDiscoverShortCategory[];
+  images?: IDiscoverImage[];
+  description?: Prisma.JsonObject;
+  stores?: IStore[];
+  price: number;
+}
+
 // Define interface for scraper item
 export interface IScraperItem {
   id: number;

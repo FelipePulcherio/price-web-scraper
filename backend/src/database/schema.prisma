@@ -82,8 +82,9 @@ model ItemStore {
   storeId Int
   store   Store @relation(fields: [storeId], references: [id])
 
-  url    String
-  events Events[]
+  url        String
+  specificId String   @default("")
+  events     Events[]
 
   @@id([itemId, storeId])
 }

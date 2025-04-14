@@ -1,0 +1,48 @@
+export interface ICostcoAuthAPI {
+  status: number;
+  statusText: string;
+  headers: {
+    'set-cookie': string[];
+  };
+  data: string;
+}
+
+export interface ICostcoSearchAPI {
+  status: number;
+  statusText: string;
+  headers: {
+    'set-cookie': string[];
+  };
+  data: {
+    response: ICostcoAPIResponse;
+  };
+}
+
+export interface ICostcoAPIResponse {
+  docs: ICostcoItems[];
+  numFound: number;
+  start?: number;
+  numFoundExact?: boolean;
+}
+
+export interface ICostcoItems {
+  item_product_marketing_statement: string;
+  Model_attr: string[];
+  item_member_only: boolean;
+  item_number: string;
+  Model_descriptive: string[];
+  item_manufacturing_skus: string[];
+  content_type: string[];
+  Brand_attr: string[];
+  categoryPath_ss: string[];
+  group_id: string;
+  name: string;
+  description: string;
+  image: string;
+  deliveryStatus: 'in stock';
+  hasSingleSku: boolean;
+  minSalePrice: number;
+  maxSalePrice: number;
+  isItemInStock: boolean;
+  images: string[];
+}

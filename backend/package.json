@@ -8,9 +8,12 @@
     "vercel-build": "tsc",
     "render-build": "npm install && tsc",
     "build": "tsc --watch",
+    "build2": "tsc",
     "start": "nodemon ./dist/app.js",
+    "start2": "node ./dist/app.js",
     "render-start": "node ./dist/app.js",
-    "dev": "concurrently \"npm run build\" \"npm run start\" "
+    "dev": "concurrently \"npm run build\" \"npm run start\" ",
+    "dev2": "npm run build2 && npm run start2"
   },
   "keywords": [
     "Web",

@@ -15,7 +15,7 @@ async function getAuth(): Promise<string | null> {
     const initialResponse: ICostcoAuthAPI = await axiosClient.get(url, {
       headers: {
         'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
         Accept: '*/*',
         'Accept-Encoding': 'gzip, deflate, br',
         Connection: 'keep-alive',
@@ -95,7 +95,7 @@ export default async function costcoCaSearch({
         Origin: 'https://www.costco.ca',
         Referer: 'https://www.costco.ca/',
         'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
         'X-Api-Key': apiKey,
         Cookie: cookieHeader,
       },

@@ -102,7 +102,7 @@ export interface IDiscoverItem {
   subSubCategories?: IDiscoverShortCategory[];
   images?: IDiscoverImage[];
   description?: Prisma.JsonObject;
-  stores?: IStore[];
+  stores: IStore[];
   price: number;
 }
 

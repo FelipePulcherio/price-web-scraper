@@ -94,11 +94,6 @@ function normalizeSearchData({
       discoveredItems.push(newItem);
     });
   });
-
-  console.log(
-    'Total discovered items after normalization:',
-    discoveredItems.length
-  );
   return discoveredItems;
 }
 
@@ -143,11 +138,17 @@ export default function ({
       discoveredItems,
       apiResponse: apiResponse as IBestBuySearchAPIData[],
     });
+    console.log(
+      `BEST BUY CA: ${discoveredItems.length} items normalized from search.`
+    );
   } else {
     discoveredItems = normalizeAvailabilityData({
       discoveredItems,
       apiResponse: apiResponse as IBestBuyAvailabilityAPIData[],
     });
+    console.log(
+      `BEST BUY CA: ${discoveredItems.length} items normalized from availability.`
+    );
   }
 
   return discoveredItems;

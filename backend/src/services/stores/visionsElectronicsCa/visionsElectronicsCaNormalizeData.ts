@@ -114,9 +114,9 @@ function normalizeSearchData({
   });
 
   console.log(
-    'Total discovered items after normalization:',
-    discoveredItems.length
+    `VISIONS ELECTRONICS CA: ${discoveredItems.length} items normalized from availability.`
   );
+
   return discoveredItems;
 }
 

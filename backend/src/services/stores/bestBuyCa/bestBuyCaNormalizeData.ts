@@ -16,6 +16,8 @@ const ignoreStrings: string[] = [
   'Freedom',
   'Monthly',
   'Open',
+  'Openbox',
+  'Display',
 ];
 
 function containsIgnoredWord(name: string): boolean {

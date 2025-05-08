@@ -2,12 +2,11 @@ import { axiosClient } from '../storesApiClient';
 import {
   IVisionsElectronicsAuthAPIResponse,
   IVisionsElectronicsSearchAPIResponse,
-  IVisionsElectronicsSearchAPIData,
 } from './types';
 import { IDiscoverItem } from '@/interfaces/interfaces';
 import visionsElectronicsCaNormalizeData from './visionsElectronicsCaNormalizeData';
 
-import saveAsJson from '../utils/saveAsJson';
+import utils from '../utils';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -20,7 +19,7 @@ interface getAuthReturn {
   apiKey: string;
 }
 
-async function getAuth(): Promise<getAuthReturn | null> {
+async function getAuth(): Promise<getAuthReturn> {
   try {
     const url = 'https://www.visions.ca/';
     const authResponse: IVisionsElectronicsAuthAPIResponse =
@@ -40,7 +39,9 @@ async function getAuth(): Promise<getAuthReturn | null> {
     );
 
     if (!match) {
-      throw new Error('Application ID or API Key not found.');
+      throw new utils.ParsingError(
+        'Failed to get Application ID or API Key from VISIONS ELECTRONICS CA.'
+      );
     }
 
     applicationId = match[1];
@@ -51,8 +52,10 @@ async function getAuth(): Promise<getAuthReturn | null> {
 
     return { applicationId, apiKey };
   } catch (err) {
-    console.error('Error getting Visions Electronics auth:', err);
-    return null;
+    throw new utils.AuthError(
+      'Failed to get auth from VISIONS ELECTRONICS CA.',
+      err
+    );
   }
 }
 
@@ -84,7 +87,7 @@ async function fetchSearchAPI({
 }: {
   query: string;
   pageSize: number;
-}): Promise<IVisionsElectronicsSearchAPIResponse | null> {
+}): Promise<IVisionsElectronicsSearchAPIResponse> {
   // Api for searching an item
   // Needs Headers + Application ID + API Key + Body
   // Works by string (without separator)
@@ -109,12 +112,14 @@ async function fetchSearchAPI({
         },
       });
 
-    console.log(`Visions Electronics Search API Called.`);
+    console.log(`VISIONS ELECTRONICS CA: Search API Called.`);
 
     return apiResponse;
   } catch (err) {
-    console.error('Error fetching Visions Electronics data (Search):', err);
-    return null;
+    throw new utils.FetchFailedError(
+      'Failed to fetch data from VISIONS ELECTRONICS CA search.',
+      err
+    );
   }
 }
 
@@ -124,7 +129,7 @@ export default async function visionsElectronicsCaSearch({
 }: {
   checkAuth: boolean;
   query: string;
-}): Promise<IDiscoverItem[] | null> {
+}): Promise<IDiscoverItem[]> {
   const pageSize: number = 1000;
   if (checkAuth) {
     await getAuth();
@@ -134,9 +139,8 @@ export default async function visionsElectronicsCaSearch({
     query,
     pageSize,
   });
-  if (!firstApiResponse) return null;
 
-  // await saveAsJson({
+  // await utils.saveAsJson({
   //   fileName: 'visionselectronics-results.json',
   //   toBeSaved: firstApiResponse.data,
   // });

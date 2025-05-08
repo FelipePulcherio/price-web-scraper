@@ -20,6 +20,7 @@ const ignoreStrings: string[] = [
   'Freedom',
   'Monthly',
   'Open',
+  'Openbox',
   'Display',
 ];
 
@@ -82,9 +83,9 @@ function normalizeSearchData({
       containsIgnoredWord(product.productName) ||
       containsIgnoredWord(product.variationProductName ?? '')
     ) {
-      console.log(
-        `⛔ Filtered out: ${product.productCode} - ${product.productName}`
-      );
+      // console.log(
+      //   `⛔ Filtered out: ${product.productCode} - ${product.productName}`
+      // );
 
       return;
     }
@@ -137,15 +138,15 @@ function normalizeSearchData({
       ...(extractModel(product) ? { model: extractModel(product) } : {}),
     };
 
-    console.log(`✅ Kept: ${product.productCode} - ${product.productName}`);
-    console.dir(newItem, { depth: null });
+    // console.log(`✅ Kept: ${product.productCode} - ${product.productName}`);
+    // console.dir(newItem, { depth: null });
     discoveredItems.push(newItem);
   });
 
   console.log(
-    'Total discovered items after normalization:',
-    discoveredItems.length
+    `LONDON DRUGS CA: ${discoveredItems.length} items normalized from search.`
   );
+
   return discoveredItems;
 }
 

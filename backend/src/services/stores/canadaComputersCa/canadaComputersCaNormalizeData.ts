@@ -16,6 +16,7 @@ const ignoreStrings: string[] = [
   'Freedom',
   'Monthly',
   'Open',
+  'Openbox',
   'Display',
 ];
 
@@ -107,9 +108,9 @@ function normalizeSearchData({
   });
 
   console.log(
-    'Total discovered items after normalization:',
-    discoveredItems.length
+    `LONDON DRUGS CA: ${discoveredItems.length} items normalized from search.`
   );
+
   return discoveredItems;
 }
 

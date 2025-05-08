@@ -6,7 +6,7 @@ import {
   ILondonDrugsSearchAPIResponse,
 } from './types';
 import { IDiscoverItem } from '@/interfaces/interfaces';
-import formatQuery from '../utils/formatQuery';
+import utils from '../utils';
 import londonDrugsCaParseData from './londonDrugsCaParseData';
 import londonDrugsCaNormalizeData from './londonDrugsCaNormalizeData';
 
@@ -16,7 +16,7 @@ import path from 'path';
 
 const londondDrugsCaJar = new CookieJar();
 
-async function getAuth(): Promise<void | null> {
+async function getAuth(): Promise<void> {
   try {
     // Retrieve cookies from auth api
     const url = 'https://www.londondrugs.com/api/auth/session';
@@ -45,15 +45,16 @@ async function getAuth(): Promise<void | null> {
     }
 
     if (!cookieHeader) {
-      throw new Error('Cookies not found.');
+      throw new utils.CookieExtractionError(
+        'Cookies not found from LONDON DRUGS CA auth response.'
+      );
     }
 
-    console.log('London Drugs Auth acquired.');
+    // console.log('LONDON DRUGS CA: Auth acquired.');
 
     return;
   } catch (err) {
-    console.error('Error getting London Drugs auth:', err);
-    return null;
+    throw new utils.AuthError('Failed to get auth from LONDON DRUGS CA.', err);
   }
 }
 
@@ -65,7 +66,7 @@ function buildLondonDrugsSearchUrl({
   pageSize: number;
 }): string {
   const apiUrlBase = `https://www.londondrugs.com/search?pageSize=${pageSize}&q=query%20here`;
-  const formattedQuery = formatQuery({ query, separator: '%20' });
+  const formattedQuery = utils.formatQuery({ query, separator: '%20' });
   return apiUrlBase.replace('query%20here', formattedQuery);
 }
 
@@ -75,7 +76,7 @@ async function fetchSearchAPI({
 }: {
   apiUrl: string;
   checkAuth: boolean;
-}): Promise<ILondonDrugsSearchAPIResponse | null> {
+}): Promise<ILondonDrugsSearchAPIResponse> {
   // Api for searching an item
   // Needs Headers
   // Works by string (with %20 separator) and id (refer to "productCode")
@@ -93,9 +94,15 @@ async function fetchSearchAPI({
     };
 
     if (checkAuth) {
-      headers.Cookie = await londondDrugsCaJar.getCookieString(
-        'https://www.londondrugs.com'
-      );
+      try {
+        headers.Cookie = await londondDrugsCaJar.getCookieString(
+          'https://www.londondrugs.com'
+        );
+      } catch (err) {
+        throw new utils.CookieExtractionError(
+          'Failed to retrieve LONDON DRUGS CA cookies from jar.'
+        );
+      }
     }
 
     const apiResponse: ILondonDrugsSearchAPIResponse = await axiosClient.get(
@@ -106,12 +113,14 @@ async function fetchSearchAPI({
       }
     );
 
-    // console.log(`London Drugs Search API Called.`);
+    console.log(`LONDON DRUGS CA: Search API Called.`);
 
     return apiResponse;
   } catch (err) {
-    console.error('Error fetching London Drugs data (Search):', err);
-    return null;
+    throw new utils.FetchFailedError(
+      'Failed to fetch data from LONDON DRUGS CA search.',
+      err
+    );
   }
 }
 
@@ -121,7 +130,7 @@ export default async function londonDrugsCaSearch({
 }: {
   checkAuth: boolean;
   query: string;
-}): Promise<IDiscoverItem[] | null> {
+}): Promise<IDiscoverItem[]> {
   const pageSize: number = 1600;
   if (checkAuth) {
     await getAuth();
@@ -132,7 +141,6 @@ export default async function londonDrugsCaSearch({
     apiUrl: searchUrl,
     checkAuth,
   });
-  if (!firstApiResponse) return null;
 
   // await fs.writeFile('londondrugs-results.txt', firstApiResponse.data, 'utf-8');
 

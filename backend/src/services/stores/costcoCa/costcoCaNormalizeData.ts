@@ -1,4 +1,4 @@
-import { ICostcoSearchAPIResponse } from './types';
+import { ICostcoSearchAPIData } from './types';
 import {
   IDiscoverImage,
   IDiscoverItem,
@@ -37,61 +37,63 @@ function costcoCaPriceCalculator(
 export default function ({
   apiResponse,
 }: {
-  apiResponse: ICostcoSearchAPIResponse;
+  apiResponse: ICostcoSearchAPIData[];
 }): IDiscoverItem[] {
   let discoveredItems: IDiscoverItem[] = [];
 
   // Loop trough all docs
-  apiResponse.data.response.docs.forEach((doc) => {
-    const store: IStore[] = [
-      {
-        name: 'COSTCO CA',
-        url: costcoCaUrlGenerator(doc.content_type[0], doc.group_id),
-        specificId: doc.item_number,
-      },
-    ];
+  apiResponse.forEach((data) => {
+    data.docs.forEach((doc) => {
+      const store: IStore[] = [
+        {
+          name: 'COSTCO CA',
+          url: costcoCaUrlGenerator(doc.content_type[0], doc.group_id),
+          specificId: doc.item_number,
+        },
+      ];
 
-    // TO DO: Category mapping for COSTCO CA
-    const discoveredCategory: IDiscoverShortCategory[] = [
-      {
-        name: '',
-        hasDepth: true,
-      },
-    ];
+      // TO DO: Category mapping for COSTCO CA
+      const discoveredCategory: IDiscoverShortCategory[] = [
+        {
+          name: '',
+          hasDepth: true,
+        },
+      ];
 
-    const discoveredSubCategory: IDiscoverShortCategory[] = [
-      {
-        name: '',
-        hasDepth: true,
-      },
-    ];
+      const discoveredSubCategory: IDiscoverShortCategory[] = [
+        {
+          name: '',
+          hasDepth: true,
+        },
+      ];
 
-    const discoveredSubSubCategory: IDiscoverShortCategory[] = [
-      {
-        name: '',
-        hasDepth: false,
-      },
-    ];
+      const discoveredSubSubCategory: IDiscoverShortCategory[] = [
+        {
+          name: '',
+          hasDepth: false,
+        },
+      ];
 
-    // Image is modified. Not suited for direct use.
-    const discoveredImages: IDiscoverImage[] = [
-      {
-        url: doc.image,
-      },
-    ];
+      // Image is modified. Not suited for direct use.
+      const discoveredImages: IDiscoverImage[] = [
+        {
+          url: doc.image,
+        },
+      ];
 
-    const newItem: IDiscoverItem = {
-      name: doc.name,
-      model: doc.Model_attr[0],
-      brand: doc.Brand_attr[0],
-      stores: store,
-      price: costcoCaPriceCalculator(
-        doc.minSalePrice,
-        doc.item_product_marketing_statement
-      ),
-    };
+      const newItem: IDiscoverItem = {
+        name: doc.name,
+        model: doc.Model_attr[0],
+        brand: doc.Brand_attr[0],
+        stores: store,
+        price: costcoCaPriceCalculator(
+          doc.minSalePrice,
+          doc.item_product_marketing_statement
+        ),
+      };
 
-    discoveredItems.push(newItem);
+      discoveredItems.push(newItem);
+    });
   });
 
   console.log(

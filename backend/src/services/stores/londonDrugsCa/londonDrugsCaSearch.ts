@@ -10,7 +10,6 @@ import utils from '../utils';
 import londonDrugsCaParseData from './londonDrugsCaParseData';
 import londonDrugsCaNormalizeData from './londonDrugsCaNormalizeData';
 
-import saveAsJson from '../utils/saveAsJson';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -149,7 +148,7 @@ export default async function londonDrugsCaSearch({
     pageSize,
   });
 
-  // await saveAsJson({
+  // await utils.saveAsJson({
   //   fileName: 'londondrugs-parsed.json',
   //   toBeSaved: parsedData,
   // });

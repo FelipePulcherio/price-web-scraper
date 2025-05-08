@@ -5,10 +5,9 @@ import {
   ICanadaComputersSearchAPIData,
 } from './types';
 import { IDiscoverItem } from '@/interfaces/interfaces';
-import formatQuery from '../utils/formatQuery';
+import utils from '../utils';
 import canadaComputersCaNormalizeData from './canadaComputersCaNormalizeData';
 
-import saveAsJson from '../utils/saveAsJson';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -23,7 +22,7 @@ function buildCanadaComputersApiBody({
   query: string;
   pageSize: number;
 }) {
-  const formattedQuery = formatQuery({ query, separator: '+' });
+  const formattedQuery = utils.formatQuery({ query, separator: '+' });
   const body = {
     s: formattedQuery,
     resultsPerPage: pageSize,
@@ -37,7 +36,7 @@ async function fetchSearchAPI({
 }: {
   query: string;
   pageSize: number;
-}): Promise<ICanadaComputersSearchAPIResponse | null> {
+}): Promise<ICanadaComputersSearchAPIResponse> {
   // Api for searching an item
   // Needs Headers + Body
   // Works by string (with + separator) and id (refer to "reference")
@@ -59,14 +58,14 @@ async function fetchSearchAPI({
         },
       });
 
-    // console.log(
-    //   `Canada Computers Search API Called. Results: ${apiResponse.data.pagination.total_items}.`
-    // );
+    console.log(`CANADA COMPUTERS CA: Search API Called.`);
 
     return apiResponse;
   } catch (err) {
-    console.error('Error fetching Canada Computers data (Search):', err);
-    return null;
+    throw new utils.FetchFailedError(
+      'Failed to fetch data from CANADA COMPUTERS CA search.',
+      err
+    );
   }
 }
 
@@ -85,7 +84,7 @@ export default async function canadaComputersCaSearch({
   // const file = await fs.readFile(inputPath, 'utf-8');
   // const allSearchResponses: IBestBuySearchAPIData[] = JSON.parse(file);
 
-  // await saveAsJson({
+  // await utils.saveAsJson({
   //   fileName: 'canadacomputers-results.json',
   //   toBeSaved: allSearchResponses.data,
   // });

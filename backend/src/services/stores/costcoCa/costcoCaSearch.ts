@@ -28,10 +28,16 @@ async function getAuth(): Promise<string> {
 
     // console.log(initialResponse.headers['set-cookie']);
 
-    const setCookieHeader = initialResponse.headers['set-cookie'];
-    if (setCookieHeader) {
-      setCookieHeader.forEach((cookie: string) =>
+    const cookieHeader = initialResponse.headers['set-cookie'];
+    if (cookieHeader) {
+      cookieHeader.forEach((cookie: string) =>
         costcoCaJar.setCookieSync(cookie, 'https://www.costco.ca')
+      );
+    }
+
+    if (!cookieHeader) {
+      throw new utils.CookieExtractionError(
+        'Cookies not found from COSTCO CA auth response.'
       );
     }
 

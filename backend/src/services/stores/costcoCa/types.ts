@@ -1,4 +1,4 @@
-export interface ICostcoAuthAPI {
+export interface ICostcoAuthAPIResponse {
   status: number;
   statusText: string;
   headers: {
@@ -7,18 +7,18 @@ export interface ICostcoAuthAPI {
   data: string;
 }
 
-export interface ICostcoSearchAPI {
+export interface ICostcoSearchAPIResponse {
   status: number;
   statusText: string;
   headers: {
     'set-cookie': string[];
   };
   data: {
-    response: ICostcoAPIResponse;
+    response: ICostcoSearchAPIData;
   };
 }
 
-export interface ICostcoAPIResponse {
+export interface ICostcoSearchAPIData {
   docs: ICostcoItems[];
   numFound: number;
   start?: number;

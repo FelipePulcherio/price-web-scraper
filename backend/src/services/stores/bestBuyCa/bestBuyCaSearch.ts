@@ -6,18 +6,21 @@ import {
   IBestBuyAvailabilityAPIData,
 } from './types';
 import { IDiscoverItem } from '@/interfaces/interfaces';
-import formatQuery from '../utils/formatQuery';
-import randomizedDelay from '../utils/randomizedDelay';
+import utils from '../utils';
 import bestBuyCaNormalizeData from './bestBuyCaNormalizeData';
 
-import saveAsJson from '../utils/saveAsJson';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-function buildBestBuySearchUrl({ query }: { query: string }): string {
-  const apiUrlBase =
-    'https://www.bestbuy.ca/api/v2/json/search?currentRegion=BC&lang=en-CA&page=1&pageSize=100&path=custom0productcondition%3ABrand%20New%3Bsoldandshippedby0enrchstring%3ABest%20Buy&query=query%20here&exp=labels%2Csearch_abtesting_personalization_epsilon%3Ab0%2Csearch_abtesting_personalization_zeta%3Ab1&isPLP=true&sortBy=price&sortDir=asc';
-  const formattedQuery = formatQuery({ query, separator: '%20' });
+function buildBestBuySearchUrl({
+  query,
+  page,
+}: {
+  query: string;
+  page: number;
+}): string {
+  const apiUrlBase = `https://www.bestbuy.ca/api/v2/json/search?currentRegion=BC&lang=en-CA&page=${page}&pageSize=100&path=custom0productcondition%3ABrand%20New%3Bsoldandshippedby0enrchstring%3ABest%20Buy&query=query%20here&exp=labels%2Csearch_abtesting_personalization_epsilon%3Ab0%2Csearch_abtesting_personalization_zeta%3Ab1&isPLP=true&sortBy=price&sortDir=asc`;
+  const formattedQuery = utils.formatQuery({ query, separator: '%20' });
   return apiUrlBase.replace('query%20here', formattedQuery);
 }
 
@@ -25,7 +28,7 @@ async function fetchSearchAPI({
   apiUrl,
 }: {
   apiUrl: string;
-}): Promise<IBestBuySearchAPIResponse | null> {
+}): Promise<IBestBuySearchAPIResponse> {
   // Api for searching an item
   // Needs Headers
   // Works by string (with %20 separator) and id (refer to "sku")
@@ -47,13 +50,15 @@ async function fetchSearchAPI({
     );
 
     // console.log(
-    //   `Best Buy Search API Called. Page: ${apiResponse.data.currentPage}. Results: ${apiResponse.data.products.length}.`
+    //   `BEST BUY CA: Search API Called. Page: ${apiResponse.data.currentPage}. Results: ${apiResponse.data.products.length}.`
     // );
 
     return apiResponse;
   } catch (err) {
-    console.error('Error fetching Best Buy data (Search):', err);
-    return null;
+    throw new utils.FetchFailedError(
+      'Failed to fetch data from BEST BUY CA search.',
+      err
+    );
   }
 }
 
@@ -61,26 +66,48 @@ async function fetchAllSearchPages({
   query,
 }: {
   query: string;
-}): Promise<IBestBuySearchAPIData[] | null> {
+}): Promise<IBestBuySearchAPIData[]> {
   let allResponses: IBestBuySearchAPIData[] = [];
 
-  const searchUrl: string = buildBestBuySearchUrl({ query });
+  const searchUrl: string = buildBestBuySearchUrl({ query, page: 1 });
 
-  console.log('BB API Called. Fetching Page #1.');
+  console.log('BEST BUY CA: Search API Called. Fetching Page #1.');
   const firstApiResponse = await fetchSearchAPI({ apiUrl: searchUrl });
-
-  if (!firstApiResponse) return null;
 
   allResponses.push(firstApiResponse.data);
   const { totalPages } = firstApiResponse.data;
 
   for (let i = 2; i <= totalPages; i++) {
-    await randomizedDelay({ initialTime: 5000, finalTime: 10000 });
-    const nextPageUrl = searchUrl.replace(`page=${i - 1}`, `page=${i}`);
+    await utils.randomizedDelay({ initialTime: 5000, finalTime: 10000 });
 
-    console.log(`BB Search API Called. Fetching Page #${i}.`);
-    const response = await fetchSearchAPI({ apiUrl: nextPageUrl });
-    if (response) allResponses.push(response.data);
+    const nextPageUrl = buildBestBuySearchUrl({ query, page: i });
+    let success = false;
+    let attempts = 0;
+
+    // Blind retry if a page fails for whatever reason
+    while (!success && attempts < 3) {
+      try {
+        console.log(
+          `BEST BUY CA: Search API Called. Fetching Page #${i}. Attempt ${
+            attempts + 1
+          }`
+        );
+        const response = await fetchSearchAPI({ apiUrl: nextPageUrl });
+        if (response) {
+          allResponses.push(response.data);
+          success = true;
+        }
+      } catch (err) {
+        attempts++;
+        if (attempts === 3) {
+          console.warn(
+            `BEST BUY CA: Failed to fetch page ${i} after 3 attempts. Skipping.`
+          );
+        } else {
+          await utils.randomizedDelay({ initialTime: 5000, finalTime: 6000 });
+        }
+      }
+    }
   }
 
   return allResponses;
@@ -107,7 +134,7 @@ function chunkSkuStringsFromApiResponses({
     chunks.push(chunk);
   }
 
-  // console.log(`✔ Created ${chunks.length} chunk(s) of SKUs`);
+  // console.log(`BEST BUY CA: Created ${chunks.length} chunk(s) of SKUs`);
   // chunks.forEach((chunk, index) => {
   //   console.log(
   //     `Chunk #${index + 1} (${chunk.split('%7C').length} SKUs): ${chunk}`
@@ -131,7 +158,7 @@ async function fetchAvailabilityAPI({
   apiUrl,
 }: {
   apiUrl: string;
-}): Promise<IBestBuyAvailabilityAPIResponse | null> {
+}): Promise<IBestBuyAvailabilityAPIResponse> {
   // Api for checking availability of 1 or many items (limit is 96)
   // Needs Headers
   // Works by string with %7C separator
@@ -152,14 +179,12 @@ async function fetchAvailabilityAPI({
       }
     );
 
-    // console.log(
-    //   `Best Buy Availability API Called. Results: ${apiResponse.data.availabilities.length}.`
-    // );
-
     return apiResponse;
   } catch (err) {
-    console.error('Error fetching Best Buy data (Availability):', err);
-    return null;
+    throw new utils.FetchFailedError(
+      'Failed to fetch data from BEST BUY CA availability.',
+      err
+    );
   }
 }
 
@@ -167,25 +192,45 @@ async function fetchAllAvailabilityPages({
   discoveredItems,
 }: {
   discoveredItems: IDiscoverItem[];
-}): Promise<IBestBuyAvailabilityAPIData[] | null> {
+}): Promise<IBestBuyAvailabilityAPIData[]> {
   let allAvailabilityResponses: IBestBuyAvailabilityAPIData[] = [];
+  let success = false;
+  let attempts = 0;
 
   const skuChunks = chunkSkuStringsFromApiResponses({ discoveredItems });
 
   for (let i = 0; i < skuChunks.length; i++) {
-    await randomizedDelay({ initialTime: 5000, finalTime: 10000 });
+    await utils.randomizedDelay({ initialTime: 5000, finalTime: 10000 });
     const nextPageUrl: string = buildBestBuyAvailabilityUrl({
       skuChunk: skuChunks[i],
     });
 
-    console.log(
-      `BB Availability API Called. Fetching Chunk #${i + 1} / ${
-        skuChunks.length
-      }.`
-    );
-
-    const response = await fetchAvailabilityAPI({ apiUrl: nextPageUrl });
-    if (response) allAvailabilityResponses.push(response.data);
+    // Blind retry if a page fails for whatever reason
+    while (!success && attempts < 3) {
+      try {
+        console.log(
+          `BEST BUY CA: Availability API Called. Fetching Chunk #${i + 1}/${
+            skuChunks.length
+          }. Attempt ${attempts + 1}`
+        );
+        const response = await fetchAvailabilityAPI({ apiUrl: nextPageUrl });
+        if (response) {
+          allAvailabilityResponses.push(response.data);
+          success = true;
+        }
+      } catch (err) {
+        attempts++;
+        if (attempts === 3) {
+          console.warn(
+            `BEST BUY CA: Failed to fetch Chunk #${
+              i + 1
+            } after 3 attempts. Skipping.`
+          );
+        } else {
+          await utils.randomizedDelay({ initialTime: 5000, finalTime: 6000 });
+        }
+      }
+    }
   }
 
   return allAvailabilityResponses;
@@ -195,21 +240,20 @@ export default async function bestBuyCaSearch({
   query,
 }: {
   query: string;
-}): Promise<IDiscoverItem[] | null> {
+}): Promise<IDiscoverItem[]> {
   // Best Buy runs a lot of APIs to retrieve chunks of info.
   // Search API does not give all info. Only sku, name, url, price, main image, category ids
   // TO DO: Run item detail API (single sku) to get more images, model, brand, upc, availability
   // OPTIONAL TO DO: Setup crawler to run variants API -> This returns all related skus (different sizes, color, etc.)
 
   const allSearchResponses = await fetchAllSearchPages({ query });
-  if (!allSearchResponses) return null;
 
   // For debbuging
   // const inputPath = path.resolve(__dirname, 'bestbuy-results.json');
   // const file = await fs.readFile(inputPath, 'utf-8');
   // const allSearchResponses: IBestBuySearchAPIData[] = JSON.parse(file);
 
-  // await saveAsJson({
+  // await utils.saveAsJson({
   //   fileName: 'bestbuy-results.json',
   //   toBeSaved: allSearchResponses,
   // });
@@ -223,7 +267,6 @@ export default async function bestBuyCaSearch({
   const allAvailabilityResponses = await fetchAllAvailabilityPages({
     discoveredItems,
   });
-  if (!allAvailabilityResponses) return null;
 
   discoveredItems = bestBuyCaNormalizeData({
     type: 'availability',

@@ -38,10 +38,6 @@ function buildProductUrl(productName: string, productCode: string): string {
   return `https://www.londondrugs.com/products/${parsedProductName}/p/${productCode}`;
 }
 
-function buildImageUrl(url: string): string {
-  return `https:${url}`;
-}
-
 function extractBrand(product: ILondonDrugsItem): string | undefined {
   const brandName = product.brand?.name?.trim();
   return brandName || undefined;
@@ -122,7 +118,7 @@ function normalizeSearchData({
 
     const discoveredImages: IDiscoverImage[] = [
       {
-        url: buildImageUrl(product.primaryImage.imageUrl),
+        url: product.primaryImage.imageUrl,
       },
     ];
 

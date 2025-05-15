@@ -36,11 +36,13 @@ export interface ICostcoItems {
   Brand_attr: string[];
   categoryPath_ss: string[];
   group_id: string;
+  item_name: string;
   name: string;
   description: string;
   image: string;
   deliveryStatus: 'in stock';
   hasSingleSku: boolean;
+  item_location_pricing_salePrice: number;
   minSalePrice: number;
   maxSalePrice: number;
   isItemInStock: boolean;

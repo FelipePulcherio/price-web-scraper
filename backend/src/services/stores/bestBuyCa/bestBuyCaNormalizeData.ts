@@ -1,8 +1,8 @@
 import {
+  IDiscoverStore,
   IDiscoverImage,
   IDiscoverItem,
   IDiscoverShortCategory,
-  IStore,
 } from '@/interfaces/interfaces';
 import { IBestBuySearchAPIData, IBestBuyAvailabilityAPIData } from './types';
 
@@ -49,7 +49,7 @@ function normalizeSearchData({
         return;
       }
 
-      const store: IStore[] = [
+      const store: IDiscoverStore[] = [
         {
           name: 'BEST BUY CA',
           url: `https://bestbuy.ca${product.productUrl}`,

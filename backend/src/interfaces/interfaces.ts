@@ -6,7 +6,6 @@ export interface IStore {
   name: string;
   logo?: string;
   url: string;
-  specificId?: string;
 }
 
 // Define interface for store info inside Item
@@ -92,6 +91,13 @@ export interface IDiscoverImage {
   url: string;
 }
 
+export interface IDiscoverStore {
+  name: string;
+  url: string;
+  specificId?: string;
+  price?: number;
+}
+
 export interface IDiscoverItem {
   id?: number;
   name: string;
@@ -102,8 +108,8 @@ export interface IDiscoverItem {
   subSubCategories?: IDiscoverShortCategory[];
   images?: IDiscoverImage[];
   description?: Prisma.JsonObject;
-  stores: IStore[];
-  price: number;
+  stores: IDiscoverStore[];
+  price?: number;
 }
 
 // Define interface for scraper item

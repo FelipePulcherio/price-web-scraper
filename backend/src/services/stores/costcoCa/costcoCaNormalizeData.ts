@@ -1,9 +1,9 @@
 import { ICostcoSearchAPIData } from './types';
 import {
+  IDiscoverStore,
   IDiscoverImage,
   IDiscoverItem,
   IDiscoverShortCategory,
-  IStore,
 } from '@/interfaces/interfaces';
 
 function costcoCaUrlGenerator(contentType: string, groupId: string): string {
@@ -44,7 +44,7 @@ export default function ({
   // Loop trough all docs
   apiResponse.forEach((data) => {
     data.docs.forEach((doc) => {
-      const store: IStore[] = [
+      const store: IDiscoverStore[] = [
         {
           name: 'COSTCO CA',
           url: costcoCaUrlGenerator(doc.content_type[0], doc.group_id),

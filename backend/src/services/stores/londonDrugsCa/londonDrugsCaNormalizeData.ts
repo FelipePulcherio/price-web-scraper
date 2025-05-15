@@ -3,10 +3,10 @@
 // price.salePrice
 // Clean productName. Sometimes it contains the model.
 import {
+  IDiscoverStore,
   IDiscoverImage,
   IDiscoverItem,
   IDiscoverShortCategory,
-  IStore,
 } from '@/interfaces/interfaces';
 import { ILondonDrugsSearchAPIData, ILondonDrugsItem } from './types';
 
@@ -86,7 +86,7 @@ function normalizeSearchData({
       return;
     }
 
-    const store: IStore[] = [
+    const store: IDiscoverStore[] = [
       {
         name: 'LONDON DRUGS CA',
         url: buildProductUrl(product.productName, product.productCode),

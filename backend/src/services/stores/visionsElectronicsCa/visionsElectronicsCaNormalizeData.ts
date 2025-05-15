@@ -1,8 +1,8 @@
 import {
+  IDiscoverStore,
   IDiscoverImage,
   IDiscoverItem,
   IDiscoverShortCategory,
-  IStore,
 } from '@/interfaces/interfaces';
 import {
   IVisionsElectronicsSearchAPIData,
@@ -60,7 +60,7 @@ function normalizeSearchData({
       return;
     }
 
-    const store: IStore[] = [
+    const store: IDiscoverStore[] = [
       {
         name: 'VISIONS ELECTRONICS CA',
         url: product.url,

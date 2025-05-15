@@ -1,8 +1,8 @@
 import {
+  IDiscoverStore,
   IDiscoverImage,
   IDiscoverItem,
   IDiscoverShortCategory,
-  IStore,
 } from '@/interfaces/interfaces';
 import { ICanadaComputersSearchAPIData, ICanadaComputersImage } from './types';
 
@@ -60,7 +60,7 @@ function normalizeSearchData({
       return;
     }
 
-    const store: IStore[] = [
+    const store: IDiscoverStore[] = [
       {
         name: 'CANADA COMPUTERS CA',
         url: product.url,

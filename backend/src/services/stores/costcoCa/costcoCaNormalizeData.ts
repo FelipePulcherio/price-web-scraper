@@ -82,12 +82,12 @@ export default function ({
       ];
 
       const newItem: IDiscoverItem = {
-        name: doc.name,
+        name: doc.item_name,
         model: doc.Model_attr[0],
         brand: doc.Brand_attr[0],
         stores: store,
         price: costcoCaPriceCalculator(
-          doc.minSalePrice,
+          doc.item_location_pricing_salePrice,
           doc.item_product_marketing_statement
         ),
       };

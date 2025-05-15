@@ -108,7 +108,7 @@ function normalizeSearchData({
   });
 
   console.log(
-    `LONDON DRUGS CA: ${discoveredItems.length} items normalized from search.`
+    `CANADA COMPUTERS CA: ${discoveredItems.length} items normalized from search.`
   );
 
   return discoveredItems;

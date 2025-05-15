@@ -114,7 +114,7 @@ function normalizeSearchData({
   });
 
   console.log(
-    `VISIONS ELECTRONICS CA: ${discoveredItems.length} items normalized from availability.`
+    `VISIONS ELECTRONICS CA: ${discoveredItems.length} items normalized from search.`
   );
 
   return discoveredItems;

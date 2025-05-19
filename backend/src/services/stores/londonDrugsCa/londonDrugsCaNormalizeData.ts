@@ -1,7 +1,3 @@
-// isAvailable === true
-// inventory.onlineStockLevel > 0
-// price.salePrice
-// Clean productName. Sometimes it contains the model.
 import {
   IDiscoverStore,
   IDiscoverImage,
@@ -9,23 +5,10 @@ import {
   IDiscoverShortCategory,
 } from '@/interfaces/interfaces';
 import { ILondonDrugsSearchAPIData, ILondonDrugsItem } from './types';
-
-const ignoreStrings: string[] = [
-  'Bell',
-  'Telus',
-  'Fido',
-  'Rogers',
-  'Virgin',
-  'Koodo',
-  'Freedom',
-  'Monthly',
-  'Open',
-  'Openbox',
-  'Display',
-];
+import storesConfig from '../config';
 
 function containsIgnoredWord(name: string): boolean {
-  return ignoreStrings.some((word) =>
+  return storesConfig.filters.ignoreKeywords.some((word) =>
     name.toLowerCase().includes(word.toLowerCase())
   );
 }

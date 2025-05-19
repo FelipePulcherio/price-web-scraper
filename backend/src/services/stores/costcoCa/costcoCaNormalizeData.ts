@@ -1,10 +1,17 @@
-import { ICostcoSearchAPIData } from './types';
+import { ICostcoSearchAPIData, ICostcoItem } from './types';
 import {
   IDiscoverStore,
   IDiscoverImage,
   IDiscoverItem,
   IDiscoverShortCategory,
 } from '@/interfaces/interfaces';
+import storesConfig from '../config';
+
+function containsIgnoredWord(name: string): boolean {
+  return storesConfig.filters.ignoreKeywords.some((word) =>
+    name.toLowerCase().includes(word.toLowerCase())
+  );
+}
 
 function costcoCaUrlGenerator(contentType: string, groupId: string): string {
   return `https://www.costco.ca/.${contentType}.${groupId}.html`;
@@ -43,12 +50,20 @@ export default function ({
 
   // Loop trough all docs
   apiResponse.forEach((data) => {
-    data.docs.forEach((doc) => {
+    data.docs.forEach((product) => {
+      // Data to be ignored
+      if (containsIgnoredWord(product.item_name)) {
+        // console.log(
+        //   `⛔ Filtered out: ${product.item_number} - ${product.item_name}`
+        // );
+        return;
+      }
+
       const store: IDiscoverStore[] = [
         {
           name: 'COSTCO CA',
-          url: costcoCaUrlGenerator(doc.content_type[0], doc.group_id),
-          specificId: doc.item_number,
+          url: costcoCaUrlGenerator(product.content_type[0], product.group_id),
+          specificId: product.item_number,
         },
       ];
 
@@ -77,20 +92,23 @@ export default function ({
       // Image is modified. Not suited for direct use.
       const discoveredImages: IDiscoverImage[] = [
         {
-          url: doc.image,
+          url: product.image,
         },
       ];
 
       const newItem: IDiscoverItem = {
-        name: doc.item_name,
-        model: doc.Model_attr[0],
-        brand: doc.Brand_attr[0],
+        name: product.item_name,
+        model: product.Model_attr[0],
+        brand: product.Brand_attr[0],
         stores: store,
         price: costcoCaPriceCalculator(
-          doc.item_location_pricing_salePrice,
-          doc.item_product_marketing_statement
+          product.item_location_pricing_salePrice,
+          product.item_product_marketing_statement
         ),
       };
+
+      // console.log(`✅ Kept: ${product.item_number} - ${product.item_name}`);
+      // console.dir(newItem, { depth: null });
 
       discoveredItems.push(newItem);
     });

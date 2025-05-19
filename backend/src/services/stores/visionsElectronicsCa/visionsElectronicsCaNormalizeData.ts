@@ -8,23 +8,10 @@ import {
   IVisionsElectronicsSearchAPIData,
   IVisionsElectronicsItem,
 } from './types';
-
-const ignoreStrings: string[] = [
-  'Bell',
-  'Telus',
-  'Fido',
-  'Rogers',
-  'Virgin',
-  'Koodo',
-  'Freedom',
-  'Monthly',
-  'Open',
-  'Openbox',
-  'Display',
-];
+import storesConfig from '../config';
 
 function containsIgnoredWord(name: string): boolean {
-  return ignoreStrings.some((word) =>
+  return storesConfig.filters.ignoreKeywords.some((word) =>
     name.toLowerCase().includes(word.toLowerCase())
   );
 }

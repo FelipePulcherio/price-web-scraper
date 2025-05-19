@@ -19,13 +19,13 @@ export interface ICostcoSearchAPIResponse {
 }
 
 export interface ICostcoSearchAPIData {
-  docs: ICostcoItems[];
+  docs: ICostcoItem[];
   numFound: number;
   start?: number;
   numFoundExact?: boolean;
 }
 
-export interface ICostcoItems {
+export interface ICostcoItem {
   item_product_marketing_statement: string;
   Model_attr: string[];
   item_member_only: boolean;

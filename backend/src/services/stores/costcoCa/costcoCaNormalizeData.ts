@@ -41,6 +41,16 @@ function costcoCaPriceCalculator(
   return minSalePrice;
 }
 
+function extractBrand(product: ICostcoItem): string | undefined {
+  const brandName = product.Brand_attr?.[0]?.trim();
+  return brandName || undefined;
+}
+
+function extractModel(product: ICostcoItem): string | undefined {
+  const modelName = product?.Model_attr?.[0]?.trim();
+  return modelName || undefined;
+}
+
 export default function ({
   apiResponse,
 }: {
@@ -98,13 +108,13 @@ export default function ({
 
       const newItem: IDiscoverItem = {
         name: product.item_name,
-        model: product.Model_attr[0],
-        brand: product.Brand_attr[0],
         stores: store,
         price: costcoCaPriceCalculator(
           product.item_location_pricing_salePrice,
           product.item_product_marketing_statement
         ),
+        ...(extractBrand(product) ? { brand: extractBrand(product) } : {}),
+        ...(extractModel(product) ? { model: extractModel(product) } : {}),
       };
 
       // console.log(`✅ Kept: ${product.item_number} - ${product.item_name}`);

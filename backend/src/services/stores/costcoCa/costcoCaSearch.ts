@@ -163,7 +163,7 @@ async function fetchAllSearchPages({
     while (!success && attempts < 3) {
       try {
         console.log(
-          `COSTCO CA: Search API Called. Fetching Page #${i}. Attempt ${
+          `COSTCO CA: Search API Called. Fetching Page #${i + 1}. Attempt ${
             attempts + 1
           }`
         );

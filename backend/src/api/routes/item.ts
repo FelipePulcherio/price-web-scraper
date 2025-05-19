@@ -13,7 +13,6 @@ const route = Router();
 function itemRoute(app: Router): void {
   app.use('/items', route);
 
-  /*
   // GET /api/v1/items/current/:itemId
   route.get(
     '/current/:itemId',
@@ -36,7 +35,6 @@ function itemRoute(app: Router): void {
       }
     }
   );
-  */
 
   // GET /api/v1/items/mainDeals
   route.get(

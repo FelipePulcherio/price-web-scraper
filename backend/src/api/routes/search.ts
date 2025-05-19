@@ -46,7 +46,6 @@ function searchRoute(app: Router): void {
     }
   );
 
-  /*
   // GET /api/v1/search?q=
   // Used on regular searches. Use pages with 24 items
   route.get(
@@ -74,9 +73,7 @@ function searchRoute(app: Router): void {
       }
     }
   );
-  */
 
-  
   // GET /api/v1/testSearch?q=
   // Used on regular searches. Use pages with 24 items
   route.get(
@@ -104,7 +101,6 @@ function searchRoute(app: Router): void {
       }
     }
   );
-  
 }
 
 export default searchRoute;

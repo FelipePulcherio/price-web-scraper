@@ -136,17 +136,22 @@ export default async function londonDrugsCaSearch({
   }
 
   const searchUrl: string = buildLondonDrugsSearchUrl({ query, pageSize });
-  const firstApiResponse = await fetchSearchAPI({
+  let firstApiResponse = await fetchSearchAPI({
     apiUrl: searchUrl,
     checkAuth,
   });
 
   // await fs.writeFile('londondrugs-results.txt', firstApiResponse.data, 'utf-8');
 
-  const parsedData: ILondonDrugsSearchAPIData = londonDrugsCaParseData({
+  let parsedData = londonDrugsCaParseData({
     apiResponse: firstApiResponse.data,
     pageSize,
   });
+
+  // Redirect found
+  if (typeof parsedData === 'string') {
+    return [];
+  }
 
   // await utils.saveAsJson({
   //   fileName: 'londondrugs-parsed.json',

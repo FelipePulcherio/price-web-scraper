@@ -1,4 +1,10 @@
+import utils from '../utils';
 import { ILondonDrugsSearchAPIData } from './types';
+
+function sanitizeRscTokens(segment: string): string {
+  // Replace $L1d, $undefined, $something123_ with null
+  return segment.replace(/\$[a-zA-Z0-9_]+/g, 'null');
+}
 
 function extractProductsBlock(raw: string, pageSize: number): string {
   const startPattern = '{"products"';
@@ -8,16 +14,39 @@ function extractProductsBlock(raw: string, pageSize: number): string {
   const endIndex = raw.indexOf(endPattern);
 
   if (startIndex === -1 || endIndex === -1) {
-    throw new Error('Start or end pattern not found in the string.');
+    throw new utils.ParsingError(
+      'Extract Products Block: Start or end pattern not found in the string.'
+    );
   }
 
   // endIndex + length of endPattern to include the closing part
-  return raw.slice(startIndex, endIndex + endPattern.length);
+  const rawProducts: string = raw.slice(
+    startIndex,
+    endIndex + endPattern.length
+  );
+
+  return sanitizeRscTokens(rawProducts);
 }
 
-function sanitizeRscTokens(segment: string): string {
-  // Replace $L1d, $undefined, $something123_ with null
-  return segment.replace(/\$[a-zA-Z0-9_]+/g, 'null');
+function identifyRedirect(raw: string, pageSize: number): string {
+  const startPattern = '"digest":"NEXT_REDIRECT;replace;';
+  const endPattern = `?pageSize=${pageSize};`;
+
+  const startIndex = raw.indexOf(startPattern);
+  const endIndex = raw.indexOf(endPattern);
+
+  if (startIndex === -1 || endIndex === -1) {
+    throw new utils.ParsingError(
+      'Identify Redirect: Start or end pattern not found in the string.'
+    );
+  }
+
+  const redirectLink: string = raw.slice(
+    startIndex + startPattern.length,
+    endIndex
+  );
+
+  return redirectLink;
 }
 
 export default function ({
@@ -26,11 +55,21 @@ export default function ({
 }: {
   apiResponse: string;
   pageSize: number;
-}): ILondonDrugsSearchAPIData {
-  // TO DO: Identify a redirect. "digest": "NEXT_REDIRECT;replace;
-  // If a redirect is found we should return with a message asking to refine search.
-  const productsBlock = extractProductsBlock(apiResponse, pageSize);
-  const sanitizedBlock = sanitizeRscTokens(productsBlock);
-
-  return JSON.parse(sanitizedBlock);
+}): ILondonDrugsSearchAPIData | string {
+  // Try regular parsing. If it fails check if it's a redirect.
+  try {
+    const sanitizedBlock = extractProductsBlock(apiResponse, pageSize);
+    return JSON.parse(sanitizedBlock);
+  } catch (err) {
+    if (
+      err instanceof utils.ParsingError &&
+      err.message.includes(
+        'Extract Products Block: Start or end pattern not found in the string.'
+      )
+    ) {
+      const redirectLink = identifyRedirect(apiResponse, pageSize);
+      return redirectLink;
+    }
+    throw err;
+  }
 }

@@ -121,7 +121,7 @@ async function fetchSearchAPI({
     return apiResponse;
   } catch (err) {
     throw new utils.FetchFailedError(
-      'Failed to fetch data from COSTCO CA CA search.',
+      'Failed to fetch data from COSTCO CA search.',
       err
     );
   }

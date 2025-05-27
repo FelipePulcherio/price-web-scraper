@@ -7,6 +7,7 @@ import {
 import {
   IVisionsElectronicsSearchAPIData,
   IVisionsElectronicsItem,
+  IVisionsElectronicsDiscountAPIData,
 } from './types';
 import storesConfig from '../config';
 
@@ -107,17 +108,80 @@ function normalizeSearchData({
   return discoveredItems;
 }
 
-export default function ({
+function visionsElectronicsCaPriceCalculator(
+  originalPrice: number,
+  discountString: string
+): number {
+  // '$200 Discount In-Cart!'
+
+  const match = discountString.match(/\$([\d,.]+)/);
+  if (!match || !match[1]) return originalPrice;
+
+  const discountAmount = parseFloat(match[1].replace(/,/g, ''));
+  if (isNaN(discountAmount)) return originalPrice;
+
+  return Math.max(Math.round((originalPrice - discountAmount) * 100) / 100, 0);
+}
+
+function normalizeDiscountData({
   discoveredItems,
   apiResponse,
 }: {
   discoveredItems: IDiscoverItem[];
-  apiResponse: IVisionsElectronicsSearchAPIData;
+  apiResponse: IVisionsElectronicsDiscountAPIData[];
 }): IDiscoverItem[] {
-  discoveredItems = normalizeSearchData({
-    discoveredItems,
-    apiResponse: apiResponse,
+  const updatedItems: IDiscoverItem[] = discoveredItems.map((item) => {
+    const specificId = item.stores[0]?.specificId;
+    if (!specificId) return item;
+
+    const discountData = apiResponse.find(
+      (entry) => entry.objectId === specificId
+    );
+
+    if (!discountData) return item;
+
+    const label = discountData.imagePosition;
+
+    // Skip if empty or doesn't contain a discount
+    if (!label || !label.includes('Discount')) return item;
+
+    return {
+      ...item,
+      price: visionsElectronicsCaPriceCalculator(item.price!, label),
+    };
   });
+
+  console.log(
+    `VISIONS ELECTRONICS CA: ${updatedItems.length} items normalized from discount.`
+  );
+
+  // console.dir(updatedItems, { depth: null });
+
+  return updatedItems;
+}
+
+export default function ({
+  type,
+  discoveredItems,
+  apiResponse,
+}: {
+  type: 'search' | 'discount';
+  discoveredItems: IDiscoverItem[];
+  apiResponse:
+    | IVisionsElectronicsSearchAPIData
+    | IVisionsElectronicsDiscountAPIData[];
+}): IDiscoverItem[] {
+  if (type === 'search') {
+    discoveredItems = normalizeSearchData({
+      discoveredItems,
+      apiResponse: apiResponse as IVisionsElectronicsSearchAPIData,
+    });
+  } else {
+    discoveredItems = normalizeDiscountData({
+      discoveredItems,
+      apiResponse: apiResponse as IVisionsElectronicsDiscountAPIData[],
+    });
+  }
 
   return discoveredItems;
 }

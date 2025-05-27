@@ -2,11 +2,13 @@ import { axiosClient } from '../storesApiClient';
 import {
   IVisionsElectronicsAuthAPIResponse,
   IVisionsElectronicsSearchAPIResponse,
+  IVisionsElectronicsDiscountAPIResponse,
+  IVisionsElectronicsDiscountAPIData,
 } from './types';
 import { IDiscoverItem } from '@/interfaces/interfaces';
+import utils from '../utils';
 import visionsElectronicsCaNormalizeData from './visionsElectronicsCaNormalizeData';
 
-import utils from '../utils';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -123,6 +125,120 @@ async function fetchSearchAPI({
   }
 }
 
+async function fetchDiscountAPI({
+  objectId,
+}: {
+  objectId: string;
+}): Promise<IVisionsElectronicsDiscountAPIData> {
+  // Api for getting an item special discount
+
+  const apiUrl: string = `https://www.visions.ca/wpproductlabels/product/labels/product_id/${objectId}`;
+
+  try {
+    const apiResponse: IVisionsElectronicsDiscountAPIResponse =
+      await axiosClient.get(apiUrl, {
+        method: 'GET',
+        headers: {
+          Accept: '*/*',
+          'Content-Type': 'application/json',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Accept-Encoding': 'gzip, deflate, br',
+          Connection: 'keep-alive',
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
+        },
+      });
+
+    console.log(`VISIONS ELECTRONICS CA: Discount API Called.`);
+
+    return {
+      ...apiResponse.data,
+      objectId,
+    };
+  } catch (err) {
+    throw new utils.FetchFailedError(
+      'Failed to fetch data from VISIONS ELECTRONICS CA discount.',
+      err
+    );
+  }
+}
+
+function extractIdStringsFromApiResponses({
+  discoveredItems,
+}: {
+  discoveredItems: IDiscoverItem[];
+}): string[] {
+  const allIds: string[] = [];
+
+  discoveredItems.forEach((item) => {
+    const specificId = item.stores[0].specificId;
+    if (specificId) {
+      allIds.push(specificId);
+    }
+  });
+
+  // console.log(`VISIONS ELECTRONICS CA: Extracted ${allIds.length} IDs.`);
+
+  return allIds;
+}
+
+async function fetchWithRetry<T>(
+  fn: () => Promise<T>,
+  retries = 2,
+  id?: string
+): Promise<T> {
+  let attempt = 0;
+  while (attempt <= retries) {
+    try {
+      return await fn();
+    } catch (err) {
+      console.warn(`[ID: ${id}] Attempt ${attempt + 1} failed.`);
+      console.error(err);
+      attempt++;
+      if (attempt > retries) {
+        console.error(`[ID: ${id}] Failed after ${retries + 1} attempts.`, err);
+        throw err;
+      }
+      await utils.randomizedDelay({ initialTime: 2000, finalTime: 4000 });
+    }
+  }
+
+  throw new Error('Unreachable code in fetchWithRetry');
+}
+
+async function fetchAllDiscountPages({
+  discoveredItems,
+}: {
+  discoveredItems: IDiscoverItem[];
+}): Promise<IVisionsElectronicsDiscountAPIData[]> {
+  const ids = extractIdStringsFromApiResponses({ discoveredItems });
+  // console.dir(ids, { maxArrayLength: null });
+  const allDiscountResponses: IVisionsElectronicsDiscountAPIData[] = [];
+
+  for (const id of ids) {
+    try {
+      const result = await fetchWithRetry(
+        () => fetchDiscountAPI({ objectId: id }),
+        2,
+        id
+      );
+      allDiscountResponses.push(result);
+    } catch (err) {
+      console.warn(`[ID: ${id}] Failed to fetch after 3 attempts.`);
+      continue;
+    }
+
+    // Optional: add a small wait between requests to reduce proxy pressure
+    await utils.randomizedDelay({ initialTime: 300, finalTime: 700 });
+  }
+
+  console.log(
+    `VISIONS ELECTRONICS CA: Successfully fetched ${allDiscountResponses.length}/${ids.length} discount pages.`
+  );
+
+  return allDiscountResponses;
+}
+
 export default async function visionsElectronicsCaSearch({
   checkAuth,
   query,
@@ -135,19 +251,30 @@ export default async function visionsElectronicsCaSearch({
     await getAuth();
   }
 
-  const firstApiResponse = await fetchSearchAPI({
+  const allSearchResponses = await fetchSearchAPI({
     query,
     pageSize,
   });
 
+  let discoveredItems: IDiscoverItem[] = visionsElectronicsCaNormalizeData({
+    type: 'search',
+    discoveredItems: [],
+    apiResponse: allSearchResponses.data,
+  });
+
   // await utils.saveAsJson({
-  //   fileName: 'visionselectronics-results.json',
-  //   toBeSaved: firstApiResponse.data,
+  //   fileName: 'visionselectronics-search.json',
+  //   toBeSaved: allSearchResponses.data,
   // });
 
-  let discoveredItems: IDiscoverItem[] = visionsElectronicsCaNormalizeData({
-    discoveredItems: [],
-    apiResponse: firstApiResponse.data,
+  const allDiscountResponses = await fetchAllDiscountPages({
+    discoveredItems,
+  });
+
+  discoveredItems = visionsElectronicsCaNormalizeData({
+    type: 'discount',
+    discoveredItems,
+    apiResponse: allDiscountResponses,
   });
 
   return discoveredItems;

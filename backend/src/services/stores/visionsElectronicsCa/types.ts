@@ -16,6 +16,12 @@ export interface IVisionsElectronicsSearchAPIResponse {
   data: IVisionsElectronicsSearchAPIData;
 }
 
+export interface IVisionsElectronicsDiscountAPIResponse {
+  status: number;
+  statusText: string;
+  data: IVisionsElectronicsDiscountAPIData;
+}
+
 export interface IVisionsElectronicsSearchAPIData {
   results: [
     {
@@ -46,4 +52,11 @@ export interface IVisionsElectronicsItem {
     };
   };
   objectID: string;
+}
+
+export interface IVisionsElectronicsDiscountAPIData {
+  imagePosition: string;
+  otherPosition: string;
+  detailPosition: string;
+  objectId?: string;
 }

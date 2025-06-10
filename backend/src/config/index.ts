@@ -34,9 +34,13 @@ export default {
 
   // BrighData
   brightData: getEnvVariable('BRIGHTDATA_ENDPOINT'),
+  brightDataProxy: getEnvVariable('BRIGHTDATA_PROXY'),
 
   // ScraperAPI
-  proxy: getEnvVariable('PROXY'),
+  scraperApiProxy: getEnvVariable('SCRAPERAPI_PROXY'),
+
+  // Decodo
+  decodoProxy: getEnvVariable('DECODO_PROXY'),
 
   // Agenda.js
   agenda: {

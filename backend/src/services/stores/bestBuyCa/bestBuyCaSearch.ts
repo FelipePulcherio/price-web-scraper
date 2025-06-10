@@ -1,4 +1,4 @@
-import { axiosClient } from '../storesApiClient';
+import { decodoAxiosClient as axiosClient } from '../storesApiClient';
 import {
   IBestBuySearchAPIResponse,
   IBestBuySearchAPIData,
@@ -78,7 +78,7 @@ async function fetchAllSearchPages({
   const { totalPages } = firstApiResponse.data;
 
   for (let i = 2; i <= totalPages; i++) {
-    await utils.randomizedDelay({ initialTime: 5000, finalTime: 10000 });
+    await utils.randomizedDelay({ initialTime: 1500, finalTime: 3000 });
 
     const nextPageUrl = buildBestBuySearchUrl({ query, page: i });
     let success = false;
@@ -104,7 +104,7 @@ async function fetchAllSearchPages({
             `BEST BUY CA: Failed to fetch page ${i} after 3 attempts. Skipping.`
           );
         } else {
-          await utils.randomizedDelay({ initialTime: 5000, finalTime: 6000 });
+          await utils.randomizedDelay({ initialTime: 1500, finalTime: 3000 });
         }
       }
     }
@@ -200,7 +200,7 @@ async function fetchAllAvailabilityPages({
   const skuChunks = chunkSkuStringsFromApiResponses({ discoveredItems });
 
   for (let i = 0; i < skuChunks.length; i++) {
-    await utils.randomizedDelay({ initialTime: 5000, finalTime: 10000 });
+    await utils.randomizedDelay({ initialTime: 1500, finalTime: 3000 });
     const nextPageUrl: string = buildBestBuyAvailabilityUrl({
       skuChunk: skuChunks[i],
     });
@@ -227,7 +227,7 @@ async function fetchAllAvailabilityPages({
             } after 3 attempts. Skipping.`
           );
         } else {
-          await utils.randomizedDelay({ initialTime: 5000, finalTime: 6000 });
+          await utils.randomizedDelay({ initialTime: 1500, finalTime: 3000 });
         }
       }
     }

@@ -1,5 +1,5 @@
 import { CookieJar } from 'tough-cookie';
-import { axiosClient } from '../storesApiClient';
+import { decodoAxiosClient as axiosClient } from '../storesApiClient';
 import {
   ICostcoAuthAPIResponse,
   ICostcoSearchAPIResponse,
@@ -152,7 +152,7 @@ async function fetchAllSearchPages({
   );
 
   for (let i = 1; i < totalPages; i++) {
-    await utils.randomizedDelay({ initialTime: 5000, finalTime: 10000 });
+    await utils.randomizedDelay({ initialTime: 1500, finalTime: 3000 });
 
     const nextPageStart = i * pageSize;
     const nextPageUrl = buildCostcoCaSearchUrl({ query, start: nextPageStart });
@@ -182,7 +182,7 @@ async function fetchAllSearchPages({
             `COSTCO CA: Failed to fetch page ${i} after 3 attempts. Skipping.`
           );
         } else {
-          await utils.randomizedDelay({ initialTime: 5000, finalTime: 6000 });
+          await utils.randomizedDelay({ initialTime: 1500, finalTime: 3000 });
         }
       }
     }

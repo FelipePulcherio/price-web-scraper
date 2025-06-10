@@ -1,6 +1,5 @@
 import {
   IDiscoverStore,
-  IDiscoverImage,
   IDiscoverItem,
   IDiscoverShortCategory,
 } from '@/interfaces/interfaces';
@@ -21,13 +20,18 @@ function buildProductUrl(productName: string, productCode: string): string {
   return `https://www.londondrugs.com/products/${parsedProductName}/p/${productCode}`;
 }
 
+function extractImage(product: ILondonDrugsItem): string | undefined {
+  const imageUrl = product.primaryImage?.imageUrl?.trim();
+  return imageUrl || undefined;
+}
+
 function extractBrand(product: ILondonDrugsItem): string | undefined {
   const brandName = product.brand?.name?.trim();
   return brandName || undefined;
 }
 
 function extractModel(product: ILondonDrugsItem): string | undefined {
-  const modelSpec = product.specifications.find(
+  const modelSpec = product.specifications?.find(
     (spec) => spec.name.toLowerCase() === 'model'
   );
   const modelName = modelSpec?.value?.name?.trim();
@@ -99,15 +103,11 @@ function normalizeSearchData({
       },
     ];
 
-    const discoveredImages: IDiscoverImage[] = [
-      {
-        url: product.primaryImage.imageUrl,
-      },
-    ];
-
     const newItem: IDiscoverItem = {
       name: normalizeProductName(product.productName, extractModel(product)),
-      images: discoveredImages,
+      ...(extractImage(product)
+        ? { images: [{ url: extractImage(product)! }] }
+        : {}),
       stores: store,
       price:
         product.price!.salePrice ??

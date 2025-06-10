@@ -1,5 +1,5 @@
 import { CookieJar } from 'tough-cookie';
-import { axiosClient } from '../storesApiClient';
+import { decodoAxiosClient as axiosClient } from '../storesApiClient';
 import {
   ILondonDrugsAuthAPIResponse,
   ILondonDrugsSearchAPIData,

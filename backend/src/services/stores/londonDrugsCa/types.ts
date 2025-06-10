@@ -39,7 +39,7 @@ export interface ILondonDrugsItem {
   variationProductCode?: string;
   productName: string;
   productShortDescription: string;
-  primaryImage: {
+  primaryImage?: {
     // id: string | null;
     // altText: string | null;
     imageUrl: string;
@@ -68,7 +68,7 @@ export interface ILondonDrugsItem {
     name?: string;
     url?: string;
   };
-  specifications: {
+  specifications?: {
     code: string;
     name: string;
     // isHidden: boolean;

@@ -1,4 +1,4 @@
-import { axiosClient } from '../storesApiClient';
+import { scraperApiAxiosClient as axiosClient } from '../storesApiClient';
 import qs from 'qs';
 import {
   ICanadaComputersSearchAPIResponse,

@@ -127,7 +127,33 @@ async function fetchSearchAPI({
   }
 }
 
-async function fetchAllSearchPages({
+async function fetchWithRetry<T>(
+  fn: () => Promise<T>,
+  retries = 2,
+  page?: number
+): Promise<T> {
+  let attempt = 0;
+  while (attempt <= retries) {
+    try {
+      return await fn();
+    } catch (err) {
+      console.warn(`COSTCO CA: [Page ${page}] Attempt ${attempt + 1} failed.`);
+      attempt++;
+      if (attempt > retries) {
+        console.warn(
+          `COSTCO CA: [Page ${page}] Failed after ${retries + 1} attempts.`
+        );
+        console.error(err);
+        throw err;
+      }
+      await utils.randomizedDelay({ initialTime: 500, finalTime: 1500 });
+    }
+  }
+
+  throw new Error('Unreachable code in fetchWithRetry');
+}
+
+async function fetchAllSearchPagesLinear({
   checkAuth,
   query,
 }: {
@@ -191,6 +217,77 @@ async function fetchAllSearchPages({
   return allResponses;
 }
 
+async function fetchAllSearchPagesParallel({
+  checkAuth,
+  query,
+}: {
+  checkAuth: boolean;
+  query: string;
+}): Promise<ICostcoSearchAPIData[]> {
+  const pageSize: number = 24;
+
+  // Run once to find totalPages
+  const firstApiResponse = await fetchSearchAPI({
+    checkAuth,
+    apiUrl: buildCostcoCaSearchUrl({ query, start: 0 }),
+  });
+
+  const totalPages = Math.ceil(
+    firstApiResponse.data.response.numFound / pageSize
+  );
+
+  console.log(`COSTCO CA: Search API will call ${totalPages} page(s).`);
+
+  if (totalPages <= 1) return [firstApiResponse.data.response];
+
+  // Build tasks for the rest of the pages
+  const pageFetchPromises = Array.from({ length: totalPages - 1 }, (_, i) =>
+    (async () => {
+      const page = i + 1;
+      const nextPageStart = (i + 1) * pageSize;
+      const nextPageUrl = buildCostcoCaSearchUrl({
+        query,
+        start: nextPageStart,
+      });
+
+      try {
+        const response = await fetchWithRetry(
+          () => fetchSearchAPI({ checkAuth, apiUrl: nextPageUrl }),
+          1,
+          page
+        );
+        console.log(
+          `COSTCO CA: PAGE ${page} has ${response.data.response.docs.length} items.`
+        );
+        return { success: true, data: response.data.response };
+      } catch (err) {
+        return { success: false };
+      }
+    })()
+  );
+
+  const results = await Promise.allSettled(pageFetchPromises);
+
+  const successfulResponses: ICostcoSearchAPIData[] = results
+    .filter(
+      (
+        res
+      ): res is PromiseFulfilledResult<{
+        success: true;
+        data: ICostcoSearchAPIData;
+      }> => res.status === 'fulfilled' && res.value.success
+    )
+    .map((res) => res.value.data);
+
+  console.log(
+    `COSTCO CA: Successfully fetched ${
+      successfulResponses.length + 1
+    }/${totalPages} page(s).`
+  );
+
+  return [...[firstApiResponse.data.response], ...successfulResponses];
+}
+
 export default async function costcoCaSearch({
   checkAuth,
   query,
@@ -202,7 +299,10 @@ export default async function costcoCaSearch({
     await getAuth();
   }
 
-  const allSearchResponses = await fetchAllSearchPages({ checkAuth, query });
+  const allSearchResponses = await fetchAllSearchPagesParallel({
+    checkAuth,
+    query,
+  });
 
   const discoveredItems: IDiscoverItem[] = costcoCaNormalizeData({
     apiResponse: allSearchResponses,

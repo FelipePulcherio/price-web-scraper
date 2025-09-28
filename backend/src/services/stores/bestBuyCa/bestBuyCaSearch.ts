@@ -49,9 +49,7 @@ async function fetchSearchAPI({
       }
     );
 
-    // console.log(
-    //   `BEST BUY CA: Search API Called. Page: ${apiResponse.data.currentPage}. Results: ${apiResponse.data.products.length}.`
-    // );
+    // console.log(`BEST BUY CA: Search API Called.`);
 
     return apiResponse;
   } catch (err) {
@@ -62,7 +60,35 @@ async function fetchSearchAPI({
   }
 }
 
-async function fetchAllSearchPages({
+async function fetchWithRetry<T>(
+  fn: () => Promise<T>,
+  retries = 2,
+  page?: number
+): Promise<T> {
+  let attempt = 0;
+  while (attempt <= retries) {
+    try {
+      return await fn();
+    } catch (err) {
+      console.warn(
+        `BEST BUY CA: [Page ${page}] Attempt ${attempt + 1} failed.`
+      );
+      attempt++;
+      if (attempt > retries) {
+        console.warn(
+          `BEST BUY CA: [Page ${page}] Failed after ${retries + 1} attempts.`
+        );
+        // console.error(err);
+        throw err;
+      }
+      await utils.randomizedDelay({ initialTime: 500, finalTime: 1500 });
+    }
+  }
+
+  throw new Error('Unreachable code in fetchWithRetry');
+}
+
+async function fetchAllSearchPagesLinear({
   query,
 }: {
   query: string;
@@ -111,6 +137,70 @@ async function fetchAllSearchPages({
   }
 
   return allResponses;
+}
+
+async function fetchAllSearchPagesParallel({
+  query,
+}: {
+  query: string;
+}): Promise<IBestBuySearchAPIData[]> {
+  const searchUrl: string = buildBestBuySearchUrl({ query, page: 1 });
+
+  // Run once to find totalPages
+  console.log('BEST BUY CA: Search API Called.');
+  const firstApiResponse = await fetchWithRetry(
+    () => fetchSearchAPI({ apiUrl: searchUrl }),
+    2,
+    1
+  );
+
+  const { totalPages } = firstApiResponse.data;
+
+  console.log(`BEST BUY CA: Search API will call ${totalPages} pages.`);
+
+  if (totalPages <= 1) return [firstApiResponse.data];
+
+  const pagePromises = Array.from({ length: totalPages - 1 }, (_, i) => {
+    const page = i + 2;
+    const nextPageUrl = buildBestBuySearchUrl({ query, page });
+
+    return (async () => {
+      try {
+        const response = await fetchWithRetry(
+          () => fetchSearchAPI({ apiUrl: nextPageUrl }),
+          2,
+          page
+        );
+        return { success: true, data: response.data };
+      } catch (err) {
+        console.warn(
+          `BEST BUY CA: [Page ${page}] Failed to fetch after 3 attempts.`
+        );
+        return { success: false };
+      }
+    })();
+  });
+
+  const results = await Promise.allSettled(pagePromises);
+
+  const successfulResponses: IBestBuySearchAPIData[] = results
+    .filter(
+      (
+        res
+      ): res is PromiseFulfilledResult<{
+        success: true;
+        data: IBestBuySearchAPIData;
+      }> => res.status === 'fulfilled' && res.value.success
+    )
+    .map((res) => res.value.data);
+
+  console.log(
+    `BEST BUY CA: Successfully fetched ${
+      successfulResponses.length + 1
+    }/${totalPages} page(s).`
+  );
+
+  return [...[firstApiResponse.data], ...successfulResponses];
 }
 
 function chunkSkuStringsFromApiResponses({
@@ -188,7 +278,7 @@ async function fetchAvailabilityAPI({
   }
 }
 
-async function fetchAllAvailabilityPages({
+async function fetchAllAvailabilityPagesLinear({
   discoveredItems,
 }: {
   discoveredItems: IDiscoverItem[];
@@ -236,6 +326,56 @@ async function fetchAllAvailabilityPages({
   return allAvailabilityResponses;
 }
 
+async function fetchAllAvailabilityPagesParallel({
+  discoveredItems,
+}: {
+  discoveredItems: IDiscoverItem[];
+}): Promise<IBestBuyAvailabilityAPIData[]> {
+  const skuChunks = chunkSkuStringsFromApiResponses({ discoveredItems });
+
+  console.log(
+    `BEST BUY CA: Availability API will call ${skuChunks.length} pages.`
+  );
+
+  const availabilityFetchPromises = skuChunks.map((chunk, idx) =>
+    (async () => {
+      const nextPageUrl: string = buildBestBuyAvailabilityUrl({
+        skuChunk: chunk,
+      });
+
+      try {
+        const response = await fetchWithRetry(
+          () => fetchAvailabilityAPI({ apiUrl: nextPageUrl }),
+          2,
+          idx + 1
+        );
+        return { success: true as const, data: response.data };
+      } catch (err) {
+        return { success: false as const };
+      }
+    })()
+  );
+
+  const results = await Promise.allSettled(availabilityFetchPromises);
+
+  const successfulResponses: IBestBuyAvailabilityAPIData[] = results
+    .filter(
+      (
+        res
+      ): res is PromiseFulfilledResult<{
+        success: true;
+        data: IBestBuyAvailabilityAPIData;
+      }> => res.status === 'fulfilled' && res.value.success
+    )
+    .map((res) => res.value.data);
+
+  console.log(
+    `BEST BUY CA: Availability API successfully fetched ${successfulResponses.length}/${skuChunks.length} pages.`
+  );
+
+  return successfulResponses;
+}
+
 export default async function bestBuyCaSearch({
   query,
 }: {
@@ -246,7 +386,7 @@ export default async function bestBuyCaSearch({
   // TO DO: Run item detail API (single sku) to get more images, model, brand, upc, availability
   // OPTIONAL TO DO: Setup crawler to run variants API -> This returns all related skus (different sizes, color, etc.)
 
-  const allSearchResponses = await fetchAllSearchPages({ query });
+  const allSearchResponses = await fetchAllSearchPagesParallel({ query });
 
   // For debbuging
   // const inputPath = path.resolve(__dirname, 'bestbuy-results.json');
@@ -264,7 +404,7 @@ export default async function bestBuyCaSearch({
     apiResponse: allSearchResponses,
   });
 
-  const allAvailabilityResponses = await fetchAllAvailabilityPages({
+  const allAvailabilityResponses = await fetchAllAvailabilityPagesParallel({
     discoveredItems,
   });
 

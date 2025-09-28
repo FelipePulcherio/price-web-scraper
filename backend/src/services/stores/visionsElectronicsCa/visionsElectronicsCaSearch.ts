@@ -1,4 +1,4 @@
-import { axiosClient } from '../storesApiClient';
+import { decodoAxiosClient as axiosClient } from '../storesApiClient';
 import {
   IVisionsElectronicsAuthAPIResponse,
   IVisionsElectronicsSearchAPIResponse,
@@ -108,7 +108,7 @@ async function fetchSearchAPI({
           'Accept-Encoding': 'gzip, deflate, br',
           Connection: 'keep-alive',
           'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
           'x-algolia-application-id': applicationId,
           'x-algolia-api-key': apiKey,
         },
@@ -149,7 +149,7 @@ async function fetchDiscountAPI({
         },
       });
 
-    console.log(`VISIONS ELECTRONICS CA: Discount API Called.`);
+    // console.log(`VISIONS ELECTRONICS CA: Discount API Called.`);
 
     return {
       ...apiResponse.data,
@@ -192,27 +192,32 @@ async function fetchWithRetry<T>(
     try {
       return await fn();
     } catch (err) {
-      console.warn(`[ID: ${id}] Attempt ${attempt + 1} failed.`);
-      console.error(err);
+      console.warn(
+        `VISIONS ELECTRONICS CA: [ID ${id}] Attempt ${attempt + 1} failed.`
+      );
       attempt++;
       if (attempt > retries) {
-        console.error(`[ID: ${id}] Failed after ${retries + 1} attempts.`, err);
+        console.warn(
+          `VISIONS ELECTRONICS CA: [ID ${id}] Failed after ${
+            retries + 1
+          } attempts.`
+        );
+        // console.error(err);
         throw err;
       }
-      await utils.randomizedDelay({ initialTime: 2000, finalTime: 4000 });
+      await utils.randomizedDelay({ initialTime: 500, finalTime: 1500 });
     }
   }
 
   throw new Error('Unreachable code in fetchWithRetry');
 }
 
-async function fetchAllDiscountPages({
+async function fetchAllDiscountPagesLinear({
   discoveredItems,
 }: {
   discoveredItems: IDiscoverItem[];
 }): Promise<IVisionsElectronicsDiscountAPIData[]> {
   const ids = extractIdStringsFromApiResponses({ discoveredItems });
-  // console.dir(ids, { maxArrayLength: null });
   const allDiscountResponses: IVisionsElectronicsDiscountAPIData[] = [];
 
   for (const id of ids) {
@@ -224,12 +229,13 @@ async function fetchAllDiscountPages({
       );
       allDiscountResponses.push(result);
     } catch (err) {
-      console.warn(`[ID: ${id}] Failed to fetch after 3 attempts.`);
+      console.warn(
+        `VISIONS ELECTRONICS CA: [ID ${id}] Failed to fetch after 3 attempts.`
+      );
       continue;
     }
 
-    // Optional: add a small wait between requests to reduce proxy pressure
-    await utils.randomizedDelay({ initialTime: 300, finalTime: 700 });
+    await utils.randomizedDelay({ initialTime: 200, finalTime: 400 });
   }
 
   console.log(
@@ -237,6 +243,52 @@ async function fetchAllDiscountPages({
   );
 
   return allDiscountResponses;
+}
+
+async function fetchAllDiscountPagesParallel({
+  discoveredItems,
+}: {
+  discoveredItems: IDiscoverItem[];
+}): Promise<IVisionsElectronicsDiscountAPIData[]> {
+  const ids = extractIdStringsFromApiResponses({ discoveredItems });
+
+  console.log(
+    `VISIONS ELECTRONICS CA: Discount API will call ${ids.length} pages.`
+  );
+
+  const discountFetchPromises = ids.map((id) =>
+    (async () => {
+      try {
+        const res = await fetchWithRetry(
+          () => fetchDiscountAPI({ objectId: id }),
+          2,
+          id
+        );
+        return { success: true as const, data: res };
+      } catch (err) {
+        return { success: false };
+      }
+    })()
+  );
+
+  const results = await Promise.allSettled(discountFetchPromises);
+
+  const successfulResponses: IVisionsElectronicsDiscountAPIData[] = results
+    .filter(
+      (
+        res
+      ): res is PromiseFulfilledResult<{
+        success: true;
+        data: IVisionsElectronicsDiscountAPIData;
+      }> => res.status === 'fulfilled' && res.value.success
+    )
+    .map((res) => res.value.data);
+
+  console.log(
+    `VISIONS ELECTRONICS CA: Discount API successfully fetched ${successfulResponses.length}/${ids.length} discount page(s).`
+  );
+
+  return successfulResponses;
 }
 
 export default async function visionsElectronicsCaSearch({
@@ -267,7 +319,7 @@ export default async function visionsElectronicsCaSearch({
   //   toBeSaved: allSearchResponses.data,
   // });
 
-  const allDiscountResponses = await fetchAllDiscountPages({
+  const allDiscountResponses = await fetchAllDiscountPagesParallel({
     discoveredItems,
   });
 

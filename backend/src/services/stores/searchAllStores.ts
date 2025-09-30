@@ -38,7 +38,7 @@ function isRetriableError(err: unknown): boolean {
 
   if (
     err instanceof utils.FetchFailedError &&
-    isRetriableAxiosStatus(err.cause, [429, 499, 500])
+    isRetriableAxiosStatus(err.cause, [408, 429, 499, 500, 502, 504, 522])
   ) {
     return true;
   }

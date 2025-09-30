@@ -59,21 +59,21 @@ function normalizeSearchData({
     // TO DO: Category mapping for VISIONS ELECTRONICS CA
     const discoveredCategory: IDiscoverShortCategory[] = [
       {
-        name: '',
+        name: 'DEFAULT',
         hasDepth: true,
       },
     ];
 
     const discoveredSubCategory: IDiscoverShortCategory[] = [
       {
-        name: '',
+        name: 'DEFAULT',
         hasDepth: true,
       },
     ];
 
     const discoveredSubSubCategory: IDiscoverShortCategory[] = [
       {
-        name: '',
+        name: 'DEFAULT',
         hasDepth: false,
       },
     ];

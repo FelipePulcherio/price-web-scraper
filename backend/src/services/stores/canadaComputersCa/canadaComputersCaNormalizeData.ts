@@ -58,21 +58,21 @@ function normalizeSearchData({
     // TO DO: Category mapping for CANADA COMPUTERS CA
     const discoveredCategory: IDiscoverShortCategory[] = [
       {
-        name: '',
+        name: 'DEFAULT',
         hasDepth: true,
       },
     ];
 
     const discoveredSubCategory: IDiscoverShortCategory[] = [
       {
-        name: '',
+        name: 'DEFAULT',
         hasDepth: true,
       },
     ];
 
     const discoveredSubSubCategory: IDiscoverShortCategory[] = [
       {
-        name: '',
+        name: 'DEFAULT',
         hasDepth: false,
       },
     ];

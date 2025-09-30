@@ -285,7 +285,7 @@ export async function searchItemByString(
 
     // If item was not found
     if (items.length === 0) {
-      throw new Error('Not found');
+      return [];
     }
 
     // console.log(items);

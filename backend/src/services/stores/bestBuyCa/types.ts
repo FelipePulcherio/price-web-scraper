@@ -37,7 +37,7 @@ export interface IBestBuyItem {
   // seoText: string;
   // sellerId: string | null;
   // seller: any | null;
-  highResImage: string;
+  highResImage: string | null;
   // altLangSeoText: string | null;
   // offerId: string | null;
   // priceUnit: string;
@@ -85,4 +85,111 @@ export interface IBestBuyItemAvailability {
   scheduledDelivery: boolean;
   isGiftCard: boolean;
   isService: boolean;
+}
+
+export interface IBestBuyDetailAPIResponse {
+  status: number;
+  statusText: string;
+  headers: {
+    'set-cookie': string[];
+  };
+  data: IBestBuyDetailAPIData;
+}
+
+export interface IBestBuyDetailAPIData {
+  additionalMedia: {
+    thumbnailUrl: string;
+    url: string;
+    mimeType: string;
+  }[];
+  // altLangSeoText: string;
+  availability: {
+    sku: string;
+    inStoreAvailability: string;
+    inStoreAvailabilityText: string;
+    inStoreAvailabilityUpdateDate: string;
+    isAvailableOnline: boolean;
+    onlineAvailability: string;
+    onlineAvailabilityText: string;
+    onlineAvailabilityUpdateDate: string;
+    onlineAvailabilityCount: number;
+    onlineAvailabilityZoneCount: number | null;
+    buttonState: string;
+  };
+  brandName: string;
+  brandThumbnailImage: string;
+  bundle: any[];
+  categoryName: string;
+  // currentRegion: string;
+  customerRating: number | null;
+  customerRatingCount: number | null;
+  customerReviewCount: number | null;
+  ehf: number;
+  // hasFreeShipping: boolean;
+  // hasFrenchContent: boolean;
+  // hasHomeDeliveryService: boolean;
+  // hasInStorePickup: boolean;
+  hasPromotion: boolean;
+  // hasRebate: boolean;
+  // hasWarranty: boolean;
+  // hideSaleEndDate: boolean;
+  // hideSavings: boolean;
+  highResImage: string | null;
+  // isAdvertised: boolean;
+  // isAvailableForOrder: boolean;
+  // isAvailableForPickup: boolean;
+  // isBackorderable: boolean;
+  // isClearance: boolean;
+  // isFrenchCompliant: boolean;
+  // isInStoreOnly: boolean;
+  // isMachineTranslated: boolean;
+  // isMarketplace: boolean;
+  // isOnlineOnly: boolean;
+  // isPreorderable: boolean;
+  // isPriceEndsLabel: boolean;
+  // isProductOnSale: boolean;
+  isPurchasable: boolean;
+  isShippable: boolean;
+  // isSpecialDelivery: boolean;
+  isVisible: boolean;
+  longDescription: string;
+  make: string;
+  manufacturer: string;
+  modelNumber: string;
+  name: string;
+  // offerId: string;
+  // priceUnit: string | null;
+  primaryParentCategoryId: string;
+  // productType: string;
+  productUrl: string;
+  // recommended: any[];
+  regularPrice: number;
+  // related: any[];
+  // relatedUpcs: any[];
+  // requiredProducts: any[];
+  // requiresAgeVerification: boolean;
+  salePrice: number;
+  // saleStartDate: string;
+  seller: string | null;
+  sellerId: string;
+  // seoText: string;
+  // warrantyAndRepairDisclosureUrl: string | null;
+  // services: any[];
+  // shortDescription: string;
+  sku: string;
+  // specialOffers: any | null;
+  specs: {
+    group: string;
+    name: string;
+    value: string;
+  }[];
+  // thumbnailImage: string;
+  upcNumber: string;
+  // videos: any[];
+  // warranties: any[];
+  // warrantyBenefitsMessages: any[];
+  // whatsInTheBox: any[];
+  // PreorderOrderDate: string;
+  // PreorderReleaseDate: string | null;
+  SaleEndDate: string;
 }

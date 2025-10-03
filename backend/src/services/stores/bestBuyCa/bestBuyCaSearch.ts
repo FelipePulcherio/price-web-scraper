@@ -4,6 +4,8 @@ import {
   IBestBuySearchAPIData,
   IBestBuyAvailabilityAPIResponse,
   IBestBuyAvailabilityAPIData,
+  IBestBuyDetailAPIResponse,
+  IBestBuyDetailAPIData,
 } from './types';
 import { IDiscoverItem } from '@/interfaces/interfaces';
 import utils from '../utils';
@@ -376,6 +378,111 @@ async function fetchAllAvailabilityPagesParallel({
   return successfulResponses;
 }
 
+function buildBestBuyDetailUrl({ sku }: { sku: string }): string {
+  const apiUrlBase =
+    'https://www.bestbuy.ca/api/v2/json/product/skuHere?currentRegion=BC&lang=en-CA';
+  return apiUrlBase.replace('skuHere', sku);
+}
+
+async function fetchDetailAPI({
+  apiUrl,
+}: {
+  apiUrl: string;
+}): Promise<IBestBuyDetailAPIResponse> {
+  // Api for checking detail of 1 item (limit is 1)
+  // Needs Headers
+  // Works by sku string
+  try {
+    const apiResponse: IBestBuyDetailAPIResponse = await axiosClient.get(
+      apiUrl,
+      {
+        method: 'GET',
+        headers: {
+          Accept: '*/*',
+          'Content-Type': 'application/json',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Accept-Encoding': 'gzip, deflate, br',
+          Connection: 'keep-alive',
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
+        },
+      }
+    );
+
+    return apiResponse;
+  } catch (err) {
+    throw new utils.FetchFailedError(
+      'Failed to fetch data from BEST BUY CA detail.',
+      err
+    );
+  }
+}
+
+function allSkusFromApiResponses({
+  discoveredItems,
+}: {
+  discoveredItems: IDiscoverItem[];
+}): string[] {
+  const allSkus: string[] = [];
+
+  discoveredItems.forEach((item) => {
+    const specificId = item.stores[0].specificId;
+    if (specificId) {
+      allSkus.push(specificId);
+    }
+  });
+
+  return allSkus;
+}
+
+async function fetchAllDetailPagesParallel({
+  discoveredItems,
+}: {
+  discoveredItems: IDiscoverItem[];
+}): Promise<IBestBuyDetailAPIData[]> {
+  const skus = allSkusFromApiResponses({ discoveredItems });
+
+  console.log(`BEST BUY CA: Detail API will call ${skus.length} pages.`);
+
+  const detailFetchPromises = skus.map((sku, i) =>
+    (async () => {
+      const nextPageUrl: string = buildBestBuyDetailUrl({
+        sku,
+      });
+
+      try {
+        const response = await fetchWithRetry(
+          () => fetchDetailAPI({ apiUrl: nextPageUrl }),
+          2,
+          i + 1
+        );
+        return { success: true as const, data: response.data };
+      } catch (err) {
+        return { success: false as const };
+      }
+    })()
+  );
+
+  const results = await Promise.allSettled(detailFetchPromises);
+
+  const successfulResponses: IBestBuyDetailAPIData[] = results
+    .filter(
+      (
+        res
+      ): res is PromiseFulfilledResult<{
+        success: true;
+        data: IBestBuyDetailAPIData;
+      }> => res.status === 'fulfilled' && res.value.success
+    )
+    .map((res) => res.value.data);
+
+  console.log(
+    `BEST BUY CA: Detail API successfully fetched ${successfulResponses.length}/${skus.length} pages.`
+  );
+
+  return successfulResponses;
+}
+
 export default async function bestBuyCaSearch({
   query,
 }: {
@@ -404,14 +511,14 @@ export default async function bestBuyCaSearch({
     apiResponse: allSearchResponses,
   });
 
-  const allAvailabilityResponses = await fetchAllAvailabilityPagesParallel({
+  const allDetailResponses = await fetchAllDetailPagesParallel({
     discoveredItems,
   });
 
   discoveredItems = bestBuyCaNormalizeData({
     type: 'availability',
     discoveredItems,
-    apiResponse: allAvailabilityResponses,
+    apiResponse: allDetailResponses,
   });
 
   return discoveredItems;

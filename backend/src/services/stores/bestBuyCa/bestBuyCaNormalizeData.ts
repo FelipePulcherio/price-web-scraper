@@ -124,22 +124,25 @@ function normalizeAvailabilityData({
   return filteredItems;
 }
 
-export function cleanNameFromModel(name: string, model: string): string {
-  // Escape regex special chars from model string
-  const escapedModel = model.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function cleanName(name: string, model?: string): string {
+  let cleanedName = name;
 
-  // Regex: match model with optional surrounding brackets/parentheses/dashes/spaces
-  const regex = new RegExp(
-    `\\s*[-()\\[\\]]*\\s*${escapedModel}\\s*[-()\\[\\]]*\\s*`,
-    'i'
-  );
+  // 1) Remove model if present (with optional parentheses or brackets around it)
+  if (model) {
+    const modelRegex = new RegExp(
+      `(\\(|\\[|\\s|-)?${model}(\\)|\\]|\\s|-)?`,
+      'gi'
+    );
+    cleanedName = cleanedName.replace(modelRegex, '').trim();
+  }
 
-  const cleaned = name
-    .replace(regex, ' ')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
+  // 2) Remove " - Only at Best Buy" (case-insensitive, safe with/without spaces)
+  cleanedName = cleanedName.replace(/\s*-\s*Only at Best Buy/gi, '').trim();
 
-  return cleaned;
+  // 3) Collapse multiple spaces into one
+  cleanedName = cleanedName.replace(/\s{2,}/g, ' ');
+
+  return cleanedName;
 }
 
 function normalizeDetailData({
@@ -171,7 +174,7 @@ function normalizeDetailData({
       // Add new data to item
       const enriched: IDiscoverItem = {
         ...item,
-        name: cleanNameFromModel(detail.name, detail.modelNumber) ?? item.name,
+        name: cleanName(detail.name, detail.modelNumber) ?? item.name,
         images: item.images ?? [{ url: detail.additionalMedia[0].url }],
         model: detail.modelNumber ?? item.model,
         brand: detail.brandName ?? item.brand,

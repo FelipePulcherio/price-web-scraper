@@ -15,15 +15,15 @@ scraperScheduler.define('searchAllStores', async (job) => {
   const { query } = job.attrs.data as { query: string };
 
   try {
-    // 1) Scrape data.
+    // 1) Scrape data
     console.log(`[Agenda]: Running job searchAllStores for query "${query}"`);
     const items = await searchAllStores({ query });
 
-    // 2) Save discovered items in DB.
+    // 2) Save discovered items in DB
     console.log(`[Agenda]: Saving items in DB.`);
     const newItems = await createOrUpdateDiscoveredItems(items);
 
-    // 3) Save new events in DB.
+    // 3) Save new events in DB
     console.log(`[Agenda]: Saving events in DB.`);
     await createEvent(newItems, 'SCRAPER');
 

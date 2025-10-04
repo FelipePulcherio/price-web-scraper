@@ -70,3 +70,161 @@ export async function createEvent(
     throw new Error(err instanceof Error ? err.message : 'Unknown error.');
   }
 }
+
+export async function createOrUpdateDiscoveredItems(
+  discoveredItems: IDiscoverItem[]
+): Promise<IDiscoverItem[]> {
+  const createdOrUpdatedItems: IDiscoverItem[] = [];
+
+  // PART 1
+  // 1) Split into usable and unusable groups
+  const itemsWithModels = discoveredItems.filter((i) => i.model);
+  const itemsWithoutModels = discoveredItems.filter((i) => !i.model);
+
+  // 2) Collect all models
+  const models = itemsWithModels.map((i) => i.model!);
+
+  // 3) Fetch all items that has model in DB
+  const existingItems = await prisma.item.findMany({
+    where: { model: { in: models } },
+    include: {
+      categories: { select: { id: true } },
+      subCategories: { select: { id: true } },
+      subSubCategories: { select: { id: true } },
+    },
+  });
+
+  // 4) Index by model for quick lookup
+  const existingByModel = new Map(existingItems.map((i) => [i.model, i]));
+
+  // 5) Split into Update and Create
+  const toUpdate: IDiscoverItem[] = [];
+  const toCreate: IDiscoverItem[] = [];
+
+  for (const item of itemsWithModels) {
+    const existingId = existingByModel.get(item.model!);
+    if (existingId) {
+      toUpdate.push({ ...item, id: existingId.id });
+    } else {
+      toCreate.push(item);
+    }
+  }
+
+  // 6): Bulk UPDATE (No connections)
+  let updated: { id: number; name: string; model: string }[] = [];
+  if (toUpdate.length > 0) {
+    updated = await prisma.item.updateManyAndReturn({
+      where: { id: { in: toUpdate.map((i) => i.id!) } },
+      data: {
+        updatedAt: new Date(),
+      },
+      select: { id: true, name: true, model: true },
+    });
+  }
+
+  // 7) Bulk CREATE (No connections)
+  let created: { id: number; name: string; model: string }[] = [];
+  if (toCreate.length > 0) {
+    created = await prisma.item.createManyAndReturn({
+      data: toCreate.map((item) => ({
+        name: item.name,
+        model: item.model!,
+        brand: item.brand ?? '',
+      })),
+      select: { id: true, name: true, model: true },
+    });
+  }
+
+  const allCreatedOrUpdated = [...updated, ...created];
+
+  // PART 2
+  // 1) Build relation insert arrays
+  const storeLinks: {
+    itemId: number;
+    storeId: number;
+    url: string;
+    specificId: string;
+  }[] = [];
+
+  for (const item of itemsWithModels) {
+    const itemId = allCreatedOrUpdated.find((x) => x.name === item.name)?.id;
+    if (!itemId) continue;
+
+    item.stores?.forEach((s) => {
+      if (s.storeId) {
+        storeLinks.push({
+          itemId,
+          storeId: s.storeId,
+          url: s.url,
+          specificId: s.specificId ?? '',
+        });
+      }
+    });
+  }
+
+  // 2) Bulk CREATE connections (ItemStore is the only explicit join table)
+  if (storeLinks.length > 0) {
+    await prisma.itemStore.createMany({
+      data: storeLinks,
+      skipDuplicates: true,
+    });
+  }
+
+  // PART 3
+  // 1) Category connection. If categories are undefined it will not create connections.
+  for (const item of itemsWithModels) {
+    const updateData: any = {};
+
+    if (
+      item.categories &&
+      item.categories.length > 0 &&
+      existingByModel.get(item.model!)?.categories.length === undefined
+    ) {
+      updateData.categories = {
+        connect: item.categories.map((c) => ({ name: c.name })),
+      };
+    }
+
+    if (
+      item.subCategories &&
+      item.subCategories.length > 0 &&
+      existingByModel.get(item.model!)?.subCategories.length === undefined
+    ) {
+      updateData.subCategories = {
+        connect: item.subCategories.map((sc) => ({ name: sc.name })),
+      };
+    }
+
+    if (
+      item.subSubCategories &&
+      item.subSubCategories.length > 0 &&
+      existingByModel.get(item.model!)?.subSubCategories.length === undefined
+    ) {
+      updateData.subSubCategories = {
+        connect: item.subSubCategories.map((ssc) => ({ name: ssc.name })),
+      };
+    }
+
+    const itemId = allCreatedOrUpdated.find((i) => i.model === item.model)!.id;
+
+    // console.log(
+    //   `ID: ${itemId} | Item: ${item.name.slice(0, 8)} | C: ${
+    //     item.categories
+    //   } | SC: ${item.subCategories} | SSC: ${item.subSubCategories}`
+    // );
+
+    await prisma.item.update({
+      where: {
+        id: itemId,
+      },
+      data: updateData,
+    });
+  }
+
+  // PART 4
+  // Return items created or updated
+  return itemsWithModels.map((item) => {
+    const id = allCreatedOrUpdated.find((x) => x.name === item.name)?.id;
+    return { ...item, id };
+  });
+}

@@ -1,13 +1,20 @@
 import axios from 'axios';
 import utils from './utils';
 import storesConfig from './config';
-import { IDiscoverItem, IDiscoverImage, IStore } from '@/interfaces/interfaces';
+import {
+  IDiscoverItem,
+  IDiscoverImage,
+  IStore,
+  IShortStore,
+  IEvent,
+} from '@/interfaces/interfaces';
 
 import bestBuyCaSearch from './bestBuyCa/bestBuyCaSearch';
 import canadaComputersCaSearch from './canadaComputersCa/canadaComputersCaSearch';
 import costcoCaSearch from './costcoCa/costcoCaSearch';
 import londonDrugsCaSearch from './londonDrugsCa/londonDrugsCaSearch';
 import visionsElectronicsCaSearch from './visionsElectronicsCa/visionsElectronicsCaSearch';
+import { getAllStores } from '@/database/operations/dbRead';
 
 function isAuthRelatedError(error: unknown): boolean {
   if (
@@ -116,24 +123,24 @@ async function retryLayer({
 }): Promise<IDiscoverItem[]> {
   const results: IDiscoverItem[][] = (await Promise.all([
     // Stores without auth
-    retryWithBackoff(() => bestBuyCaSearch({ query }), 3, 'BEST BUY CA').catch(
-      () => []
-    ),
-    retryWithBackoff(
-      () => canadaComputersCaSearch({ query }),
-      3,
-      'CANADA COMPUTERS CA'
-    ).catch(() => []),
+    // retryWithBackoff(() => bestBuyCaSearch({ query }), 3, 'BEST BUY CA').catch(
+    //   () => []
+    // ),
+    // retryWithBackoff(
+    //   () => canadaComputersCaSearch({ query }),
+    //   3,
+    //   'CANADA COMPUTERS CA'
+    // ).catch(() => []),
 
     // Stores with optional auth fallback
-    tryStoreWithOptionalAuth(londonDrugsCaSearch, query, 3, 'LONDON DRUGS CA'),
+    // tryStoreWithOptionalAuth(londonDrugsCaSearch, query, 3, 'LONDON DRUGS CA'),
     tryStoreWithOptionalAuth(costcoCaSearch, query, 3, 'COSTCO CA'),
-    tryStoreWithOptionalAuth(
-      visionsElectronicsCaSearch,
-      query,
-      3,
-      'VISIONS ELECTRONICS CA'
-    ),
+    // tryStoreWithOptionalAuth(
+    //   visionsElectronicsCaSearch,
+    //   query,
+    //   3,
+    //   'VISIONS ELECTRONICS CA'
+    // ),
   ])) as IDiscoverItem[][];
 
   return results.flat();
@@ -304,10 +311,51 @@ function deduplicationLayer(items: IDiscoverItem[]): IDiscoverItem[] {
     }
   }
 
+  // Remove duplicate names (keeping only one)
+  const uniqueItems = merged.filter(
+    (item, index, self) => index === self.findIndex((i) => i.name === item.name)
+  );
+
   console.log(
     `✔ Deduplication complete: input ${items.length} → output ${merged.length}`
   );
-  return merged;
+
+  return uniqueItems;
+}
+
+function appendEvent(items: IDiscoverItem[]): IDiscoverItem[] {
+  return items.map((item) => {
+    const events: IEvent[] = item.stores.map((store) => ({
+      itemName: item.name,
+      storeName: store.name,
+      price: store.price!,
+      fromJob: 'Scraper',
+      status: 'OK',
+    }));
+
+    return {
+      ...item,
+      event: events,
+    };
+  });
+}
+
+async function appendStoreId(items: IDiscoverItem[]): Promise<IDiscoverItem[]> {
+  const allStores: IShortStore[] = await getAllStores();
+
+  return items.map((item) => ({
+    ...item,
+    stores: item.stores.map((s) => {
+      const store = allStores.find((dbStore) => dbStore.name === s.name);
+      if (!store) {
+        throw new Error(`Unknown store name: ${s.name}`);
+      }
+      return {
+        ...s,
+        storeId: store.id, // append the id from DB
+      };
+    }),
+  }));
 }
 
 export default async function searchAllStores({
@@ -317,12 +365,19 @@ export default async function searchAllStores({
 }): Promise<IDiscoverItem[]> {
   const allRawResults: IDiscoverItem[] = await retryLayer({ query });
 
-  const mergedResults: IDiscoverItem[] = deduplicationLayer(allRawResults);
+  const deduplicatedResults: IDiscoverItem[] =
+    deduplicationLayer(allRawResults);
+
+  const storeAppendedResult: IDiscoverItem[] = await appendStoreId(
+    deduplicatedResults
+  );
+
+  const finalResults: IDiscoverItem[] = appendEvent(storeAppendedResult);
 
   // await utils.saveAsJson({
   //   fileName: 'merged-results.json',
-  //   toBeSaved: mergedResults,
+  //   toBeSaved: finalResults,
   // });
 
-  return mergedResults;
+  return finalResults;
 }

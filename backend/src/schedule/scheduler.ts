@@ -34,7 +34,7 @@ scraperAgenda.define('Scraper', async (job) => {
   */
 
   // STEP 4: Create new Events on DB
-  await createEvent(events);
+  await createEvent([], 'SCRAPER');
   console.log('Scheduler: Creating events done.');
   console.log('Scheduler: Job "Scraper" completed!');
 });

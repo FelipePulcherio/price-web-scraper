@@ -1,5 +1,6 @@
-import { IUser, IEvent } from '@/interfaces/interfaces';
+import { IUser, IDiscoverItem } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
+import { Status } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 // FUNCTIONS
@@ -27,20 +28,42 @@ export async function createUser(data: IUser): Promise<IUser | undefined> {
   }
 }
 
-export async function createEvent(data: IEvent[]): Promise<void> {
+export async function createEvent(
+  items: IDiscoverItem[],
+  fromJob: 'SCRAPER'
+): Promise<void> {
   try {
-    const events: IEvent[] = data;
+    switch (fromJob) {
+      case 'SCRAPER':
+        // Filter items without id or storeId
+        const eventsToCreate = items
+          .filter((item) => item.id)
+          .flatMap((item) =>
+            item.stores
+              .filter((store) => store.storeId)
+              .map((store) => ({
+                itemId: item.id!,
+                storeId: store.storeId!,
+                price: store.price!,
+                date: new Date(),
+                fromJob,
+                status: Status.OK,
+              }))
+          );
 
-    await prisma.events.createMany({
-      data: events.map((event) => ({
-        itemId: event.itemId!,
-        storeId: event.storeId!,
-        price: event.price,
-        fromJob: event.fromJob,
-        status: event.status,
-      })),
-      skipDuplicates: true,
-    });
+        if (eventsToCreate.length === 0) return;
+
+        // Save in DB
+        await prisma.events.createMany({
+          data: eventsToCreate,
+          skipDuplicates: false,
+        });
+
+        break;
+
+      default:
+        throw new Error(`Unknown job type: ${fromJob}`);
+    }
   } catch (err) {
     // Throw error to whoever called this
     console.error('Error creating events:', err);

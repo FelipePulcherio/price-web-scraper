@@ -213,7 +213,7 @@ export async function getAllStores(): Promise<IShortStore[]> {
       },
     });
 
-    // If item was not found
+    // If store was not found
     if (!stores) {
       throw new Error('Not found');
     }

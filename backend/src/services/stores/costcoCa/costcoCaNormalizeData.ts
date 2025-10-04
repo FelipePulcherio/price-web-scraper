@@ -81,21 +81,18 @@ export default function ({
       const discoveredCategory: IDiscoverShortCategory[] = [
         {
           name: 'DEFAULT',
-          hasDepth: true,
         },
       ];
 
       const discoveredSubCategory: IDiscoverShortCategory[] = [
         {
           name: 'DEFAULT',
-          hasDepth: true,
         },
       ];
 
       const discoveredSubSubCategory: IDiscoverShortCategory[] = [
         {
           name: 'DEFAULT',
-          hasDepth: false,
         },
       ];
 
@@ -115,6 +112,9 @@ export default function ({
         ),
         ...(extractBrand(product) ? { brand: extractBrand(product) } : {}),
         ...(extractModel(product) ? { model: extractModel(product) } : {}),
+        categories: discoveredCategory,
+        subCategories: discoveredSubCategory,
+        subSubCategories: discoveredSubSubCategory,
       };
 
       // console.log(`✅ Kept: ${product.item_number} - ${product.item_name}`);

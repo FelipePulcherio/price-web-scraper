@@ -52,21 +52,18 @@ function normalizeSearchData({
       const discoveredCategory: IDiscoverShortCategory[] = [
         {
           name: 'DEFAULT',
-          hasDepth: true,
         },
       ];
 
       const discoveredSubCategory: IDiscoverShortCategory[] = [
         {
           name: 'DEFAULT',
-          hasDepth: true,
         },
       ];
 
       const discoveredSubSubCategory: IDiscoverShortCategory[] = [
         {
           name: 'DEFAULT',
-          hasDepth: false,
         },
       ];
 
@@ -79,6 +76,9 @@ function normalizeSearchData({
         stores: store,
         price: product.salePrice,
         ...(discoveredImages.length > 0 && { images: discoveredImages }),
+        categories: discoveredCategory,
+        subCategories: discoveredSubCategory,
+        subSubCategories: discoveredSubSubCategory,
       };
 
       // console.log(`✅ Kept: ${product.sku} - ${product.name}`);

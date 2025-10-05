@@ -516,7 +516,7 @@ export default async function bestBuyCaSearch({
   });
 
   discoveredItems = bestBuyCaNormalizeData({
-    type: 'availability',
+    type: 'detail',
     discoveredItems,
     apiResponse: allDetailResponses,
   });

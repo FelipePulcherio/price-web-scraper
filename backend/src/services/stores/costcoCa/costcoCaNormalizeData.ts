@@ -6,6 +6,7 @@ import {
   IDiscoverShortCategory,
 } from '@/interfaces/interfaces';
 import storesConfig from '../config';
+import randomLetters from '../utils/randomLetters';
 
 function containsIgnoredWord(name: string): boolean {
   return storesConfig.filters.ignoreKeywords.some((word) =>
@@ -99,6 +100,7 @@ export default function ({
       // Image is modified. Not suited for direct use.
       const discoveredImages: IDiscoverImage[] = [
         {
+          name: randomLetters(5),
           url: product.image,
         },
       ];
@@ -115,6 +117,7 @@ export default function ({
         categories: discoveredCategory,
         subCategories: discoveredSubCategory,
         subSubCategories: discoveredSubSubCategory,
+        // images: discoveredImages,
       };
 
       // console.log(`✅ Kept: ${product.item_number} - ${product.item_name}`);

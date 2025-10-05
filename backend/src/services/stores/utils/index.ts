@@ -1,6 +1,7 @@
 import formatQuery from './formatQuery';
 import randomizedDelay from './randomizedDelay';
 import saveAsJson from './saveAsJson';
+import randomLetters from './randomLetters';
 import {
   CustomError,
   AuthError,
@@ -13,6 +14,7 @@ export default {
   formatQuery,
   randomizedDelay,
   saveAsJson,
+  randomLetters,
   CustomError,
   AuthError,
   FetchFailedError,

@@ -10,6 +10,7 @@ import {
   IBestBuyDetailAPIData,
 } from './types';
 import storesConfig from '../config';
+import randomLetters from '../utils/randomLetters';
 
 function containsIgnoredWord(name: string): boolean {
   return storesConfig.filters.ignoreKeywords.some((word) =>
@@ -67,15 +68,10 @@ function normalizeSearchData({
         },
       ];
 
-      const discoveredImages: IDiscoverImage[] = product.highResImage
-        ? [{ url: product.highResImage }]
-        : [];
-
       const newItem: IDiscoverItem = {
         name: product.name,
         stores: store,
         price: product.salePrice,
-        ...(discoveredImages.length > 0 && { images: discoveredImages }),
         categories: discoveredCategory,
         subCategories: discoveredSubCategory,
         subSubCategories: discoveredSubSubCategory,
@@ -171,11 +167,19 @@ function normalizeDetailData({
 
       if (!purchasable || !correctSeller) return null;
 
+      // Add image information
+      const discoveredImages: IDiscoverImage[] = [
+        ...(detail.additionalMedia?.map((media) => ({
+          name: randomLetters(5),
+          url: media.url,
+        })) ?? []),
+      ];
+
       // Add new data to item
       const enriched: IDiscoverItem = {
         ...item,
         name: cleanName(detail.name, detail.modelNumber) ?? item.name,
-        images: item.images ?? [{ url: detail.additionalMedia[0].url }],
+        images: discoveredImages,
         model: detail.modelNumber ?? item.model,
         brand: detail.brandName ?? item.brand,
       };
@@ -196,7 +200,7 @@ export default function ({
   discoveredItems,
   apiResponse,
 }: {
-  type: 'search' | 'availability';
+  type: 'search' | 'availability' | 'detail';
   discoveredItems: IDiscoverItem[];
   apiResponse: IBestBuySearchAPIData[] | IBestBuyDetailAPIData[];
 }): IDiscoverItem[] {
@@ -205,11 +209,12 @@ export default function ({
       discoveredItems,
       apiResponse: apiResponse as IBestBuySearchAPIData[],
     });
-  } else {
+  } else if (type === 'detail') {
     discoveredItems = normalizeDetailData({
       discoveredItems,
       apiResponse: apiResponse as IBestBuyDetailAPIData[],
     });
+  } else {
   }
 
   return discoveredItems;

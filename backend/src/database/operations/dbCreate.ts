@@ -88,6 +88,7 @@ export async function createOrUpdateDiscoveredItems(
   const existingItems = await prisma.item.findMany({
     where: { model: { in: models } },
     include: {
+      images: { select: { url: true } },
       categories: { select: { id: true } },
       subCategories: { select: { id: true } },
       subSubCategories: { select: { id: true } },
@@ -139,6 +140,7 @@ export async function createOrUpdateDiscoveredItems(
 
   // PART 2
   // 1) Build relation insert arrays
+  // 1.1) Stores
   const storeLinks: {
     itemId: number;
     storeId: number;
@@ -162,7 +164,32 @@ export async function createOrUpdateDiscoveredItems(
     });
   }
 
-  // 2) Bulk CREATE connections (ItemStore is the only explicit join table)
+  // 1.2) Images
+  const itemsWithoutImages = itemsWithModels.filter((i) => i.images);
+
+  const imageLinks: {
+    itemId: number;
+    url: string;
+    name: string;
+  }[] = [];
+
+  for (const item of itemsWithoutImages) {
+    const itemId = allCreatedOrUpdated.find((x) => x.name === item.name)?.id;
+    if (!itemId) continue;
+
+    item.images?.forEach((img) => {
+      if (img.url) {
+        imageLinks.push({
+          name: img.name!,
+          url: img.url,
+          itemId,
+        });
+      }
+    });
+  }
+
+  // 2) Bulk CREATE connections
+  // 2.1) Stores
   if (storeLinks.length > 0) {
     await prisma.itemStore.createMany({
       data: storeLinks,
@@ -170,7 +197,17 @@ export async function createOrUpdateDiscoveredItems(
     });
   }
 
+  // 2.2) Images
+  if (imageLinks.length > 0) {
+    await prisma.image.createMany({
+      data: imageLinks,
+      skipDuplicates: true,
+    });
+  }
+
   // PART 3
+  // Category has no explicit join table. FOR LOOP IS SLOW O(N).
+  // Once it's solved we could use 'PART 2' strategy.
   // 1) Category connection. If categories are undefined it will not create connections.
   for (const item of itemsWithModels) {
     const updateData: any = {};

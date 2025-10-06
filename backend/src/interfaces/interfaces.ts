@@ -51,6 +51,7 @@ export interface IImage {
   name?: string;
   cloudinaryId?: string;
   url?: string;
+  itemId?: number;
 }
 
 // Define interface for item

@@ -51,6 +51,7 @@ export interface IImage {
   name?: string;
   cloudinaryId?: string;
   url?: string;
+  itemId?: number;
 }
 
 // Define interface for item
@@ -76,6 +77,42 @@ export interface IShortItem {
   image: IImage;
   price?: number;
   storesQty?: number;
+}
+
+export interface IDiscoverShortCategory {
+  id?: number;
+  name: string;
+  hasDepth?: boolean;
+}
+
+export interface IDiscoverImage {
+  id?: number;
+  name?: string;
+  cloudinaryId?: string;
+  url: string;
+}
+
+export interface IDiscoverStore {
+  name: string;
+  storeId?: number;
+  url: string;
+  specificId?: string;
+  price?: number;
+}
+
+export interface IDiscoverItem {
+  id?: number;
+  name: string;
+  model?: string;
+  brand?: string;
+  categories?: IDiscoverShortCategory[];
+  subCategories?: IDiscoverShortCategory[];
+  subSubCategories?: IDiscoverShortCategory[];
+  images?: IDiscoverImage[];
+  description?: Prisma.JsonObject;
+  stores: IDiscoverStore[];
+  price?: number;
+  event?: IEvent[];
 }
 
 // Define interface for scraper item
@@ -104,9 +141,9 @@ export interface IScraperStore {
 export interface IEvent {
   id?: number;
   itemId?: number;
-  itemName?: string;
   storeId?: number;
-  storeName?: string;
+  itemName?: string; // Used only in seed
+  storeName?: string; // Used only in seed
   price: number;
   date?: Date;
   fromJob: string;

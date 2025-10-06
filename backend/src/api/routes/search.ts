@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { searchItemByString } from '@/database/operations/dbRead';
 import resFormatter from '@/helpers/apiResponseFormatter';
 import middlewares from '../middlewares';
+import scraperScheduler from '@/schedule/scraperScheduler';
 
 const route = Router();
 
@@ -46,7 +47,6 @@ function searchRoute(app: Router): void {
     }
   );
 
-  /*
   // GET /api/v1/search?q=
   // Used on regular searches. Use pages with 24 items
   route.get(
@@ -60,21 +60,34 @@ function searchRoute(app: Router): void {
 
         console.log(`GET /api/v1/search?q=${search}`);
 
+        // 1) Look up in DB
         const fetchedItems = await searchItemByString(search, pageSize, page);
-        // console.log(fetchedItems);
+
+        if (fetchedItems && fetchedItems.length > 0) {
+          res
+            .status(200)
+            .json(
+              resFormatter(true, ['Items fetched successfully'], fetchedItems)
+            );
+          return;
+        }
+
+        // 2) Not in DB. Create new Unique Job. If nothing happens, it
+        //  means that the job is already running. User should poll.
+        await scraperScheduler
+          .create('searchAllStores', { query: search })
+          .unique({ 'data.query': search }, { insertOnly: true })
+          .save();
 
         res
-          .status(200)
-          .json(
-            resFormatter(true, ['Items fetched successfully'], fetchedItems)
-          );
+          .status(202)
+          .json(resFormatter(false, [`Searching for "${search}"`], []));
       } catch (err) {
         // Pass errors to middlewares.errorHandler
         next(err);
       }
     }
   );
-  */
 }
 
 export default searchRoute;

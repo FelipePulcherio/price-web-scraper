@@ -8,9 +8,12 @@
     "vercel-build": "tsc",
     "render-build": "npm install && tsc",
     "build": "tsc --watch",
+    "build2": "tsc",
     "start": "nodemon ./dist/app.js",
+    "start2": "node ./dist/app.js",
     "render-start": "node ./dist/app.js",
-    "dev": "concurrently \"npm run build\" \"npm run start\" "
+    "dev": "concurrently \"npm run build\" \"npm run start\" ",
+    "dev2": "npm run build2 && npm run start2"
   },
   "keywords": [
     "Web",
@@ -21,6 +24,8 @@
   "author": "Felipe S. Pulcherio",
   "license": "ISC",
   "dependencies": {
+    "@hokify/agenda": "^6.3.0",
+    "@prisma/client": "^6.3.1",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
@@ -28,8 +33,7 @@
     "@types/jsonwebtoken": "^9.0.8",
     "@types/module-alias": "^2.0.4",
     "@types/node": "^22.8.2",
-    "@hokify/agenda": "^6.3.0",
-    "@prisma/client": "^6.3.1",
+    "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
@@ -37,10 +41,12 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.1",
     "express-jwt": "^8.5.1",
+    "https-proxy-agent": "^7.0.6",
     "jsonwebtoken": "^9.0.2",
     "module-alias": "^2.2.3",
     "mongoose": "^8.5.2",
     "puppeteer-core": "^23.6.1",
+    "tough-cookie": "^5.1.2",
     "zod": "^3.24.2"
   },
   "devDependencies": {

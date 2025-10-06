@@ -9,7 +9,7 @@ import {
 import { Status } from '@prisma/client';
 
 export const ITEMS_LIST: IItem[] = [
-  /*{
+  {
     name: 'TV 65" Q60D 4K UHD HDR QLED 2024',
     model: 'QN65Q60DAFXZC',
     brand: 'Samsung',
@@ -34,6 +34,10 @@ export const ITEMS_LIST: IItem[] = [
       {
         name: 'AMAZON CA',
         url: 'https://www.amazon.ca/SAMSUNG-65-Inch-Quantum-Q-Symphony-Xcelerator/dp/B0CXR45YRM/?th=1',
+      },
+      {
+        name: 'COSTCO CA',
+        url: 'https://www.costco.ca/.product.4000268116.html',
       },
     ],
   },
@@ -67,8 +71,12 @@ export const ITEMS_LIST: IItem[] = [
         name: 'NEW EGG CA',
         url: 'https://www.newegg.ca/lg-c4-65/p/N82E16889482040',
       },
+      {
+        name: 'COSTCO CA',
+        url: 'https://www.costco.ca/lg-65-class---oled-c4-series---4k-uhd-oled-tv.product.4000270852.html',
+      },
     ],
-  },*/
+  },
   {
     name: 'PlayStation 5 Slim Digital Edition Console',
     model: 'CFI-2015-Digital',
@@ -132,7 +140,7 @@ export const ITEMS_LIST: IItem[] = [
 ];
 
 export const CATEGORIES_LIST: ICategory[] = [
-  /*{
+  {
     name: 'TV & Home Theatre',
     hasDepth: true,
     subCategories: [
@@ -173,7 +181,7 @@ export const CATEGORIES_LIST: ICategory[] = [
         ],
       },
     ],
-  },*/
+  },
   {
     name: 'Video Games & VR',
     hasDepth: true,
@@ -256,10 +264,14 @@ export const STORES_LIST: IShortStore[] = [
     name: 'WALMART CA',
     logo: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/b_rgb:0046BF,c_pad,h_100,r_max,w_100/v1/Stores/Walmart_Logo_1?_a=BAMCkGRi0',
   },
+  {
+    name: 'COSTCO CA',
+    logo: 'https://res.cloudinary.com/dabwt1bon/image/upload/f_auto,q_auto/b_rgb:0046BF,c_pad,h_100,r_max,w_100/v1/Stores/Costco_Logo_1?_a=BAMCkGRi0',
+  },
 ];
 
 export const EVENTS_LIST: IEvent[] = [
-  /*{
+  {
     itemName: 'TV 65" Q60D 4K UHD HDR QLED 2024',
     storeName: 'BEST BUY CA',
     price: 999.99,
@@ -463,6 +475,14 @@ export const EVENTS_LIST: IEvent[] = [
     itemName: 'TV 65" Q60D 4K UHD HDR QLED 2024',
     storeName: 'BEST BUY CA',
     price: 913.74,
+    date: new Date('2025-03-06T23:38:55.786Z'),
+    fromJob: 'Scraper',
+    status: Status.OK,
+  },
+  {
+    itemName: 'TV 65" Q60D 4K UHD HDR QLED 2024',
+    storeName: 'COSTCO CA',
+    price: 898,
     date: new Date('2025-03-06T23:38:55.786Z'),
     fromJob: 'Scraper',
     status: Status.OK,
@@ -722,7 +742,15 @@ export const EVENTS_LIST: IEvent[] = [
     date: new Date('2025-03-06T23:38:55.786Z'),
     fromJob: 'Scraper',
     status: Status.OK,
-  },*/
+  },
+  {
+    itemName: 'TV 65" C4 evo 4K UHD HDR OLED 2024',
+    storeName: 'COSTCO CA',
+    price: 1895.69,
+    date: new Date('2025-04-13T23:38:55.786Z'),
+    fromJob: 'Scraper',
+    status: Status.OK,
+  },
   {
     itemName: 'PlayStation 5 Slim Digital Edition Console',
     storeName: 'AMAZON CA',
@@ -804,7 +832,7 @@ export const USERS_LIST: IUser[] = [
     lastName: 'SYSTEM',
     email: 'system@findadeal.com',
     phone: '0000000000',
-    password: 'qwerty',
+    password: 'qwerty123*',
     role: 'SYSTEM',
   },
   {
@@ -812,7 +840,7 @@ export const USERS_LIST: IUser[] = [
     lastName: 'ADMIN',
     email: 'adminfsp@findadeal.com',
     phone: '0000000000',
-    password: 'qwerty',
+    password: 'qwerty123*',
     role: 'ADMIN',
   },
   {
@@ -820,7 +848,7 @@ export const USERS_LIST: IUser[] = [
     lastName: 'Pulcherio',
     email: 'felipe.test@gmail.com',
     phone: '1234567890',
-    password: 'qwerty',
+    password: 'qwerty123*',
     role: 'REGULAR_USER',
   },
 ];

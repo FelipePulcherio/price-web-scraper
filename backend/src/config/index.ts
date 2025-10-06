@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 // Code based on: https://github.com/santiq/bulletproof-nodejs/
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 // Read .env file (Skips in production)
 if (process.env.NODE_ENV === 'development') {
@@ -33,6 +34,13 @@ export default {
 
   // BrighData
   brightData: getEnvVariable('BRIGHTDATA_ENDPOINT'),
+  brightDataProxy: getEnvVariable('BRIGHTDATA_PROXY'),
+
+  // ScraperAPI
+  scraperApiProxy: getEnvVariable('SCRAPERAPI_PROXY'),
+
+  // Decodo
+  decodoProxy: getEnvVariable('DECODO_PROXY'),
 
   // Agenda.js
   agenda: {

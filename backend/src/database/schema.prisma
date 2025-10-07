@@ -24,13 +24,19 @@ model Item {
   searchCount      Int              @default(0)
 }
 
+enum ImageType {
+  THUMBNAIL
+  CAROUSEL
+}
+
 model Image {
-  id           Int    @id @default(autoincrement())
-  name         String @unique
-  cloudinaryId String @default("")
-  url          String @default("")
+  id           Int       @id @default(autoincrement())
+  type         ImageType @default(CAROUSEL)
+  name         String    @unique
+  cloudinaryId String    @default("")
+  url          String    @default("")
   itemId       Int?
-  Item         Item?  @relation(fields: [itemId], references: [id])
+  Item         Item?     @relation(fields: [itemId], references: [id])
 }
 
 model Category {

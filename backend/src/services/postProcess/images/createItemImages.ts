@@ -1,7 +1,6 @@
 import prisma from '@/loaders/prisma';
 import cloudinary from './client';
 import { getItemsWithImagesByItemIds } from '@/database/operations/dbRead';
-import { connect } from 'http2';
 
 async function createItemImages(itemIds: number[]): Promise<void> {
   console.log(

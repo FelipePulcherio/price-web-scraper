@@ -139,7 +139,9 @@ export async function getAllCategories(): Promise<ICategory[]> {
   }
 }
 
-export async function getImagesByItemIds(itemIds: number[]): Promise<IImage[]> {
+export async function getItemsWithImagesByItemIds(
+  itemIds: number[]
+): Promise<IShortItem[]> {
   if (itemIds.length === 0) return [];
 
   try {
@@ -148,7 +150,13 @@ export async function getImagesByItemIds(itemIds: number[]): Promise<IImage[]> {
       where: { id: { in: itemIds }, isActive: true },
       include: {
         images: {
-          select: { type: true, name: true, cloudinaryId: true, url: true },
+          select: {
+            id: true,
+            type: true,
+            name: true,
+            cloudinaryId: true,
+            url: true,
+          },
         },
       },
       omit: {
@@ -267,7 +275,8 @@ export async function getAllStores(): Promise<IShortStore[]> {
 export async function searchItemByString(
   query: string,
   pageSize: number,
-  page: number
+  page: number,
+  imageType?: 'THUMBNAIL' | 'CAROUSEL'
 ): Promise<IShortItem[]> {
   try {
     // Try to find item

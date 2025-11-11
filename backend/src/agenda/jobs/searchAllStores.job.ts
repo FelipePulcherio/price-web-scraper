@@ -24,15 +24,15 @@ agendaScraper.define('searchAllStores', async (job) => {
     await createEvent(newItems, 'SCRAPER');
 
     // 4) Start new job with created/updated ids
-    const createdIds = items
+    const createdIds = newItems
       .filter((item) => item.id)
       .map((item) => item.id!) as number[];
 
     if (createdIds.length > 0) {
-      await agendaPostProcess.now('postProcess', { itemIds: createdIds });
+      await agendaPostProcess.now('createItemImages', { itemIds: createdIds });
 
       console.log(
-        `[Agenda - Search All Stores]: JOB postProcess posted for ${createdIds.length} items.`
+        `[Agenda - Search All Stores]: Job createItemImages posted for ${createdIds.length} items.`
       );
     }
 

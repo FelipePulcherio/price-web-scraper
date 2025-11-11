@@ -227,7 +227,7 @@ export async function getItemsByCategoryId(
       name: item.name,
       model: item.model,
       brand: item.brand,
-      images: item.images.length > 0 ? item.images[0] : [{ url: '' }],
+      images: item.images.length > 0 ? [item.images[0]] : [{ url: '' }],
     }));
 
     return result;
@@ -333,7 +333,7 @@ export async function searchItemByString(
       name: item.name,
       model: item.model,
       brand: item.brand,
-      image: item.images.length > 0 ? item.images[0] : { url: '' },
+      images: item.images.length > 0 ? [item.images[0]] : [{ url: '' }],
       price: item.stores[0].events[0].price,
     }));
 
@@ -621,7 +621,7 @@ export async function getItemDeals(qty: number): Promise<IShortItem[]> {
         name: item.name,
         model: item.model,
         brand: item.brand,
-        image: { url: item.images[0].url },
+        images: [{ url: item.images[0].url }],
         price: lowestPrice,
         storesQty: item.stores.filter((store) => store.events[0].price > 0)
           .length,

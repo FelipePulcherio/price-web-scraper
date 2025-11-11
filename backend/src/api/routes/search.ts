@@ -20,20 +20,8 @@ function searchRoute(app: Router): void {
 
         console.log(`GET /api/v1/search/quick?q=${search}`);
 
-        let fetchedItems = await searchItemByString(search, 5, 1);
+        let fetchedItems = await searchItemByString(search, 5, 1, 'THUMBNAIL');
         // console.log(fetchedItems);
-
-        // Adjust width and height from cloudinary urls
-        fetchedItems = fetchedItems.map((item) => ({
-          ...item,
-          image: {
-            ...item.image,
-            url: item.image.url?.replace(
-              'f_auto,q_auto/',
-              'f_auto,q_auto/w_150,h_150/'
-            ),
-          },
-        }));
 
         res
           .status(200)
@@ -61,7 +49,12 @@ function searchRoute(app: Router): void {
         console.log(`GET /api/v1/search?q=${search}`);
 
         // 1) Look up in DB
-        const fetchedItems = await searchItemByString(search, pageSize, page);
+        const fetchedItems = await searchItemByString(
+          search,
+          pageSize,
+          page,
+          'CAROUSEL'
+        );
 
         if (fetchedItems && fetchedItems.length > 0) {
           res

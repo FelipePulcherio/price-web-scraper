@@ -22,5 +22,5 @@ export async function startAllAgendaJobs() {
   console.log('[Agenda]: Scraper instance started.');
 
   await agendaPostProcess.start();
-  console.log('[Agenda]: PostProcess instance started.');
+  console.log('[Agenda]: Post Process instance started.');
 }

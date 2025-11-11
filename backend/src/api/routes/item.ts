@@ -46,18 +46,6 @@ function itemRoute(app: Router): void {
         let fetchedItem = await getItemDeals(5);
         // console.log(fetchedItem);
 
-        // Adjust width and height from cloudinary urls
-        fetchedItem = fetchedItem.map((item) => ({
-          ...item,
-          image: {
-            ...item.image,
-            url: item.image.url?.replace(
-              'f_auto,q_auto/',
-              'f_auto,q_auto/w_250,h_250/'
-            ),
-          },
-        }));
-
         res
           .status(200)
           .json(resFormatter(true, ['Item fetched successfully'], fetchedItem));

@@ -2,11 +2,11 @@ import 'module-alias/register';
 import express, { Express } from 'express';
 import process from 'process';
 import config from '@/config';
-import { startAgenda } from '@/agenda';
 import bestBuyCaSearch from './services/stores/bestBuyCa/bestBuyCaSearch';
 import searchAllStores from './services/stores/searchAllStores';
 import visionsElectronicsCaSearch from './services/stores/visionsElectronicsCa/visionsElectronicsCaSearch';
 import londonDrugsCaSearch from './services/stores/londonDrugsCa/londonDrugsCaSearch';
+import { startAllAgendaJobs } from './agenda';
 
 async function startServer() {
   const app: Express = express();
@@ -28,7 +28,7 @@ async function startServer() {
   process.on('SIGINT', gracefulShutdown);
   process.on('SIGTERM', gracefulShutdown);
 
-  startAgenda();
+  startAllAgendaJobs();
   // await searchAllStores({ query: 'tv' });
   // await searchAllStores({ query: 'tv samsung' });
   // await searchAllStores({ query: 'tv lg 2025' });

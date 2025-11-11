@@ -74,7 +74,7 @@ export interface IShortItem {
   name: string;
   model: string;
   brand: string;
-  image: IImage;
+  images: IImage[];
   price?: number;
   storesQty?: number;
 }

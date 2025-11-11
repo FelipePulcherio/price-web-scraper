@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { searchItemByString } from '@/database/operations/dbRead';
 import resFormatter from '@/helpers/apiResponseFormatter';
 import middlewares from '../middlewares';
-import scraperScheduler from '@/schedule/scraperScheduler';
+import { agendaScraper } from '@/agenda';
 
 const route = Router();
 
@@ -74,7 +74,7 @@ function searchRoute(app: Router): void {
 
         // 2) Not in DB. Create new Unique Job. If nothing happens, it
         //  means that the job is already running. User should poll.
-        await scraperScheduler
+        await agendaScraper
           .create('searchAllStores', { query: search })
           .unique({ 'data.query': search }, { insertOnly: true })
           .save();

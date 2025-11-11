@@ -139,19 +139,24 @@ export async function getAllCategories(): Promise<ICategory[]> {
   }
 }
 
-export async function getImagesByItemIds(
-  itemIds: number[],
-  pageSize: number,
-  page: number
-): Promise<IImage[]> {
+export async function getImagesByItemIds(itemIds: number[]): Promise<IImage[]> {
   if (itemIds.length === 0) return [];
 
   try {
     // Try to find items
-    // TO DO: NEED TO SPECIFY DATA TO BE IN "items"
     const items = await prisma.item.findMany({
-      where: { id: { in: itemIds } },
-      include: { images: true },
+      where: { id: { in: itemIds }, isActive: true },
+      include: {
+        images: {
+          select: { type: true, name: true, cloudinaryId: true, url: true },
+        },
+      },
+      omit: {
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        searchCount: true,
+      },
     });
 
     // console.log(items);
@@ -161,15 +166,7 @@ export async function getImagesByItemIds(
       throw new Error('Not found');
     }
 
-    // Transform data
-    const allImages = items.flatMap((item) =>
-      item.images.map((img) => ({
-        ...img,
-        itemId: item.id,
-      }))
-    );
-
-    return allImages;
+    return items;
   } catch (err) {
     // Throw error to whoever called this
     // console.error(`Error fetching items:`, err);
@@ -230,7 +227,7 @@ export async function getItemsByCategoryId(
       name: item.name,
       model: item.model,
       brand: item.brand,
-      image: item.images.length > 0 ? item.images[0] : { url: '' },
+      images: item.images.length > 0 ? item.images[0] : [{ url: '' }],
     }));
 
     return result;

@@ -8,6 +8,7 @@ import {
   IScraperItem,
   IUser,
   ICurrentPrice,
+  IImage,
 } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
 
@@ -134,6 +135,44 @@ export async function getAllCategories(): Promise<ICategory[]> {
   } catch (err) {
     // Throw error to whoever called this
     // console.error('Error fetching categories:', err);
+    throw err;
+  }
+}
+
+export async function getImagesByItemIds(
+  itemIds: number[],
+  pageSize: number,
+  page: number
+): Promise<IImage[]> {
+  if (itemIds.length === 0) return [];
+
+  try {
+    // Try to find items
+    // TO DO: NEED TO SPECIFY DATA TO BE IN "items"
+    const items = await prisma.item.findMany({
+      where: { id: { in: itemIds } },
+      include: { images: true },
+    });
+
+    // console.log(items);
+
+    // If item was not found
+    if (items.length === 0) {
+      throw new Error('Not found');
+    }
+
+    // Transform data
+    const allImages = items.flatMap((item) =>
+      item.images.map((img) => ({
+        ...img,
+        itemId: item.id,
+      }))
+    );
+
+    return allImages;
+  } catch (err) {
+    // Throw error to whoever called this
+    // console.error(`Error fetching items:`, err);
     throw err;
   }
 }

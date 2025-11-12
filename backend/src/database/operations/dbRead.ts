@@ -8,9 +8,9 @@ import {
   IScraperItem,
   IUser,
   ICurrentPrice,
-  IImage,
 } from '@/interfaces/interfaces';
 import prisma from '@/loaders/prisma';
+import { accessSync } from 'fs';
 
 // FUNCTIONS
 export async function getItemById(id: number): Promise<IItem> {
@@ -39,10 +39,10 @@ export async function getItemById(id: number): Promise<IItem> {
         },
         images: {
           orderBy: {
-            url: 'asc',
+            cloudinaryUrl: 'asc',
           },
           select: {
-            url: true,
+            cloudinaryUrl: true,
           },
         },
         description: true,
@@ -96,6 +96,17 @@ export async function getItemById(id: number): Promise<IItem> {
   } catch (err) {
     // Throw error to whoever called this
     // console.error(`Error fetching item ID=${id}:`, err);
+    throw err;
+  }
+}
+
+export async function getCountAllItems(): Promise<number> {
+  try {
+    const itemCount = await prisma.item.count();
+    return itemCount;
+  } catch (err) {
+    // Throw error to whoever called this
+    // console.error(`Error counting items, err);
     throw err;
   }
 }
@@ -155,7 +166,7 @@ export async function getItemsWithImagesByItemIds(
             type: true,
             name: true,
             cloudinaryId: true,
-            url: true,
+            cloudinaryUrl: true,
           },
         },
       },
@@ -165,6 +176,51 @@ export async function getItemsWithImagesByItemIds(
         updatedAt: true,
         searchCount: true,
       },
+    });
+
+    // console.log(items);
+
+    // If item was not found
+    if (items.length === 0) {
+      throw new Error('Not found');
+    }
+
+    return items;
+  } catch (err) {
+    // Throw error to whoever called this
+    // console.error(`Error fetching items:`, err);
+    throw err;
+  }
+}
+
+export async function getAllItemsWithImages(
+  skip: number,
+  take: number
+): Promise<IShortItem[]> {
+  try {
+    // Try to find items
+    const items = await prisma.item.findMany({
+      where: { isActive: true },
+      include: {
+        images: {
+          select: {
+            id: true,
+            type: true,
+            name: true,
+            cloudinaryId: true,
+            cloudinaryUrl: true,
+          },
+        },
+      },
+      omit: {
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        searchCount: true,
+      },
+      skip,
+      take,
+      orderBy: { id: 'asc' },
     });
 
     // console.log(items);
@@ -216,7 +272,7 @@ export async function getItemsByCategoryId(
           },
           take: 1,
           select: {
-            url: true,
+            cloudinaryUrl: true,
           },
         },
       },
@@ -235,7 +291,8 @@ export async function getItemsByCategoryId(
       name: item.name,
       model: item.model,
       brand: item.brand,
-      images: item.images.length > 0 ? [item.images[0]] : [{ url: '' }],
+      images:
+        item.images.length > 0 ? [item.images[0]] : [{ cloudinaryUrl: '' }],
     }));
 
     return result;
@@ -307,7 +364,7 @@ export async function searchItemByString(
           },
           take: 1,
           select: {
-            url: true,
+            cloudinaryUrl: true,
           },
         },
         stores: {
@@ -342,7 +399,8 @@ export async function searchItemByString(
       name: item.name,
       model: item.model,
       brand: item.brand,
-      images: item.images.length > 0 ? [item.images[0]] : [{ url: '' }],
+      images:
+        item.images.length > 0 ? [item.images[0]] : [{ cloudinaryUrl: '' }],
       price: item.stores[0].events[0].price,
     }));
 
@@ -589,7 +647,7 @@ export async function getItemDeals(qty: number): Promise<IShortItem[]> {
           },
           take: 1,
           select: {
-            url: true,
+            cloudinaryUrl: true,
           },
         },
         stores: {
@@ -630,7 +688,7 @@ export async function getItemDeals(qty: number): Promise<IShortItem[]> {
         name: item.name,
         model: item.model,
         brand: item.brand,
-        images: [{ url: item.images[0].url }],
+        images: [{ cloudinaryUrl: item.images[0].cloudinaryUrl }],
         price: lowestPrice,
         storesQty: item.stores.filter((store) => store.events[0].price > 0)
           .length,

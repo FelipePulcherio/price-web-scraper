@@ -333,7 +333,7 @@ async function populateCloudinary() {
             create: {
               name: `${imageData.brand}_${imageData.model}_${imageData.number}`,
               cloudinaryId: publicId,
-              url: url,
+              cloudinaryUrl: url,
             },
           },
         },

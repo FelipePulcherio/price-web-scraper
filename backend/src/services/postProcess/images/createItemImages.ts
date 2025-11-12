@@ -35,12 +35,15 @@ async function createItemImages(itemIds: number[]): Promise<void> {
         // );
 
         // Upload directly from URL
-        const result = await cloudinary.uploader.upload(item.images[i].url!, {
-          public_id: publicId,
-          folder: 'Items',
-          unique_filename: false,
-          overwrite: false,
-        });
+        const result = await cloudinary.uploader.upload(
+          item.images[i].referenceUrl!,
+          {
+            public_id: publicId,
+            folder: 'Items',
+            unique_filename: false,
+            overwrite: false,
+          }
+        );
 
         const optimizedUrl = cloudinary.url(result.public_id, {
           transformation: [
@@ -55,7 +58,7 @@ async function createItemImages(itemIds: number[]): Promise<void> {
               type: 'THUMBNAIL',
               name: name,
               cloudinaryId: result.public_id,
-              url: optimizedUrl.replace(
+              cloudinaryUrl: optimizedUrl.replace(
                 'f_auto,q_auto/',
                 'f_auto,q_auto/w_150,h_150/'
               ),
@@ -70,7 +73,7 @@ async function createItemImages(itemIds: number[]): Promise<void> {
             type: 'CAROUSEL',
             name: name,
             cloudinaryId: result.public_id,
-            url: optimizedUrl,
+            cloudinaryUrl: optimizedUrl,
           },
         });
 

@@ -212,13 +212,13 @@ function mergeItemData(
   }));
 
   // Merge images, avoiding duplicates
-  const imageUrls = new Set(base.images?.map((img) => img.url) ?? []);
+  const imageUrls = new Set(base.images?.map((img) => img.referenceUrl) ?? []);
   const newImages: IDiscoverImage[] = [...(base.images ?? [])];
 
   for (const img of incoming.images ?? []) {
-    if (!imageUrls.has(img.url)) {
+    if (!imageUrls.has(img.referenceUrl)) {
       newImages.push(img);
-      imageUrls.add(img.url);
+      imageUrls.add(img.referenceUrl);
     }
   }
 

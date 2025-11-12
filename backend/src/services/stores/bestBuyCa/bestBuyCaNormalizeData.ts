@@ -171,7 +171,7 @@ function normalizeDetailData({
       const discoveredImages: IDiscoverImage[] = [
         ...(detail.additionalMedia?.map((media) => ({
           name: randomLetters(5),
-          url: media.url,
+          referenceUrl: media.url,
         })) ?? []),
       ];
 

@@ -106,7 +106,7 @@ function normalizeSearchData({
     const newItem: IDiscoverItem = {
       name: normalizeProductName(product.productName, extractModel(product)),
       ...(extractImage(product)
-        ? { images: [{ url: extractImage(product)! }] }
+        ? { images: [{ referenceUrl: extractImage(product)! }] }
         : {}),
       stores: store,
       price:

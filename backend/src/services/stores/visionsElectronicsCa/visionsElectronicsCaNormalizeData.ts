@@ -80,7 +80,7 @@ function normalizeSearchData({
 
     const discoveredImages: IDiscoverImage[] = [
       {
-        url: extractImage(product.image_url),
+        referenceUrl: extractImage(product.image_url),
       },
     ];
 

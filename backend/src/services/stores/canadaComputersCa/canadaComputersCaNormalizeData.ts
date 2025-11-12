@@ -24,7 +24,7 @@ function extractImages(images: ICanadaComputersImage[]): IDiscoverImage[] {
     });
   });
 
-  return Array.from(originUrls).map((url) => ({ url }));
+  return Array.from(originUrls).map((referenceUrl) => ({ referenceUrl }));
 }
 
 function normalizeSearchData({

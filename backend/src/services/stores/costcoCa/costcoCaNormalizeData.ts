@@ -101,7 +101,7 @@ export default function ({
       const discoveredImages: IDiscoverImage[] = [
         {
           name: randomLetters(5),
-          url: product.image,
+          referenceUrl: product.image,
         },
       ];
 

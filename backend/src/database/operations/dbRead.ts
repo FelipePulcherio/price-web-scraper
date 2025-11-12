@@ -167,6 +167,7 @@ export async function getItemsWithImagesByItemIds(
             name: true,
             cloudinaryId: true,
             cloudinaryUrl: true,
+            referenceUrl: true,
           },
         },
       },

@@ -9,7 +9,7 @@ agendaPostProcess.define('createItemImages', async (job) => {
       `[Agenda - Post Process]: Running job createItemImages for ${itemIds.length} items.`
     );
 
-    await postProcess.createItemImages(itemIds);
+    await postProcess.maintainItemImages(itemIds);
 
     console.log(
       `[Agenda - Post Process]: Finished createItemImages job for ${itemIds.length} items.`

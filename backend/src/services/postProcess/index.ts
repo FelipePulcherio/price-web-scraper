@@ -1,4 +1,4 @@
-import maintainItemImages from './images/maintainItemImage';
+import maintainItemImages from './images/maintainItemImage.js';
 
 export default {
   maintainItemImages,

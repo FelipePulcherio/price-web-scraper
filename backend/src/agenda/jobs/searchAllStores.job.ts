@@ -1,9 +1,9 @@
-import { agendaScraper, agendaPostProcess } from '@/agenda';
-import searchAllStores from '@/services/stores/searchAllStores';
+import { agendaScraper, agendaPostProcess } from '../index.js';
+import searchAllStores from '../../services/stores/searchAllStores.js';
 import {
   createOrUpdateDiscoveredItems,
   createEvent,
-} from '@/database/operations/dbCreate';
+} from '../../database/operations/dbCreate.js';
 
 agendaScraper.define('searchAllStores', async (job) => {
   const { query } = job.attrs.data as { query: string };

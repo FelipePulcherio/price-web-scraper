@@ -1,20 +1,20 @@
 import axios from 'axios';
-import utils from './utils';
-import storesConfig from './config';
+import utils from './utils/index.js';
+import storesConfig from './config/index.js';
 import {
   IDiscoverItem,
   IDiscoverImage,
   IStore,
   IShortStore,
   IEvent,
-} from '@/interfaces/interfaces';
+} from '@/interfaces/interfaces.js';
 
-import bestBuyCaSearch from './bestBuyCa/bestBuyCaSearch';
-import canadaComputersCaSearch from './canadaComputersCa/canadaComputersCaSearch';
-import costcoCaSearch from './costcoCa/costcoCaSearch';
-import londonDrugsCaSearch from './londonDrugsCa/londonDrugsCaSearch';
-import visionsElectronicsCaSearch from './visionsElectronicsCa/visionsElectronicsCaSearch';
-import { getAllStores } from '@/database/operations/dbRead';
+import bestBuyCaSearch from './bestBuyCa/bestBuyCaSearch.js';
+import canadaComputersCaSearch from './canadaComputersCa/canadaComputersCaSearch.js';
+import costcoCaSearch from './costcoCa/costcoCaSearch.js';
+import londonDrugsCaSearch from './londonDrugsCa/londonDrugsCaSearch.js';
+import visionsElectronicsCaSearch from './visionsElectronicsCa/visionsElectronicsCaSearch.js';
+import { getAllStores } from '../../database/operations/dbRead.js';
 
 function isAuthRelatedError(error: unknown): boolean {
   if (

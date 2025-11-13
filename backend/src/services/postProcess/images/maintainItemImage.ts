@@ -1,14 +1,14 @@
-import prisma from '@/loaders/prisma';
+import prisma from '../../../loaders/prisma.js';
 import PQueue from 'p-queue';
-import cloudinary from './client';
+import cloudinary from './client.js';
 import {
   getItemsWithImagesByItemIds,
   getAllItemsWithImages,
   getCountAllItems,
-} from '@/database/operations/dbRead';
-import { createImageAndConnectToItem } from '@/database/operations/dbCreate';
-import { updateImageById } from '@/database/operations/dbUpdate';
-import { IImage, IShortItem } from '@/interfaces/interfaces';
+} from '../../../database/operations/dbRead.js';
+import { createImageAndConnectToItem } from '../../../database/operations/dbCreate.js';
+import { updateImageById } from '../../../database/operations/dbUpdate.js';
+import { IImage, IShortItem } from '../../../interfaces/interfaces.js';
 
 async function uploadToCloudinary(
   imageUrl: string,

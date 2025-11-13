@@ -4,7 +4,7 @@ import {
   ICategory,
   IEvent,
   IUser,
-} from '@/interfaces/interfaces';
+} from '../../interfaces/interfaces.js';
 
 import { Status } from '@prisma/client';
 

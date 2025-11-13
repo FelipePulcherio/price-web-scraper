@@ -1,10 +1,10 @@
-import config from '@/config';
+import config from '../config/index.js';
 import { Agenda } from '@hokify/agenda';
-import { IScraperItem, IEvent } from '@/interfaces/interfaces';
-import { deleteScraperCollection } from '@/database/operations/dbDelete';
-import { getAllItemsForScraper } from '@/database/operations/dbRead';
-import scraperWorker from '../services/scraperWorker';
-import { createEvent } from '@/database/operations/dbCreate';
+import { IScraperItem, IEvent } from '../interfaces/interfaces.js';
+import { deleteScraperCollection } from '../database/operations/dbDelete.js';
+import { getAllItemsForScraper } from '../database/operations/dbRead.js';
+import scraperWorker from '../services/scraperWorker.js';
+import { createEvent } from '../database/operations/dbCreate.js';
 // import { analyzerComparison } from '../analyzer/analyzerComparison';
 
 // Create new instance of Agenda

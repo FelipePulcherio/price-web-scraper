@@ -1,5 +1,5 @@
-import { agendaScraper } from '@/agenda';
-import '@/agenda/jobs/searchAllStores.job';
+import { agendaScraper } from '../../agenda/index.js';
+import '../jobs/searchAllStores.job.js';
 
 async function startScraperWorker() {
   await agendaScraper.start();

@@ -1,4 +1,4 @@
-import { decodoAxiosClient as axiosClient } from '../storesApiClient';
+import { decodoAxiosClient as axiosClient } from '../storesApiClient.js';
 import {
   IBestBuySearchAPIResponse,
   IBestBuySearchAPIData,
@@ -6,10 +6,10 @@ import {
   IBestBuyAvailabilityAPIData,
   IBestBuyDetailAPIResponse,
   IBestBuyDetailAPIData,
-} from './types';
-import { IDiscoverItem } from '@/interfaces/interfaces';
-import utils from '../utils';
-import bestBuyCaNormalizeData from './bestBuyCaNormalizeData';
+} from './types.js';
+import { IDiscoverItem } from '../../../interfaces/interfaces.js';
+import utils from '../utils/index.js';
+import bestBuyCaNormalizeData from './bestBuyCaNormalizeData.js';
 
 import { promises as fs } from 'fs';
 import path from 'path';

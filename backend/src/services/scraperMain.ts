@@ -1,6 +1,6 @@
 import puppeteer, { Browser, Page } from 'puppeteer-core';
-import config from '@/config';
-import { IScraperStore, IEvent } from '@/interfaces/interfaces';
+import config from '../config/index.js';
+import { IScraperStore, IEvent } from '../interfaces/interfaces.js';
 // import { promises as fs } from 'fs';
 
 // FUNCTIONS

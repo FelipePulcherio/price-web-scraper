@@ -1,5 +1,5 @@
-import { agendaPostProcess } from '@/agenda';
-import postProcess from '@/services/postProcess';
+import { agendaPostProcess } from '../index.js';
+import postProcess from '../../services/postProcess/index.js';
 
 agendaPostProcess.define('createItemImages', async (job) => {
   const { itemIds } = job.attrs.data as { itemIds: number[] };

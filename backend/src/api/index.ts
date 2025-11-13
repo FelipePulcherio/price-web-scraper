@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import userRouter from './routes/user';
-import itemRouter from './routes/item';
-import categoryRouter from './routes/category';
-import storeRouter from './routes/store';
-import searchRouter from './routes/search';
-import authRouter from './routes/auth';
-import middlewares from './middlewares';
+import userRouter from './routes/user.js';
+import itemRouter from './routes/item.js';
+import categoryRouter from './routes/category.js';
+import storeRouter from './routes/store.js';
+import searchRouter from './routes/search.js';
+import authRouter from './routes/auth.js';
+import middlewares from './middlewares/index.js';
 
 export default () => {
   const app = Router();

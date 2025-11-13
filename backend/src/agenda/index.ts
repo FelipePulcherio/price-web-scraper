@@ -1,5 +1,5 @@
 import { Agenda } from '@hokify/agenda';
-import config from '@/config';
+import config from '../config/index.js';
 
 export const agendaScraper = new Agenda({
   db: { address: config.mongoUri, collection: config.agenda.dbCollection },
@@ -14,8 +14,8 @@ export const agendaPostProcess = new Agenda({
 // DEVELOPMENT ONLY: Start both instances inside App
 export async function startAllAgendaJobs() {
   // Import job definitions (no new instances)
-  await import('@/agenda/jobs/searchAllStores.job');
-  await import('@/agenda/jobs/postProcess.job');
+  await import('./jobs/searchAllStores.job.js');
+  await import('./jobs/postProcess.job.js');
 
   // Start both instances
   await agendaScraper.start();

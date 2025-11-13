@@ -1,13 +1,13 @@
 import { CookieJar } from 'tough-cookie';
-import { decodoAxiosClient as axiosClient } from '../storesApiClient';
+import { decodoAxiosClient as axiosClient } from '../storesApiClient.js';
 import {
   ICostcoAuthAPIResponse,
   ICostcoSearchAPIResponse,
   ICostcoSearchAPIData,
-} from './types';
-import { IDiscoverItem } from '@/interfaces/interfaces';
-import utils from '../utils';
-import costcoCaNormalizeData from './costcoCaNormalizeData';
+} from './types.js';
+import { IDiscoverItem } from '../../../interfaces/interfaces.js';
+import utils from '../utils/index.js';
+import costcoCaNormalizeData from './costcoCaNormalizeData.js';
 
 const costcoCaJar = new CookieJar();
 let apiKey: string = '134a4023-68d5-4138-8e03-8353667d5fb3';

@@ -1,10 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import middlewares from '../middlewares';
+import middlewares from '../middlewares/index.js';
 import jwt from 'jsonwebtoken';
-import config from '@/config';
-import { createUser } from '@/database/operations/dbCreate';
-import resFormatter from '@/helpers/apiResponseFormatter';
-import { AuthUser } from '@/interfaces/interfaces';
+import config from '../../config/index.js';
+import { createUser } from '../../database/operations/dbCreate.js';
+import resFormatter from '../../helpers/apiResponseFormatter.js';
+import { AuthUser } from '../../interfaces/interfaces.js';
 
 const route = Router();
 

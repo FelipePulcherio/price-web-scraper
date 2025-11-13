@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { AuthUser } from '@/interfaces/interfaces';
+import { AuthUser } from '../../interfaces/interfaces.js';
 
 async function detachCurrentUser(
   req: Request,

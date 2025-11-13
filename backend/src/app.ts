@@ -1,17 +1,19 @@
-import 'module-alias/register';
 import express, { Express } from 'express';
 import process from 'process';
-import config from '@/config';
-import bestBuyCaSearch from './services/stores/bestBuyCa/bestBuyCaSearch';
-import searchAllStores from './services/stores/searchAllStores';
-import visionsElectronicsCaSearch from './services/stores/visionsElectronicsCa/visionsElectronicsCaSearch';
-import londonDrugsCaSearch from './services/stores/londonDrugsCa/londonDrugsCaSearch';
-import { startAllAgendaJobs } from './agenda';
+import config from './config/index.js';
+import bestBuyCaSearch from './services/stores/bestBuyCa/bestBuyCaSearch.js';
+import searchAllStores from './services/stores/searchAllStores.js';
+import visionsElectronicsCaSearch from './services/stores/visionsElectronicsCa/visionsElectronicsCaSearch.js';
+import londonDrugsCaSearch from './services/stores/londonDrugsCa/londonDrugsCaSearch.js';
+import { startAllAgendaJobs } from './agenda/index.js';
 
 async function startServer() {
   const app: Express = express();
 
-  await require('./loaders').default({ expressApp: app });
+  const { default: loaders } = await import('./loaders/index.js');
+  loaders({ expressApp: app });
+
+  // await require('./loaders').default({ expressApp: app });
 
   const server = app.listen(config.port, () => {
     console.log(`[Server]: Server is listening on port: ${config.port}`);

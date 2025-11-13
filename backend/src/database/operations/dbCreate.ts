@@ -1,5 +1,5 @@
-import { IUser, IDiscoverItem, IImage } from '@/interfaces/interfaces';
-import prisma from '@/loaders/prisma';
+import { IUser, IDiscoverItem, IImage } from '../../interfaces/interfaces.js';
+import prisma from '../../loaders/prisma.js';
 import { Status } from '@prisma/client';
 import bcrypt from 'bcrypt';
 

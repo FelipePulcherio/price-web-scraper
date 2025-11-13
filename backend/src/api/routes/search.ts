@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { searchItemByString } from '@/database/operations/dbRead';
-import resFormatter from '@/helpers/apiResponseFormatter';
-import middlewares from '../middlewares';
-import { agendaScraper } from '@/agenda';
+import { searchItemByString } from '../../database/operations/dbRead.js';
+import resFormatter from '../../helpers/apiResponseFormatter.js';
+import middlewares from '../middlewares/index.js';
+import { agendaScraper } from '../../agenda/index.js';
 
 const route = Router();
 

@@ -5,8 +5,8 @@ import {
   getItemDeals,
   getItemsByCategoryId,
   getLowestPricesByItemId,
-} from '@/database/operations/dbRead';
-import resFormatter from '@/helpers/apiResponseFormatter';
+} from '../../database/operations/dbRead.js';
+import resFormatter from '../../helpers/apiResponseFormatter.js';
 
 const route = Router();
 

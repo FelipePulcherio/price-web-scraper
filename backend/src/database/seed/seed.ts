@@ -8,8 +8,8 @@ import {
   STORES_LIST,
   EVENTS_LIST,
   USERS_LIST,
-} from './completeList';
-import config from '../../config';
+} from './completeList.js';
+import config from '../../config/index.js';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();

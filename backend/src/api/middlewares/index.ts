@@ -1,9 +1,13 @@
-import errorHandler from './errorHandler';
-import { validateSignup, validateSignin, validateSearch } from './validation';
-import verifyPassword from './verifyPassword';
-import isAuth from './isAuth';
-import attachCurrentUser from './attachCurrentUser';
-import detachCurrentUser from './detachCurrentUser';
+import errorHandler from './errorHandler.js';
+import {
+  validateSignup,
+  validateSignin,
+  validateSearch,
+} from './validation.js';
+import verifyPassword from './verifyPassword.js';
+import isAuth from './isAuth.js';
+import attachCurrentUser from './attachCurrentUser.js';
+import detachCurrentUser from './detachCurrentUser.js';
 
 export default {
   errorHandler,

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import resFormatter from '@/helpers/apiResponseFormatter';
+import resFormatter from '../../helpers/apiResponseFormatter.js';
 import { Prisma } from '@prisma/client';
 import { ZodError } from 'zod';
 

@@ -1,5 +1,5 @@
-import { agendaPostProcess } from '@/agenda';
-import '@/agenda/jobs/postProcess.job';
+import { agendaPostProcess } from '../../agenda/index.js';
+import '../jobs/postProcess.job.js';
 
 async function startPostProcessWorker() {
   await agendaPostProcess.start();

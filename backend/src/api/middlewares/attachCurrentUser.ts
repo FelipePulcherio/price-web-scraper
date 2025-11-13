@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { IUser, AuthUser } from '@/interfaces/interfaces';
-import { getUserById } from '@/database/operations/dbRead';
+import { IUser, AuthUser } from '../../interfaces/interfaces.js';
+import { getUserById } from '../../database/operations/dbRead.js';
 
 async function attachCurrentUser(
   req: Request,

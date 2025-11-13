@@ -3,9 +3,12 @@ import {
   IDiscoverImage,
   IDiscoverItem,
   IDiscoverShortCategory,
-} from '@/interfaces/interfaces';
-import { ICanadaComputersSearchAPIData, ICanadaComputersImage } from './types';
-import storesConfig from '../config';
+} from '../../../interfaces/interfaces.js';
+import {
+  ICanadaComputersSearchAPIData,
+  ICanadaComputersImage,
+} from './types.js';
+import storesConfig from '../config/index.js';
 
 function containsIgnoredWord(name: string): boolean {
   return storesConfig.filters.ignoreKeywords.some((word) =>

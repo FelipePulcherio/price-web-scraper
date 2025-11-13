@@ -276,6 +276,7 @@ export async function createImageAndConnectToItem(data: IImage): Promise<void> {
         'f_auto,q_auto/',
         'f_auto,q_auto/w_150,h_150/'
       ),
+      referenceUrl: data.referenceUrl,
       Item: { connect: { id: data.itemId } },
     },
   });

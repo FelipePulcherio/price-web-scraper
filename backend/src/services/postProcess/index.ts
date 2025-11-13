@@ -1,5 +1,5 @@
-import createItemImages from './images/createItemImages';
+import maintainItemImages from './images/maintainItemImage';
 
 export default {
-  createItemImages,
+  maintainItemImages,
 };

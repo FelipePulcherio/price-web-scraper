@@ -56,12 +56,13 @@ async function createItemImages(itemIds: number[]): Promise<void> {
           await prisma.image.create({
             data: {
               type: 'THUMBNAIL',
-              name: name,
+              name: `${brand}_${model}_THUMBNAIL`,
               cloudinaryId: result.public_id,
               cloudinaryUrl: optimizedUrl.replace(
                 'f_auto,q_auto/',
                 'f_auto,q_auto/w_150,h_150/'
               ),
+              referenceUrl: item.images[i].referenceUrl,
               Item: { connect: { id: item.id } },
             },
           });

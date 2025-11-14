@@ -266,6 +266,10 @@ export async function createOrUpdateDiscoveredItems(
   });
 }
 
+export async function createManyImages(data: IImage[]): Promise<void> {
+  await prisma.image.createMany({ data, skipDuplicates: true });
+}
+
 export async function createImageAndConnectToItem(data: IImage): Promise<void> {
   const image = await prisma.image.create({
     data: {

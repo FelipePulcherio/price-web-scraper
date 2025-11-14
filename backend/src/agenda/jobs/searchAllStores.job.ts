@@ -29,10 +29,12 @@ agendaScraper.define('searchAllStores', async (job) => {
       .map((item) => item.id!) as number[];
 
     if (createdIds.length > 0) {
-      await agendaPostProcess.now('createItemImages', { itemIds: createdIds });
+      await agendaPostProcess.now('imagesFromScraping', {
+        itemIds: createdIds,
+      });
 
       console.log(
-        `[Agenda - Search All Stores]: Job createItemImages posted for ${createdIds.length} items.`
+        `[Agenda - Search All Stores]: Job imagesFromScraping posted for ${createdIds.length} items.`
       );
     }
 

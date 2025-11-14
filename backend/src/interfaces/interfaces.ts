@@ -49,7 +49,7 @@ export interface IShortCategory {
 export interface IImage {
   id?: number;
   type?: 'THUMBNAIL' | 'CAROUSEL';
-  name?: string;
+  name: string;
   cloudinaryId?: string;
   cloudinaryUrl?: string;
   referenceUrl?: string;

@@ -17,7 +17,7 @@ export const ITEMS_LIST: IItem[] = [
     categories: [{ name: 'TV & Home Theatre' }],
     subCategories: [{ name: 'Televisions' }],
     subSubCategories: [{ name: '65 - 69 Inch TVs' }, { name: 'QLED TVs' }],
-    images: [{}],
+    images: [{ name: 'TEST_IMAGE_1' }],
     stores: [
       {
         name: 'BEST BUY CA',
@@ -49,7 +49,7 @@ export const ITEMS_LIST: IItem[] = [
     categories: [{ name: 'TV & Home Theatre' }],
     subCategories: [{ name: 'Televisions' }],
     subSubCategories: [{ name: '65 - 69 Inch TVs' }, { name: 'OLED TVs' }],
-    images: [{}],
+    images: [{ name: 'TEST_IMAGE_2' }],
     stores: [
       {
         name: 'BEST BUY CA',
@@ -85,7 +85,7 @@ export const ITEMS_LIST: IItem[] = [
     categories: [{ name: 'Video Games & VR' }],
     subCategories: [{ name: 'PlayStation 5' }],
     subSubCategories: [{ name: 'PS5 Consoles' }],
-    images: [{}],
+    images: [{ name: 'TEST_IMAGE_3' }],
     stores: [
       {
         name: 'BEST BUY CA',
@@ -113,7 +113,7 @@ export const ITEMS_LIST: IItem[] = [
     categories: [{ name: 'Video Games & VR' }],
     subCategories: [{ name: 'Nintendo Switch' }],
     subSubCategories: [{ name: 'Nintendo Switch Consoles' }],
-    images: [{}],
+    images: [{ name: 'TEST_IMAGE_4' }],
     stores: [
       {
         name: 'BEST BUY CA',

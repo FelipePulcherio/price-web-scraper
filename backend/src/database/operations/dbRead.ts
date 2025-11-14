@@ -42,6 +42,7 @@ export async function getItemById(id: number): Promise<IItem> {
             cloudinaryUrl: 'asc',
           },
           select: {
+            name: true,
             cloudinaryUrl: true,
           },
         },
@@ -273,6 +274,7 @@ export async function getItemsByCategoryId(
           },
           take: 1,
           select: {
+            name: true,
             cloudinaryUrl: true,
           },
         },
@@ -293,7 +295,9 @@ export async function getItemsByCategoryId(
       model: item.model,
       brand: item.brand,
       images:
-        item.images.length > 0 ? [item.images[0]] : [{ cloudinaryUrl: '' }],
+        item.images.length > 0
+          ? [item.images[0]]
+          : [{ name: '', cloudinaryUrl: '' }],
     }));
 
     return result;
@@ -365,6 +369,7 @@ export async function searchItemByString(
           },
           take: 1,
           select: {
+            name: true,
             cloudinaryUrl: true,
           },
         },
@@ -401,7 +406,9 @@ export async function searchItemByString(
       model: item.model,
       brand: item.brand,
       images:
-        item.images.length > 0 ? [item.images[0]] : [{ cloudinaryUrl: '' }],
+        item.images.length > 0
+          ? [item.images[0]]
+          : [{ name: '', cloudinaryUrl: '' }],
       price: item.stores[0].events[0].price,
     }));
 
@@ -648,6 +655,7 @@ export async function getItemDeals(qty: number): Promise<IShortItem[]> {
           },
           take: 1,
           select: {
+            name: true,
             cloudinaryUrl: true,
           },
         },
@@ -689,7 +697,12 @@ export async function getItemDeals(qty: number): Promise<IShortItem[]> {
         name: item.name,
         model: item.model,
         brand: item.brand,
-        images: [{ cloudinaryUrl: item.images[0].cloudinaryUrl }],
+        images: [
+          {
+            name: item.images[0].name,
+            cloudinaryUrl: item.images[0].cloudinaryUrl,
+          },
+        ],
         price: lowestPrice,
         storesQty: item.stores.filter((store) => store.events[0].price > 0)
           .length,

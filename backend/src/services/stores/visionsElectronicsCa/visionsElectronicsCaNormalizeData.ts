@@ -10,6 +10,7 @@ import {
   IVisionsElectronicsDiscountAPIData,
 } from './types.js';
 import storesConfig from '../config/index.js';
+import randomLetters from '../utils/randomLetters.js';
 
 function containsIgnoredWord(name: string): boolean {
   return storesConfig.filters.ignoreKeywords.some((word) =>
@@ -80,6 +81,7 @@ function normalizeSearchData({
 
     const discoveredImages: IDiscoverImage[] = [
       {
+        name: randomLetters(5),
         referenceUrl: extractImage(product.image_url),
       },
     ];

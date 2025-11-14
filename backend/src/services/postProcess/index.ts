@@ -1,5 +1,5 @@
-import maintainItemImages from './images/maintainItemImage.js';
+import imagesFromScraping from './images/imagesFromScraping.js';
 
 export default {
-  maintainItemImages,
+  imagesFromScraping,
 };

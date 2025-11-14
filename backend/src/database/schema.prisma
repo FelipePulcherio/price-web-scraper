@@ -38,6 +38,8 @@ model Image {
   referenceUrl  String    @default("")
   itemId        Int?
   Item          Item?     @relation(fields: [itemId], references: [id])
+
+  @@unique([itemId, referenceUrl])
 }
 
 model Category {

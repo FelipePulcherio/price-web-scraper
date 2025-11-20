@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import resFormatter from '../../helpers/apiResponseFormatter.js';
-import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { ZodError } from 'zod';
 
 function errorHandler(
@@ -29,7 +29,7 @@ function errorHandler(
   }
 
   // Handle Prisma Errors
-  else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  else if (err instanceof PrismaClientKnownRequestError) {
     if (err.code === 'P2002') {
       // Unique constraint error
       statusCode = 409;

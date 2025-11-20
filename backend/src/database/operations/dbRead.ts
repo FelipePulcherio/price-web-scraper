@@ -338,35 +338,78 @@ export async function searchItemByString(
   query: string,
   pageSize: number,
   page: number,
-  imageType?: 'THUMBNAIL' | 'CAROUSEL'
+  imageType: 'THUMBNAIL' | 'CAROUSEL' = 'THUMBNAIL'
 ): Promise<IShortItem[]> {
+  // MANUAL SQL OVERRIDE
+  // CREATE EXTENSION IF NOT EXISTS pg_trgm;
+  // CREATE EXTENSION IF NOT EXISTS unaccent;
+
   try {
-    // Try to find item
+    const offset = (page - 1) * pageSize;
+
+    // Try to find item (Full-text + fuzzy search)
+    const rawItems = await prisma.$queryRaw<any[]>(
+      Prisma.sql`
+        SELECT
+          i.id,
+          i.name,
+          i.model,
+          i.brand,
+
+          ts_rank_cd(
+            i."searchVector",
+            plainto_tsquery('simple', unaccent(${query}))
+          ) AS fts_rank,
+
+          similarity(
+            (i.model || ' ' || i.name || ' ' || i.brand),
+            unaccent(${query})
+          ) AS trigram_sim
+
+        FROM "Item" i
+
+        WHERE i."isActive" = true
+          AND (
+            i."searchVector" @@ plainto_tsquery('simple', unaccent(${query}))
+            OR similarity((i.model || ' ' || i.name || ' ' || i.brand), unaccent(${query})) > 0.25
+          )
+
+        ORDER BY
+          (
+            ts_rank_cd(
+              i."searchVector",
+              plainto_tsquery('simple', unaccent(${query}))
+            ) * 0.7
+          )
+          +
+          (
+            similarity(
+              (i.model || ' ' || i.name || ' ' || i.brand),
+              unaccent(${query})
+            ) * 0.3
+          )
+          DESC
+
+        LIMIT ${pageSize}
+        OFFSET ${offset}
+        `
+    );
+
+    if (rawItems.length === 0) return [];
+
+    // Fetch images + prices using IDs
+    const ids = rawItems.map((r) => r.id);
+
     const items = await prisma.item.findMany({
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      where: {
-        isActive: true,
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { model: { contains: query, mode: 'insensitive' } },
-          { brand: { contains: query, mode: 'insensitive' } },
-        ],
-      },
+      where: { id: { in: ids } },
       select: {
         id: true,
         name: true,
         model: true,
         brand: true,
         images: {
-          where: {
-            name: {
-              contains: '1',
-            },
-          },
-          orderBy: {
-            name: 'asc',
-          },
+          where: { type: imageType },
+          orderBy: { name: 'asc' },
           take: 1,
           select: {
             name: true,
@@ -375,47 +418,47 @@ export async function searchItemByString(
         },
         stores: {
           where: {
-            events: { some: {} },
+            events: { some: { status: 'OK' } },
           },
           select: {
             events: {
               where: { status: 'OK' },
               orderBy: { price: 'asc' },
               take: 1,
-              select: {
-                price: true,
-              },
+              select: { price: true },
             },
           },
         },
       },
     });
 
-    // If item was not found
-    if (items.length === 0) {
-      return [];
-    }
-
     // console.log(items);
     // console.log(items[0].stores);
 
     // Transform data
-    const result: IShortItem[] = items.map((item) => ({
-      id: item.id,
-      name: item.name,
-      model: item.model,
-      brand: item.brand,
-      images:
-        item.images.length > 0
-          ? [item.images[0]]
-          : [{ name: '', cloudinaryUrl: '' }],
-      price: item.stores[0].events[0].price,
-    }));
+    const result: IShortItem[] = items.map((item) => {
+      // Find lowest price
+      const allEvents = item.stores.flatMap((s) => s.events);
+      const lowest =
+        allEvents.length > 0
+          ? Math.min(...allEvents.map((e) => e.price))
+          : undefined;
+
+      return {
+        id: item.id,
+        name: item.name,
+        model: item.model,
+        brand: item.brand,
+        images: item.images ?? [],
+        price: lowest ?? undefined,
+        storesQty: item.stores.length,
+      };
+    });
 
     return result;
   } catch (err) {
     // Throw error to whoever called this
-    // console.error('Error fetching items:', err);
+    console.error('Error fetching items:', err);
     throw err;
   }
 }

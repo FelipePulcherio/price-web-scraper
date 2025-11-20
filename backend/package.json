@@ -10,7 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "vercel-build": "tsc",
-    "render-build": "npm install && tsc",
+    "render-build": "npm install && npx prisma generate && tsc",
     "build": "tsc --watch",
     "build2": "tsc",
     "start": "nodemon ./dist/app.js",

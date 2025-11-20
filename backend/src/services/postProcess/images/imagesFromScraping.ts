@@ -165,10 +165,11 @@ async function imagesFromScraping(itemIds: number[]): Promise<void> {
             },
           });
         } catch (err) {
-          console.error(
-            `[Service - Post Process - Image From Scraping]: Upload failed for itemId: ${item.id}`,
-            err
-          );
+          // TO DO: Fix 'uploadToCloudinary()' so it doesn't reach this code
+          // console.error(
+          //   `[Service - Post Process - Image From Scraping]: Upload failed for itemId: ${item.id}`,
+          //   err
+          // );
         }
       });
     }

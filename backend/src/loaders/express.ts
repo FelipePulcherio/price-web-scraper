@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import config from '@/config';
-import routes from '@/api';
+import config from '../config/index.js';
+import routes from '../api/index.js';
 
 function expressLoader({ app }: { app: express.Application }): void {
   // Use cors for integration with frontend

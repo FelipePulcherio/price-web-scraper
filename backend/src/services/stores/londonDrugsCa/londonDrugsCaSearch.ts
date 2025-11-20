@@ -1,14 +1,14 @@
 import { CookieJar } from 'tough-cookie';
-import { decodoAxiosClient as axiosClient } from '../storesApiClient';
+import { decodoAxiosClient as axiosClient } from '../storesApiClient.js';
 import {
   ILondonDrugsAuthAPIResponse,
   ILondonDrugsSearchAPIData,
   ILondonDrugsSearchAPIResponse,
-} from './types';
-import { IDiscoverItem } from '@/interfaces/interfaces';
-import utils from '../utils';
-import londonDrugsCaParseData from './londonDrugsCaParseData';
-import londonDrugsCaNormalizeData from './londonDrugsCaNormalizeData';
+} from './types.js';
+import { IDiscoverItem } from '../../../interfaces/interfaces.js';
+import utils from '../utils/index.js';
+import londonDrugsCaParseData from './londonDrugsCaParseData.js';
+import londonDrugsCaNormalizeData from './londonDrugsCaNormalizeData.js';
 
 import { promises as fs } from 'fs';
 import path from 'path';

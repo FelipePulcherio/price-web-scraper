@@ -8,8 +8,8 @@ import {
   STORES_LIST,
   EVENTS_LIST,
   USERS_LIST,
-} from './completeList';
-import config from '../../config';
+} from './completeList.js';
+import config from '../../config/index.js';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -333,7 +333,7 @@ async function populateCloudinary() {
             create: {
               name: `${imageData.brand}_${imageData.model}_${imageData.number}`,
               cloudinaryId: publicId,
-              url: url,
+              cloudinaryUrl: url,
             },
           },
         },

@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { searchItemByString } from '@/database/operations/dbRead';
-import resFormatter from '@/helpers/apiResponseFormatter';
-import middlewares from '../middlewares';
-import scraperScheduler from '@/schedule/scraperScheduler';
+import { searchItemByString } from '../../database/operations/dbRead.js';
+import resFormatter from '../../helpers/apiResponseFormatter.js';
+import middlewares from '../middlewares/index.js';
+import { agendaScraper } from '../../agenda/index.js';
 
 const route = Router();
 
@@ -20,20 +20,8 @@ function searchRoute(app: Router): void {
 
         console.log(`GET /api/v1/search/quick?q=${search}`);
 
-        let fetchedItems = await searchItemByString(search, 5, 1);
+        let fetchedItems = await searchItemByString(search, 5, 1, 'THUMBNAIL');
         // console.log(fetchedItems);
-
-        // Adjust width and height from cloudinary urls
-        fetchedItems = fetchedItems.map((item) => ({
-          ...item,
-          image: {
-            ...item.image,
-            url: item.image.url?.replace(
-              'f_auto,q_auto/',
-              'f_auto,q_auto/w_150,h_150/'
-            ),
-          },
-        }));
 
         res
           .status(200)
@@ -61,7 +49,12 @@ function searchRoute(app: Router): void {
         console.log(`GET /api/v1/search?q=${search}`);
 
         // 1) Look up in DB
-        const fetchedItems = await searchItemByString(search, pageSize, page);
+        const fetchedItems = await searchItemByString(
+          search,
+          pageSize,
+          page,
+          'CAROUSEL'
+        );
 
         if (fetchedItems && fetchedItems.length > 0) {
           res
@@ -74,7 +67,7 @@ function searchRoute(app: Router): void {
 
         // 2) Not in DB. Create new Unique Job. If nothing happens, it
         //  means that the job is already running. User should poll.
-        await scraperScheduler
+        await agendaScraper
           .create('searchAllStores', { query: search })
           .unique({ 'data.query': search }, { insertOnly: true })
           .save();

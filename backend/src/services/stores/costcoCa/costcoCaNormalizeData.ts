@@ -1,12 +1,12 @@
-import { ICostcoSearchAPIData, ICostcoItem } from './types';
+import { ICostcoSearchAPIData, ICostcoItem } from './types.js';
 import {
   IDiscoverStore,
   IDiscoverImage,
   IDiscoverItem,
   IDiscoverShortCategory,
-} from '@/interfaces/interfaces';
-import storesConfig from '../config';
-import randomLetters from '../utils/randomLetters';
+} from '../../../interfaces/interfaces.js';
+import storesConfig from '../config/index.js';
+import randomLetters from '../utils/randomLetters.js';
 
 function containsIgnoredWord(name: string): boolean {
   return storesConfig.filters.ignoreKeywords.some((word) =>
@@ -101,7 +101,7 @@ export default function ({
       const discoveredImages: IDiscoverImage[] = [
         {
           name: randomLetters(5),
-          url: product.image,
+          referenceUrl: product.image,
         },
       ];
 

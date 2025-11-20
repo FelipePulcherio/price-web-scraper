@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { HttpsProxyAgent } from 'https-proxy-agent';
-import config from '@/config';
+import config from '../../config/index.js';
 
 const scraperApiProxyAgent = new HttpsProxyAgent(config.scraperApiProxy);
 const brightDataProxyAgent = new HttpsProxyAgent(config.brightDataProxy);

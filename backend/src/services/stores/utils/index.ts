@@ -1,14 +1,14 @@
-import formatQuery from './formatQuery';
-import randomizedDelay from './randomizedDelay';
-import saveAsJson from './saveAsJson';
-import randomLetters from './randomLetters';
+import formatQuery from './formatQuery.js';
+import randomizedDelay from './randomizedDelay.js';
+import saveAsJson from './saveAsJson.js';
+import randomLetters from './randomLetters.js';
 import {
   CustomError,
   AuthError,
   FetchFailedError,
   ParsingError,
   CookieExtractionError,
-} from './errors';
+} from './errors.js';
 
 export default {
   formatQuery,

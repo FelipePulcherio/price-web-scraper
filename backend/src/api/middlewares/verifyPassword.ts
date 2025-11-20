@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import { getUserByEmail } from '@/database/operations/dbRead';
+import { getUserByEmail } from '../../database/operations/dbRead.js';
 
 async function verifyPassword(
   req: Request,

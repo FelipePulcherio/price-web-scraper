@@ -1,5 +1,5 @@
-import { IUser, IDiscoverItem } from '@/interfaces/interfaces';
-import prisma from '@/loaders/prisma';
+import { IUser, IDiscoverItem, IImage } from '../../interfaces/interfaces.js';
+import prisma from '../../loaders/prisma.js';
 import { Status } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
@@ -88,7 +88,7 @@ export async function createOrUpdateDiscoveredItems(
   const existingItems = await prisma.item.findMany({
     where: { model: { in: models } },
     include: {
-      images: { select: { url: true } },
+      images: { select: { referenceUrl: true } },
       categories: { select: { id: true } },
       subCategories: { select: { id: true } },
       subSubCategories: { select: { id: true } },
@@ -169,7 +169,7 @@ export async function createOrUpdateDiscoveredItems(
 
   const imageLinks: {
     itemId: number;
-    url: string;
+    referenceUrl: string;
     name: string;
   }[] = [];
 
@@ -178,10 +178,10 @@ export async function createOrUpdateDiscoveredItems(
     if (!itemId) continue;
 
     item.images?.forEach((img) => {
-      if (img.url) {
+      if (img.referenceUrl) {
         imageLinks.push({
           name: img.name!,
-          url: img.url,
+          referenceUrl: img.referenceUrl,
           itemId,
         });
       }
@@ -263,5 +263,25 @@ export async function createOrUpdateDiscoveredItems(
   return itemsWithModels.map((item) => {
     const id = allCreatedOrUpdated.find((x) => x.name === item.name)?.id;
     return { ...item, id };
+  });
+}
+
+export async function createManyImages(data: IImage[]): Promise<void> {
+  await prisma.image.createMany({ data, skipDuplicates: true });
+}
+
+export async function createImageAndConnectToItem(data: IImage): Promise<void> {
+  const image = await prisma.image.create({
+    data: {
+      type: data.type,
+      name: data.name!,
+      cloudinaryId: data.cloudinaryId,
+      cloudinaryUrl: data.cloudinaryUrl!.replace(
+        'f_auto,q_auto/',
+        'f_auto,q_auto/w_150,h_150/'
+      ),
+      referenceUrl: data.referenceUrl,
+      Item: { connect: { id: data.itemId } },
+    },
   });
 }

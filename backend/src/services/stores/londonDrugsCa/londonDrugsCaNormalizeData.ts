@@ -2,9 +2,9 @@ import {
   IDiscoverStore,
   IDiscoverItem,
   IDiscoverShortCategory,
-} from '@/interfaces/interfaces';
-import { ILondonDrugsSearchAPIData, ILondonDrugsItem } from './types';
-import storesConfig from '../config';
+} from '../../../interfaces/interfaces.js';
+import { ILondonDrugsSearchAPIData, ILondonDrugsItem } from './types.js';
+import storesConfig from '../config/index.js';
 
 function containsIgnoredWord(name: string): boolean {
   return storesConfig.filters.ignoreKeywords.some((word) =>
@@ -106,7 +106,7 @@ function normalizeSearchData({
     const newItem: IDiscoverItem = {
       name: normalizeProductName(product.productName, extractModel(product)),
       ...(extractImage(product)
-        ? { images: [{ url: extractImage(product)! }] }
+        ? { images: [{ referenceUrl: extractImage(product)! }] }
         : {}),
       stores: store,
       price:

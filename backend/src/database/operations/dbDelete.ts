@@ -1,5 +1,5 @@
 import { connect, connection } from 'mongoose';
-import config from '@/config';
+import config from '../../config/index.js';
 
 // FUNCTIONS
 export async function deleteScraperCollection(): Promise<void> {

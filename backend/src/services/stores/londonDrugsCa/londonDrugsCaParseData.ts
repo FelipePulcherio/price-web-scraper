@@ -1,5 +1,5 @@
-import utils from '../utils';
-import { ILondonDrugsSearchAPIData } from './types';
+import utils from '../utils/index.js';
+import { ILondonDrugsSearchAPIData } from './types.js';
 
 function sanitizeRscTokens(segment: string): string {
   // Replace $L1d, $undefined, $something123_ with null

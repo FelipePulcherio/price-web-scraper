@@ -1,12 +1,12 @@
-import { scraperApiAxiosClient as axiosClient } from '../storesApiClient';
+import { scraperApiAxiosClient as axiosClient } from '../storesApiClient.js';
 import qs from 'qs';
 import {
   ICanadaComputersSearchAPIResponse,
   ICanadaComputersSearchAPIData,
-} from './types';
-import { IDiscoverItem } from '@/interfaces/interfaces';
-import utils from '../utils';
-import canadaComputersCaNormalizeData from './canadaComputersCaNormalizeData';
+} from './types.js';
+import { IDiscoverItem } from '../../../interfaces/interfaces.js';
+import utils from '../utils/index.js';
+import canadaComputersCaNormalizeData from './canadaComputersCaNormalizeData.js';
 
 import { promises as fs } from 'fs';
 import path from 'path';

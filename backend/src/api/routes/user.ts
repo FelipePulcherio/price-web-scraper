@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import middlewares from '../middlewares';
-import resFormatter from '@/helpers/apiResponseFormatter';
+import middlewares from '../middlewares/index.js';
+import resFormatter from '../../helpers/apiResponseFormatter.js';
 
 const route = Router();
 

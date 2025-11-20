@@ -2,7 +2,11 @@
   "name": "backend",
   "version": "0.0.1",
   "description": "Scrape pre defined websites in search for a product price and store data in MongoDB",
-  "main": "dist/app.js",
+  "exports": "./dist/app.js",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "vercel-build": "tsc",
@@ -25,7 +29,8 @@
   "license": "ISC",
   "dependencies": {
     "@hokify/agenda": "^6.3.0",
-    "@prisma/client": "^6.3.1",
+    "@prisma/adapter-neon": "^7.0.0",
+    "@prisma/client": "^7.0.0",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
@@ -43,8 +48,9 @@
     "express-jwt": "^8.5.1",
     "https-proxy-agent": "^7.0.6",
     "jsonwebtoken": "^9.0.2",
-    "module-alias": "^2.2.3",
     "mongoose": "^8.5.2",
+    "p-queue": "^9.0.0",
+    "prisma": "^7.0.0",
     "puppeteer-core": "^23.6.1",
     "tough-cookie": "^5.1.2",
     "zod": "^3.24.2"
@@ -52,14 +58,8 @@
   "devDependencies": {
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
-    "prisma": "^6.3.1",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.6.3"
-  },
-  "prisma": {
-    "schema": "src/database/schema.prisma"
-  },
-  "_moduleAliases": {
-    "@": "./dist"
   }
 }

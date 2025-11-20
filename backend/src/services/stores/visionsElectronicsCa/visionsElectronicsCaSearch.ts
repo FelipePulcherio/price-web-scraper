@@ -1,13 +1,13 @@
-import { decodoAxiosClient as axiosClient } from '../storesApiClient';
+import { decodoAxiosClient as axiosClient } from '../storesApiClient.js';
 import {
   IVisionsElectronicsAuthAPIResponse,
   IVisionsElectronicsSearchAPIResponse,
   IVisionsElectronicsDiscountAPIResponse,
   IVisionsElectronicsDiscountAPIData,
-} from './types';
-import { IDiscoverItem } from '@/interfaces/interfaces';
-import utils from '../utils';
-import visionsElectronicsCaNormalizeData from './visionsElectronicsCaNormalizeData';
+} from './types.js';
+import { IDiscoverItem } from '../../../interfaces/interfaces.js';
+import utils from '../utils/index.js';
+import visionsElectronicsCaNormalizeData from './visionsElectronicsCaNormalizeData.js';
 
 import { promises as fs } from 'fs';
 import path from 'path';

@@ -1,5 +1,9 @@
-import scraperMain from './scraperMain';
-import { IScraperItem, IScraperStore, IEvent } from '@/interfaces/interfaces';
+import scraperMain from './scraperMain.js';
+import {
+  IScraperItem,
+  IScraperStore,
+  IEvent,
+} from '../interfaces/interfaces.js';
 
 // FUNCTIONS
 async function scraperWorker(itemData: IScraperItem[]): Promise<IEvent[]> {

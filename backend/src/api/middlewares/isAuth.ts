@@ -1,7 +1,7 @@
 import { NextFunction, Request } from 'express';
 import { expressjwt, TokenGetter } from 'express-jwt';
 import { Algorithm } from 'jsonwebtoken';
-import config from '@/config';
+import config from '../../config/index.js';
 
 function getTokenFromHeader(req: Request) {
   if (

@@ -1,20 +1,20 @@
 import axios from 'axios';
-import utils from './utils';
-import storesConfig from './config';
+import utils from './utils/index.js';
+import storesConfig from './config/index.js';
 import {
   IDiscoverItem,
   IDiscoverImage,
   IStore,
   IShortStore,
   IEvent,
-} from '@/interfaces/interfaces';
+} from '@/interfaces/interfaces.js';
 
-import bestBuyCaSearch from './bestBuyCa/bestBuyCaSearch';
-import canadaComputersCaSearch from './canadaComputersCa/canadaComputersCaSearch';
-import costcoCaSearch from './costcoCa/costcoCaSearch';
-import londonDrugsCaSearch from './londonDrugsCa/londonDrugsCaSearch';
-import visionsElectronicsCaSearch from './visionsElectronicsCa/visionsElectronicsCaSearch';
-import { getAllStores } from '@/database/operations/dbRead';
+import bestBuyCaSearch from './bestBuyCa/bestBuyCaSearch.js';
+import canadaComputersCaSearch from './canadaComputersCa/canadaComputersCaSearch.js';
+import costcoCaSearch from './costcoCa/costcoCaSearch.js';
+import londonDrugsCaSearch from './londonDrugsCa/londonDrugsCaSearch.js';
+import visionsElectronicsCaSearch from './visionsElectronicsCa/visionsElectronicsCaSearch.js';
+import { getAllStores } from '../../database/operations/dbRead.js';
 
 function isAuthRelatedError(error: unknown): boolean {
   if (
@@ -212,13 +212,13 @@ function mergeItemData(
   }));
 
   // Merge images, avoiding duplicates
-  const imageUrls = new Set(base.images?.map((img) => img.url) ?? []);
+  const imageUrls = new Set(base.images?.map((img) => img.referenceUrl) ?? []);
   const newImages: IDiscoverImage[] = [...(base.images ?? [])];
 
   for (const img of incoming.images ?? []) {
-    if (!imageUrls.has(img.url)) {
+    if (!imageUrls.has(img.referenceUrl)) {
       newImages.push(img);
-      imageUrls.add(img.url);
+      imageUrls.add(img.referenceUrl);
     }
   }
 

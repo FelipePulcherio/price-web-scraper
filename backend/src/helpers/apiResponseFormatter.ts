@@ -1,4 +1,4 @@
-import { API } from '@/interfaces/interfaces';
+import { API } from '../interfaces/interfaces.js';
 
 function apiResponseFormatter<T>(
   success: boolean,

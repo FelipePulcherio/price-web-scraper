@@ -3,14 +3,14 @@ import {
   IDiscoverImage,
   IDiscoverItem,
   IDiscoverShortCategory,
-} from '@/interfaces/interfaces';
+} from '../../../interfaces/interfaces.js';
 import {
   IBestBuySearchAPIData,
   IBestBuyAvailabilityAPIData,
   IBestBuyDetailAPIData,
-} from './types';
-import storesConfig from '../config';
-import randomLetters from '../utils/randomLetters';
+} from './types.js';
+import storesConfig from '../config/index.js';
+import randomLetters from '../utils/randomLetters.js';
 
 function containsIgnoredWord(name: string): boolean {
   return storesConfig.filters.ignoreKeywords.some((word) =>
@@ -171,7 +171,7 @@ function normalizeDetailData({
       const discoveredImages: IDiscoverImage[] = [
         ...(detail.additionalMedia?.map((media) => ({
           name: randomLetters(5),
-          url: media.url,
+          referenceUrl: media.url,
         })) ?? []),
       ];
 

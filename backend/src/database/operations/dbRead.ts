@@ -8,8 +8,9 @@ import {
   IScraperItem,
   IUser,
   ICurrentPrice,
-} from '@/interfaces/interfaces';
-import prisma from '@/loaders/prisma';
+} from '../../interfaces/interfaces.js';
+import prisma from '../../loaders/prisma.js';
+import { accessSync } from 'fs';
 
 // FUNCTIONS
 export async function getItemById(id: number): Promise<IItem> {
@@ -38,10 +39,11 @@ export async function getItemById(id: number): Promise<IItem> {
         },
         images: {
           orderBy: {
-            url: 'asc',
+            cloudinaryUrl: 'asc',
           },
           select: {
-            url: true,
+            name: true,
+            cloudinaryUrl: true,
           },
         },
         description: true,
@@ -99,6 +101,17 @@ export async function getItemById(id: number): Promise<IItem> {
   }
 }
 
+export async function getCountAllItems(): Promise<number> {
+  try {
+    const itemCount = await prisma.item.count();
+    return itemCount;
+  } catch (err) {
+    // Throw error to whoever called this
+    // console.error(`Error counting items, err);
+    throw err;
+  }
+}
+
 export async function getAllCategories(): Promise<ICategory[]> {
   try {
     // Try to find item
@@ -138,6 +151,95 @@ export async function getAllCategories(): Promise<ICategory[]> {
   }
 }
 
+export async function getItemsWithImagesByItemIds(
+  itemIds: number[]
+): Promise<IShortItem[]> {
+  if (itemIds.length === 0) return [];
+
+  try {
+    // Try to find items
+    const items = await prisma.item.findMany({
+      where: { id: { in: itemIds }, isActive: true },
+      include: {
+        images: {
+          select: {
+            id: true,
+            type: true,
+            name: true,
+            cloudinaryId: true,
+            cloudinaryUrl: true,
+            referenceUrl: true,
+          },
+        },
+      },
+      omit: {
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        searchCount: true,
+      },
+    });
+
+    // console.log(items);
+
+    // If item was not found
+    if (items.length === 0) {
+      throw new Error('Not found');
+    }
+
+    return items;
+  } catch (err) {
+    // Throw error to whoever called this
+    // console.error(`Error fetching items:`, err);
+    throw err;
+  }
+}
+
+export async function getAllItemsWithImages(
+  skip: number,
+  take: number
+): Promise<IShortItem[]> {
+  try {
+    // Try to find items
+    const items = await prisma.item.findMany({
+      where: { isActive: true },
+      include: {
+        images: {
+          select: {
+            id: true,
+            type: true,
+            name: true,
+            cloudinaryId: true,
+            cloudinaryUrl: true,
+          },
+        },
+      },
+      omit: {
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        searchCount: true,
+      },
+      skip,
+      take,
+      orderBy: { id: 'asc' },
+    });
+
+    // console.log(items);
+
+    // If item was not found
+    if (items.length === 0) {
+      throw new Error('Not found');
+    }
+
+    return items;
+  } catch (err) {
+    // Throw error to whoever called this
+    // console.error(`Error fetching items:`, err);
+    throw err;
+  }
+}
+
 export async function getItemsByCategoryId(
   categoryId: number,
   pageSize: number,
@@ -172,7 +274,8 @@ export async function getItemsByCategoryId(
           },
           take: 1,
           select: {
-            url: true,
+            name: true,
+            cloudinaryUrl: true,
           },
         },
       },
@@ -191,7 +294,10 @@ export async function getItemsByCategoryId(
       name: item.name,
       model: item.model,
       brand: item.brand,
-      image: item.images.length > 0 ? item.images[0] : { url: '' },
+      images:
+        item.images.length > 0
+          ? [item.images[0]]
+          : [{ name: '', cloudinaryUrl: '' }],
     }));
 
     return result;
@@ -231,7 +337,8 @@ export async function getAllStores(): Promise<IShortStore[]> {
 export async function searchItemByString(
   query: string,
   pageSize: number,
-  page: number
+  page: number,
+  imageType?: 'THUMBNAIL' | 'CAROUSEL'
 ): Promise<IShortItem[]> {
   try {
     // Try to find item
@@ -262,7 +369,8 @@ export async function searchItemByString(
           },
           take: 1,
           select: {
-            url: true,
+            name: true,
+            cloudinaryUrl: true,
           },
         },
         stores: {
@@ -297,7 +405,10 @@ export async function searchItemByString(
       name: item.name,
       model: item.model,
       brand: item.brand,
-      image: item.images.length > 0 ? item.images[0] : { url: '' },
+      images:
+        item.images.length > 0
+          ? [item.images[0]]
+          : [{ name: '', cloudinaryUrl: '' }],
       price: item.stores[0].events[0].price,
     }));
 
@@ -544,7 +655,8 @@ export async function getItemDeals(qty: number): Promise<IShortItem[]> {
           },
           take: 1,
           select: {
-            url: true,
+            name: true,
+            cloudinaryUrl: true,
           },
         },
         stores: {
@@ -585,7 +697,12 @@ export async function getItemDeals(qty: number): Promise<IShortItem[]> {
         name: item.name,
         model: item.model,
         brand: item.brand,
-        image: { url: item.images[0].url },
+        images: [
+          {
+            name: item.images[0].name,
+            cloudinaryUrl: item.images[0].cloudinaryUrl,
+          },
+        ],
         price: lowestPrice,
         storesQty: item.stores.filter((store) => store.events[0].price > 0)
           .length,

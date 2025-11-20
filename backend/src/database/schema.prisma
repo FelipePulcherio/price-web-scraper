@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "client"
 }
 
-datasource db {
+datasource datasource {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Item {
@@ -24,13 +24,22 @@ model Item {
   searchCount      Int              @default(0)
 }
 
+enum ImageType {
+  THUMBNAIL
+  CAROUSEL
+}
+
 model Image {
-  id           Int    @id @default(autoincrement())
-  name         String @unique
-  cloudinaryId String @default("")
-  url          String @default("")
-  itemId       Int?
-  Item         Item?  @relation(fields: [itemId], references: [id])
+  id            Int       @id @default(autoincrement())
+  type          ImageType @default(CAROUSEL)
+  name          String    @unique
+  cloudinaryId  String    @default("")
+  cloudinaryUrl String    @default("")
+  referenceUrl  String    @default("")
+  itemId        Int?
+  Item          Item?     @relation(fields: [itemId], references: [id])
+
+  @@unique([itemId, referenceUrl])
 }
 
 model Category {

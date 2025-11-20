@@ -5,8 +5,8 @@ import {
   getItemDeals,
   getItemsByCategoryId,
   getLowestPricesByItemId,
-} from '@/database/operations/dbRead';
-import resFormatter from '@/helpers/apiResponseFormatter';
+} from '../../database/operations/dbRead.js';
+import resFormatter from '../../helpers/apiResponseFormatter.js';
 
 const route = Router();
 
@@ -45,18 +45,6 @@ function itemRoute(app: Router): void {
 
         let fetchedItem = await getItemDeals(5);
         // console.log(fetchedItem);
-
-        // Adjust width and height from cloudinary urls
-        fetchedItem = fetchedItem.map((item) => ({
-          ...item,
-          image: {
-            ...item.image,
-            url: item.image.url?.replace(
-              'f_auto,q_auto/',
-              'f_auto,q_auto/w_250,h_250/'
-            ),
-          },
-        }));
 
         res
           .status(200)

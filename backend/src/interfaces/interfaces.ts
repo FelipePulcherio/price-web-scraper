@@ -48,9 +48,11 @@ export interface IShortCategory {
 // Define interface for Image
 export interface IImage {
   id?: number;
-  name?: string;
+  type?: 'THUMBNAIL' | 'CAROUSEL';
+  name: string;
   cloudinaryId?: string;
-  url?: string;
+  cloudinaryUrl?: string;
+  referenceUrl?: string;
   itemId?: number;
 }
 
@@ -74,7 +76,7 @@ export interface IShortItem {
   name: string;
   model: string;
   brand: string;
-  image: IImage;
+  images: IImage[];
   price?: number;
   storesQty?: number;
 }
@@ -89,7 +91,7 @@ export interface IDiscoverImage {
   id?: number;
   name?: string;
   cloudinaryId?: string;
-  url: string;
+  referenceUrl: string;
 }
 
 export interface IDiscoverStore {

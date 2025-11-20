@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { getAllCategories } from '@/database/operations/dbRead';
-import resFormatter from '@/helpers/apiResponseFormatter';
+import { getAllCategories } from '../../database/operations/dbRead.js';
+import resFormatter from '../../helpers/apiResponseFormatter.js';
 
 const route = Router();
 

@@ -135,19 +135,26 @@ async function imagesFromScraping(itemIds: number[]): Promise<void> {
     let newFirstNumber = utils.getNextNumber(item.images);
 
     for (let i = 0; i < item.images.length; i++) {
+      // 4.3) Filter out processed images
+      const skipThisImage =
+        item.images[i].cloudinaryId !== '' &&
+        item.images[i].cloudinaryUrl !== '';
+
+      if (skipThisImage) continue;
+
       uploadToCloudinaryQueue.add(async () => {
         try {
           const name = `${item.brand}_${item.model}_${i + newFirstNumber}`;
           const publicId = `${item.brand}/${item.model}/${name}`;
 
-          // 4.3) Push 'Upload image to cloudinary'
+          // 4.4) Push 'Upload image to cloudinary'
           const { public_id, optimizedUrl } = await utils.uploadToCloudinary(
             item.images[i].referenceUrl!,
             publicId,
             'Items'
           );
 
-          // 4.4) Push 'Update the rest of the images'
+          // 4.5) Push 'Update the rest of the images'
           updateData.push({
             id: item.images[i].id!,
             data: {

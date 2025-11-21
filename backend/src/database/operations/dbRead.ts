@@ -289,15 +289,13 @@ export async function getItemsByCategoryId(
     }
 
     // Transform data
-    const result: IShortItem[] = items.map((item) => ({
+    const result = items.map((item) => ({
       id: item.id,
       name: item.name,
       model: item.model,
       brand: item.brand,
       images:
-        item.images.length > 0
-          ? [item.images[0]]
-          : [{ name: '', cloudinaryUrl: '' }],
+        item.images.length > 0 ? [item.images[0]] : [{ name: '', url: '' }],
     }));
 
     return result;
@@ -734,7 +732,7 @@ export async function getItemDeals(qty: number): Promise<IShortItem[]> {
     }
 
     // Transform data
-    const result: IShortItem[] = item.map((item) => {
+    const result = item.map((item) => {
       const allPrices = item.stores.flatMap((store) => store.events[0].price);
       const lowestPrice = Math.min(...allPrices.filter((n) => n > 0));
 
@@ -746,7 +744,7 @@ export async function getItemDeals(qty: number): Promise<IShortItem[]> {
         images: [
           {
             name: item.images[0].name,
-            cloudinaryUrl: item.images[0].cloudinaryUrl,
+            url: item.images[0].cloudinaryUrl,
           },
         ],
         price: lowestPrice,

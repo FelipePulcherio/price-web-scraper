@@ -436,7 +436,7 @@ export async function searchItemByString(
     // console.log(items[0].stores);
 
     // Transform data
-    const result: IShortItem[] = items.map((item) => {
+    const result = items.map((item) => {
       // Find lowest price
       const allEvents = item.stores.flatMap((s) => s.events);
       const lowest =
@@ -449,7 +449,10 @@ export async function searchItemByString(
         name: item.name,
         model: item.model,
         brand: item.brand,
-        images: item.images ?? [],
+        images: item.images.map((img) => ({
+          name: img.name ?? '',
+          url: img.cloudinaryUrl ?? '',
+        })),
         price: lowest ?? undefined,
         storesQty: item.stores.length,
       };

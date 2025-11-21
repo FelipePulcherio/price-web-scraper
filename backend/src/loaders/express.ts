@@ -7,7 +7,7 @@ import routes from '../api/index.js';
 function expressLoader({ app }: { app: express.Application }): void {
   // Use cors for integration with frontend
   const corsOptions = {
-    origin: ['*'],
+    origin: ['https://price-web-scraper-frontend.vercel.app'],
     credentials: true,
   };
 

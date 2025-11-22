@@ -457,11 +457,8 @@ export async function searchItemByString(
         name: item.name,
         model: item.model,
         brand: item.brand,
-        images: item.images.map((img) => ({
-          name: img.name ?? '',
-          url: img.cloudinaryUrl ?? '',
-        })),
-        price: lowest ?? undefined,
+        images: item.images,
+        price: lowest,
         storesQty: item.stores.length,
       };
     });

@@ -445,7 +445,7 @@ export async function searchItemByString(
 
     // Transform data
     const result = items.map((item) => {
-      // Find lowest price
+      // Find lowest price between stores
       const allEvents = item.stores.flatMap((s) => s.events);
       const lowest =
         allEvents.length > 0

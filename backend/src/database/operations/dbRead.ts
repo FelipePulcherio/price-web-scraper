@@ -406,7 +406,17 @@ export async function searchItemByString(
         model: true,
         brand: true,
         images: {
-          where: { type: imageType },
+          where: {
+            type: imageType,
+            cloudinaryId: {
+              not: undefined,
+              notIn: [''],
+            },
+            cloudinaryUrl: {
+              not: undefined,
+              notIn: [''],
+            },
+          },
           orderBy: { name: 'asc' },
           take: 1,
           select: {

@@ -421,7 +421,7 @@ export async function searchItemByString(
           select: {
             events: {
               where: { status: 'OK' },
-              orderBy: { price: 'asc' },
+              orderBy: { date: 'desc' },
               take: 1,
               select: { price: true },
             },

@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import {
   IItem,
   IShortItem,
+  IFrontShortItem,
   ICategory,
   IShortStore,
   IShortEvent,
@@ -337,7 +338,7 @@ export async function searchItemByString(
   pageSize: number,
   page: number,
   imageType: 'THUMBNAIL' | 'CAROUSEL' = 'THUMBNAIL'
-): Promise<IShortItem[]> {
+): Promise<IFrontShortItem[]> {
   // MANUAL SQL OVERRIDE
   // CREATE EXTENSION IF NOT EXISTS pg_trgm;
   // CREATE EXTENSION IF NOT EXISTS unaccent;
@@ -444,7 +445,7 @@ export async function searchItemByString(
     // console.log(items[0].stores);
 
     // Transform data
-    const result = items.map((item) => {
+    const result: IFrontShortItem[] = items.map((item) => {
       // Find lowest price between stores
       const allEvents = item.stores.flatMap((s) => s.events);
       const lowest =
@@ -452,12 +453,18 @@ export async function searchItemByString(
           ? Math.min(...allEvents.map((e) => e.price))
           : undefined;
 
+      // Adjust to front end interface
+      const frontImages = item.images.map((img) => ({
+        name: img.name ?? '',
+        cloudUrl: img.cloudinaryUrl ?? '',
+      }));
+
       return {
         id: item.id,
         name: item.name,
         model: item.model,
         brand: item.brand,
-        images: item.images,
+        images: frontImages,
         price: lowest,
         storesQty: item.stores.length,
       };

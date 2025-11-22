@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import {
   IItem,
   IShortItem,
+  IFrontShortItem,
   ICategory,
   IShortStore,
   IShortEvent,
@@ -337,7 +338,7 @@ export async function searchItemByString(
   pageSize: number,
   page: number,
   imageType: 'THUMBNAIL' | 'CAROUSEL' = 'THUMBNAIL'
-): Promise<IShortItem[]> {
+): Promise<IFrontShortItem[]> {
   // MANUAL SQL OVERRIDE
   // CREATE EXTENSION IF NOT EXISTS pg_trgm;
   // CREATE EXTENSION IF NOT EXISTS unaccent;
@@ -406,7 +407,17 @@ export async function searchItemByString(
         model: true,
         brand: true,
         images: {
-          where: { type: imageType },
+          where: {
+            type: imageType,
+            cloudinaryId: {
+              not: undefined,
+              notIn: [''],
+            },
+            cloudinaryUrl: {
+              not: undefined,
+              notIn: [''],
+            },
+          },
           orderBy: { name: 'asc' },
           take: 1,
           select: {
@@ -421,7 +432,7 @@ export async function searchItemByString(
           select: {
             events: {
               where: { status: 'OK' },
-              orderBy: { price: 'asc' },
+              orderBy: { date: 'desc' },
               take: 1,
               select: { price: true },
             },
@@ -434,24 +445,27 @@ export async function searchItemByString(
     // console.log(items[0].stores);
 
     // Transform data
-    const result = items.map((item) => {
-      // Find lowest price
+    const result: IFrontShortItem[] = items.map((item) => {
+      // Find lowest price between stores
       const allEvents = item.stores.flatMap((s) => s.events);
       const lowest =
         allEvents.length > 0
           ? Math.min(...allEvents.map((e) => e.price))
           : undefined;
 
+      // Adjust to front end interface
+      const frontImages = item.images.map((img) => ({
+        name: img.name ?? '',
+        cloudUrl: img.cloudinaryUrl ?? '',
+      }));
+
       return {
         id: item.id,
         name: item.name,
         model: item.model,
         brand: item.brand,
-        images: item.images.map((img) => ({
-          name: img.name ?? '',
-          url: img.cloudinaryUrl ?? '',
-        })),
-        price: lowest ?? undefined,
+        images: frontImages,
+        price: lowest,
         storesQty: item.stores.length,
       };
     });

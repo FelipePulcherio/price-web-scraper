@@ -56,6 +56,12 @@ export interface IImage {
   itemId?: number;
 }
 
+// Define interface for Front end Image
+export interface IFrontImage {
+  name: string;
+  cloudUrl: string;
+}
+
 // Define interface for item
 export interface IItem {
   id?: number;
@@ -77,6 +83,17 @@ export interface IShortItem {
   model: string;
   brand: string;
   images: IImage[];
+  price?: number;
+  storesQty?: number;
+}
+
+// Define interface for Front end short item
+export interface IFrontShortItem {
+  id: number;
+  name: string;
+  model: string;
+  brand: string;
+  images: IFrontImage[];
   price?: number;
   storesQty?: number;
 }
